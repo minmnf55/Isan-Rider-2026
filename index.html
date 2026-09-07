@@ -26,6 +26,21 @@ button.cta{width:100%;border:0;border-radius:14px;background:var(--navy);color:#
 .note{background:#fff8e5;border-left:5px solid var(--yellow);border-radius:12px;padding:10px;font-size:11px;line-height:1.45}
 .nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dde7ea;display:flex;justify-content:center;z-index:5}.navin{width:520px;display:grid;grid-template-columns:repeat(4,1fr)}.nav button{border:0;background:#fff;padding:11px 4px;color:var(--muted);font-size:11px;font-weight:800}.nav button.active{color:var(--teal)}.nav b{display:block;font-size:19px}
 .badge{display:inline-block;padding:4px 7px;border-radius:999px;font-size:10px;font-weight:800;background:#e9fbf5;color:#187a5d}
+
+/* V15 SUMMARY TAB */
+nav.bottom-nav, .bottom-nav, #bottomNav { grid-template-columns: repeat(5, 1fr) !important; }
+.summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+.summary-card{background:rgba(255,255,255,.92);border-radius:18px;padding:16px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.summary-card .num{font-size:27px;font-weight:800;color:#164a58}
+.summary-card .lbl{font-size:13px;color:#6b7880;margin-top:3px}
+.day-summary{background:#fff;border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.day-summary h3{margin:0 0 8px;color:#164a58}
+.day-summary .row{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid #edf1f2}
+.day-summary .row:last-child{border-bottom:0}
+.day-summary .diff{font-weight:800}
+.summary-empty{padding:24px;text-align:center;color:#708089}
+@media(max-width:420px){.summary-grid{grid-template-columns:1fr 1fr}.summary-card{padding:13px}.summary-card .num{font-size:23px}}
+
 </style>
 
 <style>
@@ -150,12 +165,13 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
 
   <main id="screen"></main>
 
-  <nav class="nav"><div class="navin">
-    <button class="active" onclick="showHome(this)"><b>⌂</b>HOME</button>
-    <button onclick="showDays(this)"><b>◉</b>RIDES</button>
-    <button onclick="showBudget(this)"><b>฿</b>BUDGET</button>
-     <button onclick="showEmergency(this)"><b>🚨</b>EMERGENCY</button>
-  </div></nav>
+  <nav class="nav">
+<button onclick="showHome(this)">⌂<span>HOME</span></button>
+<button onclick="showRides(this)" class="active">♧<span>RIDES</span></button>
+<button onclick="showBudget(this)">฿<span>BUDGET</span></button>
+<button onclick="showSummary(this)">📊<span>SUMMARY</span></button>
+<button onclick="showEmergency(this)">🚨<span>EMERGENCY</span></button>
+</nav>
 </div>
 
 <script>
@@ -502,7 +518,7 @@ ${days.filter(d=>d.sleep!=="HOME").slice(0,6).map(d=>`<button type="button" oncl
 </div>
 <div class="trackNote">Navigation opens Google Maps. Rider Mode continues tracking while this app is in the background only as permitted by the phone/browser.</div>
 </div>
-<div class="trackNote">V14 menambah sambungan terus ke Google Maps: pilih destinasi, buka navigasi turn-by-turn, cari fuel/halal food/hotel dan kongsi lokasi. Untuk penggunaan sebenar ketika menunggang, fokus pada jalan dan gunakan mount/voice guidance.</div>
+<div class="trackNote">V15 menambah sambungan terus ke Google Maps: pilih destinasi, buka navigasi turn-by-turn, cari fuel/halal food/hotel dan kongsi lokasi. Untuk penggunaan sebenar ketika menunggang, fokus pada jalan dan gunakan mount/voice guidance.</div>
 </section>`;
 renderRider();window.scrollTo(0,0);}
 
@@ -710,7 +726,7 @@ function saveReceiptPreview(input,n){
 })();
 </script>
 
-<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Isan Rider 2026 • PWA v11</div>
+<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Isan Rider 2026 • V15</div>
 
 <script>
 (function(){
@@ -764,7 +780,108 @@ function saveReceiptPreview(input,n){
   else addFinish();
   setTimeout(addFinish,500);
 })();
+
+// ===== V15 SUMMARY =====
+function fmtTime(sec){
+  sec = Math.max(0, Math.floor(Number(sec)||0));
+  const h=String(Math.floor(sec/3600)).padStart(2,'0');
+  const m=String(Math.floor((sec%3600)/60)).padStart(2,'0');
+  const s=String(sec%60).padStart(2,'0');
+  return `${h}:${m}:${s}`;
+}
+function moneyTHB(n){ return '฿' + Math.round(Number(n)||0).toLocaleString('en-US'); }
+
+function readPossible(keyNames, fallback){
+  for(const k of keyNames){
+    try{
+      const v=localStorage.getItem(k);
+      if(v!==null) return JSON.parse(v);
+    }catch(e){}
+  }
+  return fallback;
+}
+
+function buildV15Summary(){
+  const days = readPossible(['finishedDays','rideDays','dailyRideSummary','daySummaries'], []);
+  const expenses = readPossible(['expenses','budgetTransactions','transactions'], []);
+  let list = Array.isArray(days) ? days : [];
+  let totalKm=0, ride=0, rest=0, fuel=0, spent=0;
+  list.forEach(d=>{
+    totalKm += Number(d.actualKm ?? d.distance ?? d.km ?? 0) || 0;
+    ride += Number(d.rideSeconds ?? d.rideTime ?? 0) || 0;
+    rest += Number(d.restSeconds ?? d.restTime ?? 0) || 0;
+    fuel += Number(d.fuelSeconds ?? d.fuelStopSeconds ?? 0) || 0;
+  });
+  if(Array.isArray(expenses)){
+    spent = expenses.reduce((a,e)=>a+(Number(e.amount)||0),0);
+  }
+  const set=(id,v)=>{const el=document.getElementById(id); if(el) el.textContent=v;};
+  set('sumDays', list.length);
+  set('sumKm', totalKm.toFixed(1)+' km');
+  set('sumRide', fmtTime(ride));
+  set('sumRest', fmtTime(rest));
+  set('sumFuelStop', fmtTime(fuel));
+  set('sumSpend', moneyTHB(spent));
+
+  const box=document.getElementById('summaryDays');
+  if(!box) return;
+  if(!list.length){
+    box.innerHTML='<div class="summary-empty">Belum ada hari yang di-finish. Bila kau tekan FINISH DAY, rekod hari tersebut akan muncul di sini.</div>';
+    return;
+  }
+  box.innerHTML=list.map((d,i)=>{
+    const planned=Number(d.plannedKm ?? d.plannedDistance ?? 0) || 0;
+    const actual=Number(d.actualKm ?? d.distance ?? d.km ?? 0) || 0;
+    const diff=actual-planned;
+    const diffText = planned ? ((diff>=0?'+':'')+diff.toFixed(1)+' km') : '—';
+    const date=d.date ?? ('DAY '+(i+1));
+    const route=d.route ?? d.title ?? 'Ride day';
+    const daySpend=Array.isArray(expenses) ? expenses.filter(e=>String(e.day||e.date||'')===String(date)).reduce((a,e)=>a+(Number(e.amount)||0),0) : 0;
+    return `<div class="day-summary">
+      <h3>${date}</h3>
+      <div style="color:#5f7078;margin-bottom:8px">${route}</div>
+      <div class="row"><span>Planned</span><strong>${planned ? planned+' km' : '—'}</strong></div>
+      <div class="row"><span>Actual</span><strong>${actual.toFixed(1)} km</strong></div>
+      <div class="row"><span>Difference</span><span class="diff">${diffText}</span></div>
+      <div class="row"><span>Ride time</span><strong>${fmtTime(d.rideSeconds ?? d.rideTime ?? 0)}</strong></div>
+      <div class="row"><span>Rest / Food</span><strong>${fmtTime(d.restSeconds ?? d.restTime ?? 0)}</strong></div>
+      <div class="row"><span>Fuel / Short Stop</span><strong>${fmtTime(d.fuelSeconds ?? d.fuelStopSeconds ?? 0)}</strong></div>
+      <div class="row"><span>Expenses</span><strong>${moneyTHB(d.expenses ?? daySpend)}</strong></div>
+    </div>`;
+  }).join('');
+}
+
+function showSummary(btn){
+  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+  const p=document.getElementById('summaryPage'); if(p) p.style.display='block';
+  document.querySelectorAll('.bottom-nav button, nav button').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  buildV15Summary();
+}
+window.addEventListener('storage', buildV15Summary);
+
 </script>
 <div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V14 Google Maps</div>
+
+<section id="summaryPage" class="page" style="display:none">
+  <div class="card">
+    <h2>📊 TRIP SUMMARY</h2>
+    <p>Ringkasan sebenar perjalanan berdasarkan tracking dan rekod harian.</p>
+    <div class="summary-grid">
+      <div class="summary-card"><div class="num" id="sumDays">0</div><div class="lbl">DAYS FINISHED</div></div>
+      <div class="summary-card"><div class="num" id="sumKm">0.0 km</div><div class="lbl">TOTAL DISTANCE</div></div>
+      <div class="summary-card"><div class="num" id="sumRide">00:00:00</div><div class="lbl">TOTAL RIDE TIME</div></div>
+      <div class="summary-card"><div class="num" id="sumRest">00:00:00</div><div class="lbl">REST TIME</div></div>
+      <div class="summary-card"><div class="num" id="sumFuelStop">00:00:00</div><div class="lbl">FUEL / SHORT STOP</div></div>
+      <div class="summary-card"><div class="num" id="sumSpend">฿0</div><div class="lbl">ACTUAL SPENDING</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📈 PLANNED vs ACTUAL</h2>
+    <div id="summaryDays"><div class="summary-empty">Belum ada hari yang di-finish.</div></div>
+  </div>
+</section>
+
 </body>
 </html>
