@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#073B4C">
 <link rel="manifest" href="manifest.webmanifest">
-<title>Isan Rider 2026 • v10 Emergency</title>
+<title>Isan Rider 2026 • v12 GPS Rider Mode</title>
 <style>
 :root{--navy:#073B4C;--teal:#118AB2;--cyan:#06D6A0;--yellow:#FFD166;--orange:#F78C6B;--red:#EF476F;--purple:#7B61FF;--green:#52B788;--bg:#f4f7fa;--card:#fff;--ink:#18323C;--muted:#667781}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
@@ -66,15 +66,29 @@ button.cta{width:100%;border:0;border-radius:14px;background:var(--navy);color:#
 .emergency-note{background:#fff8e5;border-left:5px solid var(--yellow);border-radius:12px;padding:10px;font-size:11px;line-height:1.45;margin-top:10px}
 </style>
 
-<meta name="theme-color" content="#111827">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Isan Rider 2026">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="manifest" href="manifest.webmanifest">
+<style>
+#pwaStatus{position:fixed;top:10px;right:10px;z-index:9999;padding:7px 11px;border-radius:999px;
+font:700 11px/1 system-ui;background:#16a34a;color:#fff;box-shadow:0 2px 10px #0002}
+#pwaStatus.offline{background:#dc2626}
+#installAppBtn{position:fixed;right:14px;bottom:82px;z-index:9998;border:0;border-radius:14px;
+padding:11px 14px;font:700 13px system-ui;background:#111827;color:#fff;box-shadow:0 5px 18px #0003}
+#iosHint{position:fixed;left:14px;right:14px;bottom:80px;z-index:9997;padding:12px 14px;border-radius:14px;
+background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #0003;font:500 13px/1.4 system-ui;display:none}
+</style>
 
-</head>
+<style>
+.riderHero{background:linear-gradient(145deg,#073B4C,#118AB2);color:#fff;border-radius:20px;padding:16px;box-shadow:0 7px 22px #073b4c22}
+.riderStatus{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.gpsDot{width:10px;height:10px;border-radius:50%;background:#94a3b8;display:inline-block;margin-right:6px}
+.gpsDot.on{background:#22c55e;box-shadow:0 0 0 5px #22c55e33}
+.riderGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:12px}
+.riderMetric{background:#ffffff18;border:1px solid #ffffff24;border-radius:14px;padding:12px}
+.riderMetric b{display:block;font-size:23px;line-height:1.1}.riderMetric span{font-size:10px;opacity:.78}
+.riderBtns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.riderBtn{border:0;border-radius:13px;padding:12px;font-weight:800;font-size:13px}
+.riderBtn.start{background:#22c55e;color:#062b18}.riderBtn.stop{background:#ef4444;color:#fff}.riderBtn.reset{background:#fff;color:#073B4C}
+.gpsInfo{margin-top:10px;font-size:11px;opacity:.8;line-height:1.45}.trackNote{font-size:11px;color:var(--muted);margin-top:8px}
+</style></head>
 <body>
 <div class="app">
   <header class="hero">
@@ -310,7 +324,46 @@ This prototype creates the trip timeline; full MP4 rendering can be connected in
  alert(text);
 }
 function showDay(n){ document.getElementById("screen").innerHTML=card(days[n-1]); window.scrollTo(0,0);}
-function showDays(btn){setActive(btn);document.getElementById("screen").innerHTML=`<section class="section"><h2>Daily Rides</h2>${days.map(d=>`<div class="card" style="margin-bottom:10px" onclick="showDay(${d.n})"><div style="display:flex;justify-content:space-between"><b>DAY ${d.n} • ${d.date}</b><b>${d.km} km</b></div><div style="font-size:12px;margin-top:6px">${d.route.join(" → ")}</div><div class="label" style="margin-top:6px">Sleep: ${d.sleep} • Start: ${d.start}</div></div>`).join("")}</section>`;window.scrollTo(0,0);}
+let riderWatchId=null,riderTimer=null;
+let riderState=JSON.parse(localStorage.getItem("isanRiderGPS")||'{"running":false,"distance":0,"startTime":null,"lastLat":null,"lastLon":null,"speed":0,"accuracy":null,"lat":null,"lon":null,"points":0}');
+function saveRider(){localStorage.setItem("isanRiderGPS",JSON.stringify(riderState));}
+function haversine(a,b,c,d){const R=6371,rad=Math.PI/180,x=(c-a)*rad,y=(d-b)*rad,h=Math.sin(x/2)**2+Math.cos(a*rad)*Math.cos(c*rad)*Math.sin(y/2)**2;return R*2*Math.atan2(Math.sqrt(h),Math.sqrt(1-h));}
+function fmtTime(ms){const s=Math.max(0,Math.floor(ms/1000)),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");}
+function renderRider(){const el=id=>document.getElementById(id);if(!el("riderScreen"))return;
+el("riderDistance").textContent=riderState.distance.toFixed(1)+" km";el("riderSpeed").textContent=(riderState.speed||0).toFixed(0)+" km/h";
+el("riderAccuracy").textContent=riderState.accuracy?Math.round(riderState.accuracy)+" m":"—";el("riderPoints").textContent=riderState.points;
+el("riderLat").textContent=riderState.lat?`${riderState.lat.toFixed(6)}, ${riderState.lon.toFixed(6)}`:"Waiting for GPS…";el("riderTime").textContent=riderState.startTime?fmtTime(Date.now()-riderState.startTime):"00:00:00";
+const dot=el("riderGpsDot"),st=el("riderGpsText");if(dot){dot.classList.toggle("on",!!riderState.running);st.textContent=riderState.running?"GPS ON":"GPS OFF";}}
+function riderPosition(pos){const c=pos.coords,lat=c.latitude,lon=c.longitude;
+if(riderState.lastLat!=null&&riderState.lastLon!=null){const d=haversine(riderState.lastLat,riderState.lastLon,lat,lon);if(d<1)riderState.distance+=d;}
+riderState.lastLat=lat;riderState.lastLon=lon;riderState.lat=lat;riderState.lon=lon;riderState.speed=c.speed!=null&&c.speed>=0?c.speed*3.6:0;riderState.accuracy=c.accuracy;riderState.points++;saveRider();renderRider();}
+function startRider(){if(!("geolocation"in navigator)){alert("GPS tidak disokong oleh browser/peranti ini.");return;}if(riderState.running)return;
+riderState.running=true;riderState.startTime=riderState.startTime||Date.now();saveRider();renderRider();
+riderWatchId=navigator.geolocation.watchPosition(riderPosition,e=>{const msg={1:"Permission GPS ditolak.",2:"Lokasi tidak dapat ditentukan.",3:"GPS mengambil masa terlalu lama."}[e.code]||"GPS error.";const x=document.getElementById("riderError");if(x)x.textContent=msg;},{enableHighAccuracy:true,maximumAge:5000,timeout:15000});
+riderTimer=setInterval(renderRider,1000);}
+function stopRider(){if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}riderState.running=false;riderState.speed=0;saveRider();renderRider();}
+function resetRider(){stopRider();riderState={running:false,distance:0,startTime:null,lastLat:null,lastLon:null,speed:0,accuracy:null,lat:null,lon:null,points:0};saveRider();renderRider();}
+function showRiderMode(btn){if(btn)setActive(btn);document.getElementById("screen").innerHTML=`
+<section class="section" id="riderScreen"><div class="riderHero">
+<div class="riderStatus"><b>🏍️ LIVE RIDER MODE</b><span><span id="riderGpsDot" class="gpsDot"></span><span id="riderGpsText">GPS OFF</span></span></div>
+<div class="riderGrid">
+<div class="riderMetric"><b id="riderDistance">0.0 km</b><span>DISTANCE TRACKED</span></div>
+<div class="riderMetric"><b id="riderSpeed">0 km/h</b><span>CURRENT SPEED</span></div>
+<div class="riderMetric"><b id="riderTime">00:00:00</b><span>RIDE TIME</span></div>
+<div class="riderMetric"><b id="riderAccuracy">—</b><span>GPS ACCURACY</span></div></div>
+<div class="riderBtns"><button class="riderBtn start" onclick="startRider()">▶ START GPS</button><button class="riderBtn stop" onclick="stopRider()">■ STOP</button><button class="riderBtn reset" style="grid-column:1/3" onclick="resetRider()">↺ RESET TRACK</button></div>
+<div class="gpsInfo">📍 <span id="riderLat">Waiting for GPS…</span><br>GPS samples: <span id="riderPoints">0</span></div>
+<div id="riderError" style="margin-top:8px;color:#ffd1d1;font-size:11px"></div>
+</div><div class="trackNote">GPS hanya aktif apabila Rider Mode dimulakan. Data ringkas tracking disimpan pada telefon. V12 ialah tracking GPS, bukan turn-by-turn navigation.</div></section>`;
+renderRider();window.scrollTo(0,0);}
+
+function showDays(btn){setActive(btn);document.getElementById("screen").innerHTML=`<section class="section">
+<div class="riderHero" style="margin-bottom:12px">
+<div class="riderStatus"><b>🏍️ LIVE RIDER MODE</b><span><span id="miniGpsDot" class="gpsDot"></span><span id="miniGpsText">GPS OFF</span></span></div>
+<div style="font-size:12px;opacity:.85">Track live position, speed, distance and ride time.</div>
+<button class="riderBtn start" style="width:100%;margin-top:12px" onclick="showRiderMode()">OPEN RIDER MODE</button>
+</div>
+<h2>Daily Rides</h2>${days.map(d=>`<div class="card" style="margin-bottom:10px" onclick="showDay(${d.n})"><div style="display:flex;justify-content:space-between"><b>DAY ${d.n} • ${d.date}</b><b>${d.km} km</b></div><div style="font-size:12px;margin-top:6px">${d.route.join(" → ")}</div><div class="label" style="margin-top:6px">Sleep: ${d.sleep} • Start: ${d.start}</div></div>`).join("")}</section>`;window.scrollTo(0,0);}
 function showBudget(btn){renderBudget(btn)}
 function renderBudget(btn){
  if(btn) setActive(btn);
@@ -487,40 +540,27 @@ function saveReceiptPreview(input,n){
 }
 </script>
 
-<div id="pwaInstall" style="display:none;position:fixed;left:14px;right:14px;bottom:78px;z-index:9999;background:#111827;color:white;padding:14px 16px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.25);">
-  <div style="font-weight:800;margin-bottom:5px;">Install Isan Rider 2026</div>
-  <div style="font-size:13px;opacity:.85;margin-bottom:10px;">Pasang app ini ke Home Screen untuk akses lebih cepat dan penggunaan offline.</div>
-  <button id="installBtn" style="border:0;border-radius:10px;padding:9px 14px;font-weight:800;">Install App</button>
-  <button id="installClose" style="margin-left:6px;border:0;border-radius:10px;padding:9px 12px;">Later</button>
-</div>
-<div id="offlineBadge" style="position:fixed;top:10px;right:10px;z-index:9998;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:800;background:#16a34a;color:white;display:none;">ONLINE</div>
+<div id="pwaStatus">ONLINE</div>
+<button id="installAppBtn" style="display:none">＋ INSTALL APP</button>
+<div id="iosHint">Untuk iPhone/iPad: buka dalam Safari → Share → <b>Add to Home Screen</b>.</div>
 <script>
 (function(){
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function(){ navigator.serviceWorker.register('./sw.js').catch(function(e){console.log('SW:',e);}); });
-  }
-  const badge=document.getElementById('offlineBadge');
-  function net(){
-    if(!navigator.onLine){ badge.textContent='OFFLINE'; badge.style.background='#dc2626'; badge.style.display='block'; }
-    else { badge.textContent='ONLINE'; badge.style.background='#16a34a'; badge.style.display='block'; setTimeout(()=>badge.style.display='none',1800); }
-  }
-  window.addEventListener('online',net); window.addEventListener('offline',net);
-  if(!navigator.onLine) net();
-
+  const status=document.getElementById('pwaStatus');
+  const installBtn=document.getElementById('installAppBtn');
+  const iosHint=document.getElementById('iosHint');
+  function update(){const online=navigator.onLine;status.textContent=online?'ONLINE':'OFFLINE';status.classList.toggle('offline',!online);}
+  addEventListener('online',update);addEventListener('offline',update);update();
   let deferredPrompt=null;
-  const box=document.getElementById('pwaInstall'), btn=document.getElementById('installBtn'), close=document.getElementById('installClose');
-  window.addEventListener('beforeinstallprompt',function(e){
-    e.preventDefault(); deferredPrompt=e; box.style.display='block';
-  });
-  btn.addEventListener('click',async function(){
-    if(!deferredPrompt) return;
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt=null; box.style.display='none';
-  });
-  close.addEventListener('click',function(){box.style.display='none';});
+  addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;installBtn.style.display='block';});
+  installBtn.addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBtn.style.display='none';});
+  addEventListener('appinstalled',()=>{installBtn.style.display='none';});
+  const isiOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  const standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  if(isiOS&&!standalone)iosHint.style.display='block';
+  if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 })();
 </script>
 
+<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Isan Rider 2026 • PWA v11</div>
 </body>
 </html>
