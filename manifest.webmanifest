@@ -1,7 +1,7 @@
 {
   "name": "Min's Isan Rider 2026",
   "short_name": "Isan Rider",
-  "description": "Isan + Mekong motorcycle touring companion with live GPS Rider Mode.",
+  "description": "Isan + Mekong motorcycle touring companion with GPS, navigation and emergency tools.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
