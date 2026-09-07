@@ -123,6 +123,19 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
 .stopSheet button.cancel{background:#eee;color:#555}
 @media (min-width:480px){.riderHero .riderGrid{grid-template-columns:repeat(3,1fr)}}
 </style>
+
+<style>
+#finishDayBtn{
+ display:block!important;width:100%!important;
+ margin:10px 0!important;padding:15px 18px!important;
+ border:0!important;border-radius:14px!important;
+ background:#111827!important;color:#fff!important;
+ font-size:16px!important;font-weight:800!important;
+ min-height:52px!important;
+}
+#finishDayBtn:disabled{opacity:.45!important}
+.finishHint{font-size:12px;color:#64748b;text-align:center;margin:4px 0 10px}
+</style>
 </head>
 <body>
 <div class="app">
@@ -241,7 +254,7 @@ function showEmergency(btn){
   document.getElementById("screen").innerHTML=`
   <section class="section">
     <h2>🚨 Emergency Contacts</h2>
-    <button type="button" id="finishDayBtn" class="riderBtn finish" onclick="finishDay()">🏁 FINISH DAY</button><div class="emergency-note">
+    <button type="button" id="finishDayBtn" class="riderBtn finish" onclick="finishDay()">🏁 FINISH DAY</button><div class="finishHint">Tekan bila semua ride untuk hari ini sudah selesai.</div><div class="emergency-note">
       <b>Family contacts</b> — call these first if you need someone you trust to coordinate help.
     </div>
   </section>
