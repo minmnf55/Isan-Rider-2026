@@ -399,22 +399,6 @@ function emergencyRide(){document.getElementById("emergencyRideModal")?.remove()
 <button class="riderBtn share" style="width:100%;margin-top:10px" onclick="shareLocation()">📍 SEND MY LOCATION</button>
 <button class="riderBtn reset" style="width:100%;margin-top:8px" onclick="document.getElementById('emergencyRideModal').remove()">CLOSE</button>
 </div></div>`);}
-function renderRider(){const el=id=>document.getElementById(id);if(!el("riderScreen"))return;
-el("riderDistance").textContent=riderState.distance.toFixed(1)+" km";el("riderSpeed").textContent=(riderState.speed||0).toFixed(0)+" km/h";
-el("riderAccuracy").textContent=riderState.accuracy?Math.round(riderState.accuracy)+" m":"—";el("riderPoints").textContent=riderState.points;
-el("riderLat").textContent=riderState.lat?`${riderState.lat.toFixed(6)}, ${riderState.lon.toFixed(6)}`:"Waiting for GPS…";el("riderTime").textContent=riderState.startTime?fmtTime(Date.now()-riderState.startTime):"00:00:00";
-el("riderHeading").textContent=compass(riderState.heading);
-const dot=el("riderGpsDot"),st=el("riderGpsText");if(dot){dot.classList.toggle("on",!!riderState.running);st.textContent=riderState.running?"GPS ON":"GPS OFF";}}
-function riderPosition(pos){const c=pos.coords,lat=c.latitude,lon=c.longitude;
-if(riderState.lastLat!=null&&riderState.lastLon!=null){const d=haversine(riderState.lastLat,riderState.lastLon,lat,lon);if(d<1)riderState.distance+=d;}
-riderState.lastLat=lat;riderState.lastLon=lon;riderState.lat=lat;riderState.lon=lon;riderState.speed=c.speed!=null&&c.speed>=0?c.speed*3.6:0;riderState.accuracy=c.accuracy;riderState.points++;
-if(c.heading!=null&&c.heading>=0)riderState.heading=c.heading;saveRider();renderRider();}
-function startRider(){if(!("geolocation"in navigator)){alert("GPS tidak disokong oleh browser/peranti ini.");return;}if(riderState.running)return;
-riderState.running=true;riderState.startTime=riderState.startTime||Date.now();saveRider();renderRider();
-riderWatchId=navigator.geolocation.watchPosition(riderPosition,e=>{const msg={1:"Permission GPS ditolak.",2:"Lokasi tidak dapat ditentukan.",3:"GPS mengambil masa terlalu lama."}[e.code]||"GPS error.";const x=document.getElementById("riderError");if(x)x.textContent=msg;},{enableHighAccuracy:true,maximumAge:5000,timeout:15000});
-riderTimer=setInterval(renderRider,1000);}
-function stopRider(){if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}riderState.running=false;riderState.speed=0;saveRider();renderRider();}
-function resetRider(){stopRider();riderState={running:false,distance:0,startTime:null,lastLat:null,lastLon:null,speed:0,accuracy:null,lat:null,lon:null,points:0,heading:null};saveRider();renderRider();}
 function enableOrientation(){
 if(!window.DeviceOrientationEvent)return;
 const run=()=>window.addEventListener("deviceorientationabsolute",orientationHandler,true);
@@ -452,7 +436,7 @@ ${days.map(d=>`<option value="${d.sleep}">${d.n}. ${d.sleep}</option>`).join("")
 </div>
 <div class="trackNote">Navigation opens Google Maps. Rider Mode continues tracking while this app is in the background only as permitted by the phone/browser.</div>
 </div>
-<div class="trackNote">V13.1 menambah pause/resume timer: Ride Time, Rest Time dan Total Elapsed Time. Untuk penggunaan sebenar ketika menunggang, fokus pada jalan dan gunakan mount/voice guidance.</div>
+<div class="trackNote">V13.2 menambah pause/resume timer: Ride Time, Rest Time dan Total Elapsed Time. Untuk penggunaan sebenar ketika menunggang, fokus pada jalan dan gunakan mount/voice guidance.</div>
 </section>`;
 renderRider();window.scrollTo(0,0);}
 
