@@ -135,6 +135,9 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
 }
 #finishDayBtn:disabled{opacity:.45!important}
 .finishHint{font-size:12px;color:#64748b;text-align:center;margin:4px 0 10px}
+
+.quickDest{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:8px}
+.quickDest button{border:1px solid #d7e1e5;background:#f7fbfc;border-radius:10px;padding:9px 6px;font:700 11px system-ui;color:#073b4c}
 </style>
 </head>
 <body>
@@ -421,11 +424,28 @@ riderState.running=false;riderState.finished=true;riderState.sessionStart=null;r
 function resetRider(){if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}
 riderState={running:false,finished:false,distance:0,rideMs:0,restMs:0,stopMs:0,totalStart:null,sessionStart:null,stopStart:null,stopType:null,lastLat:null,lastLon:null,speed:0,accuracy:null,lat:null,lon:null,points:0,heading:null};saveRider();renderRider();}
 function mapsHere(){if(riderState.lat==null){alert("GPS belum dapat lokasi. Tekan START GPS dahulu.");return;}window.open("https://www.google.com/maps/search/?api=1&query="+riderState.lat+","+riderState.lon,"_blank");}
-function mapsNavigate(){if(riderState.lat==null){alert("GPS belum dapat lokasi. Tekan START GPS dahulu.");return;}
-const sel=document.getElementById("navDestination");const dest=sel?sel.value:"";if(!dest){alert("Pilih destinasi dahulu.");return;}
-window.open("https://www.google.com/maps/dir/?api=1&origin="+riderState.lat+","+riderState.lon+"&destination="+encodeURIComponent(dest)+"&travelmode=driving","_blank");}
-function mapsSearch(q){if(riderState.lat==null){alert("GPS belum dapat lokasi. Tekan START GPS dahulu.");return;}
-window.open("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q)+"&query_place_id=","_blank");}
+function openGoogleMaps(url){
+  try{window.location.href=url;}catch(e){window.open(url,"_blank");}
+}
+function mapsNavigate(){
+ const sel=document.getElementById("navDestination");
+ const dest=sel?sel.value:"";
+ if(!dest){alert("Pilih destinasi dahulu.");return;}
+ let url="https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(dest)+"&travelmode=driving";
+ if(riderState.lat!=null&&riderState.lon!=null) url+="&origin="+riderState.lat+","+riderState.lon;
+ openGoogleMaps(url);
+}
+function mapsSearch(q){
+ let url="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q);
+ if(riderState.lat!=null&&riderState.lon!=null) url+="&query_place_id=";
+ openGoogleMaps(url);
+}
+function mapsDestination(dest){
+ if(!dest){alert("Pilih destinasi dahulu.");return;}
+ let url="https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(dest)+"&travelmode=driving";
+ if(riderState.lat!=null&&riderState.lon!=null) url+="&origin="+riderState.lat+","+riderState.lon;
+ openGoogleMaps(url);
+}
 async function shareLocation(){if(riderState.lat==null){alert("GPS belum dapat lokasi. Tekan START GPS dahulu.");return;}
 const link="https://www.google.com/maps/search/?api=1&query="+riderState.lat+","+riderState.lon;
 const msg="📍 My current location — Isan Rider 2026\n"+link;
@@ -470,6 +490,9 @@ function showRiderMode(btn){if(btn)setActive(btn);document.getElementById("scree
 <option value="">Select destination…</option>
 ${days.map(d=>`<option value="${d.sleep}">${d.n}. ${d.sleep}</option>`).join("")}
 </select>
+<div class="quickDest">
+${days.filter(d=>d.sleep!=="HOME").slice(0,6).map(d=>`<button type="button" onclick="mapsDestination('${d.sleep.replace(/'/g,"\\'")}')">${d.n}. ${d.sleep}</button>`).join("")}
+</div>
 <div class="navGrid">
 <button class="navBtn map" onclick="mapsNavigate()">🗺️ NAVIGATE</button>
 <button class="navBtn share" onclick="shareLocation()">📍 SEND LOCATION</button>
@@ -479,7 +502,7 @@ ${days.map(d=>`<option value="${d.sleep}">${d.n}. ${d.sleep}</option>`).join("")
 </div>
 <div class="trackNote">Navigation opens Google Maps. Rider Mode continues tracking while this app is in the background only as permitted by the phone/browser.</div>
 </div>
-<div class="trackNote">V13.4 menambah pause/resume timer: Ride Time, Rest Time dan Total Elapsed Time. Untuk penggunaan sebenar ketika menunggang, fokus pada jalan dan gunakan mount/voice guidance.</div>
+<div class="trackNote">V14 menambah sambungan terus ke Google Maps: pilih destinasi, buka navigasi turn-by-turn, cari fuel/halal food/hotel dan kongsi lokasi. Untuk penggunaan sebenar ketika menunggang, fokus pada jalan dan gunakan mount/voice guidance.</div>
 </section>`;
 renderRider();window.scrollTo(0,0);}
 
@@ -742,5 +765,6 @@ function saveReceiptPreview(input,n){
   setTimeout(addFinish,500);
 })();
 </script>
+<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V14 Google Maps</div>
 </body>
 </html>
