@@ -24,7 +24,7 @@
 .item{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #edf1f3}.item:last-child{border-bottom:0}.item strong{font-size:12px}.item span{font-size:11px;color:var(--muted);text-align:right}
 button.cta{width:100%;border:0;border-radius:14px;background:var(--navy);color:#fff;padding:13px;font-weight:850;margin-top:10px}
 .note{background:#fff8e5;border-left:5px solid var(--yellow);border-radius:12px;padding:10px;font-size:11px;line-height:1.45}
-.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dde7ea;display:flex;justify-content:center;z-index:5}.navin{width:100%;max-width:620px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}.nav button{border:0;background:#fff;padding:10px 2px;color:var(--muted);font-size:10px;font-weight:800;min-width:0}.nav button span{display:block;white-space:nowrap}.nav button.active{color:var(--teal)}.nav b{display:block;font-size:19px}
+.nav{position:fixed;bottom:0;left:0;right:0;height:78px;background:#fff;border-top:1px solid #dde7ea;display:flex;justify-content:center;z-index:5}.navin{width:100%;max-width:620px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}.nav button{border:0;background:#fff;padding:7px 0 6px;color:var(--muted);font-size:11px;font-weight:800;min-width:0;line-height:1.05;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}.nav button span{display:block;white-space:nowrap;letter-spacing:-.1px}.nav button.active{color:var(--teal)}.nav b{display:block;font-size:23px;line-height:23px;font-weight:700}
 .badge{display:inline-block;padding:4px 7px;border-radius:999px;font-size:10px;font-weight:800;background:#e9fbf5;color:#187a5d}
 
 /* V15 SUMMARY TAB */
@@ -166,11 +166,13 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
   <main id="screen"></main>
 
   <nav class="nav">
-<button onclick="showHome(this)">⌂<span>HOME</span></button>
-<button onclick="showRides(this)" class="active">♧<span>RIDES</span></button>
-<button onclick="showBudget(this)">฿<span>BUDGET</span></button>
-<button onclick="showSummary(this)">📊<span>SUMMARY</span></button>
-<button onclick="showEmergency(this)">🚨<span>EMERGENCY</span></button>
+<div class="navin">
+<button onclick="showHome(this)"><b>⌂</b><span>HOME</span></button>
+<button onclick="showRides(this)" class="active"><b>♧</b><span>RIDES</span></button>
+<button onclick="showBudget(this)"><b>฿</b><span>BUDGET</span></button>
+<button onclick="showSummary(this)"><b>📊</b><span>SUMMARY</span></button>
+<button onclick="showEmergency(this)"><b>🚨</b><span>EMERGENCY</span></button>
+</div>
 </nav>
 </div>
 
