@@ -24,7 +24,7 @@
 .item{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #edf1f3}.item:last-child{border-bottom:0}.item strong{font-size:12px}.item span{font-size:11px;color:var(--muted);text-align:right}
 button.cta{width:100%;border:0;border-radius:14px;background:var(--navy);color:#fff;padding:13px;font-weight:850;margin-top:10px}
 .note{background:#fff8e5;border-left:5px solid var(--yellow);border-radius:12px;padding:10px;font-size:11px;line-height:1.45}
-.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dde7ea;display:flex;justify-content:center;z-index:5}.navin{width:100%;max-width:620px;display:grid;grid-template-columns:repeat(5,1fr)}.nav button{border:0;background:#fff;padding:11px 4px;color:var(--muted);font-size:11px;font-weight:800}.nav button.active{color:var(--teal)}.nav b{display:block;font-size:19px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dde7ea;display:flex;justify-content:center;z-index:5}.navin{width:100%;max-width:620px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}.nav button{border:0;background:#fff;padding:10px 2px;color:var(--muted);font-size:10px;font-weight:800;min-width:0}.nav button span{display:block;white-space:nowrap}.nav button.active{color:var(--teal)}.nav b{display:block;font-size:19px}
 .badge{display:inline-block;padding:4px 7px;border-radius:999px;font-size:10px;font-weight:800;background:#e9fbf5;color:#187a5d}
 
 /* V15 SUMMARY TAB */
@@ -522,6 +522,7 @@ ${days.filter(d=>d.sleep!=="HOME").slice(0,6).map(d=>`<button type="button" oncl
 </section>`;
 renderRider();window.scrollTo(0,0);}
 
+function showRides(btn){showDays(btn)}
 function showDays(btn){setActive(btn);document.getElementById("screen").innerHTML=`<section class="section">
 <div class="riderHero" style="margin-bottom:12px">
 <div class="riderStatus"><b>🏍️ LIVE RIDER MODE</b><span><span id="miniGpsDot" class="gpsDot"></span><span id="miniGpsText">GPS OFF</span></span></div>
@@ -852,36 +853,27 @@ function buildV15Summary(){
 }
 
 function showSummary(btn){
-  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
-  const p=document.getElementById('summaryPage'); if(p) p.style.display='block';
-  document.querySelectorAll('.bottom-nav button, nav button').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  buildV15Summary();
+  setActive(btn);
+  const screen=document.getElementById("screen");
+  screen.innerHTML=`<section id="summaryPage" class="section">
+    <div class="card"><h2>📊 TRIP SUMMARY</h2><p>Ringkasan sebenar perjalanan berdasarkan tracking dan rekod harian.</p>
+      <div class="summary-grid">
+        <div class="summary-card"><div class="num" id="sumDays">0</div><div class="lbl">DAYS FINISHED</div></div>
+        <div class="summary-card"><div class="num" id="sumKm">0.0 km</div><div class="lbl">TOTAL DISTANCE</div></div>
+        <div class="summary-card"><div class="num" id="sumRide">00:00:00</div><div class="lbl">TOTAL RIDE TIME</div></div>
+        <div class="summary-card"><div class="num" id="sumRest">00:00:00</div><div class="lbl">REST TIME</div></div>
+        <div class="summary-card"><div class="num" id="sumFuelStop">00:00:00</div><div class="lbl">FUEL / SHORT STOP</div></div>
+        <div class="summary-card"><div class="num" id="sumSpend">฿0</div><div class="lbl">ACTUAL SPENDING</div></div>
+      </div>
+    </div>
+    <div class="card"><h2>📈 PLANNED vs ACTUAL</h2><div id="summaryDays"><div class="summary-empty">Belum ada hari yang di-finish.</div></div></div>
+  </section>`;
+  buildV15Summary(); window.scrollTo(0,0);
 }
 window.addEventListener('storage', buildV15Summary);
 
 </script>
-<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V14 Google Maps</div>
-
-<section id="summaryPage" class="page" style="display:none">
-  <div class="card">
-    <h2>📊 TRIP SUMMARY</h2>
-    <p>Ringkasan sebenar perjalanan berdasarkan tracking dan rekod harian.</p>
-    <div class="summary-grid">
-      <div class="summary-card"><div class="num" id="sumDays">0</div><div class="lbl">DAYS FINISHED</div></div>
-      <div class="summary-card"><div class="num" id="sumKm">0.0 km</div><div class="lbl">TOTAL DISTANCE</div></div>
-      <div class="summary-card"><div class="num" id="sumRide">00:00:00</div><div class="lbl">TOTAL RIDE TIME</div></div>
-      <div class="summary-card"><div class="num" id="sumRest">00:00:00</div><div class="lbl">REST TIME</div></div>
-      <div class="summary-card"><div class="num" id="sumFuelStop">00:00:00</div><div class="lbl">FUEL / SHORT STOP</div></div>
-      <div class="summary-card"><div class="num" id="sumSpend">฿0</div><div class="lbl">ACTUAL SPENDING</div></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>📈 PLANNED vs ACTUAL</h2>
-    <div id="summaryDays"><div class="summary-empty">Belum ada hari yang di-finish.</div></div>
-  </div>
-</section>
+<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V15.1</div>
 
 </body>
 </html>
