@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#073B4C">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Isan Rider 2026 • v10 Emergency</title>
+<style>
+:root{--navy:#073B4C;--teal:#118AB2;--cyan:#06D6A0;--yellow:#FFD166;--orange:#F78C6B;--red:#EF476F;--purple:#7B61FF;--green:#52B788;--bg:#f4f7fa;--card:#fff;--ink:#18323C;--muted:#667781}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+.app{max-width:520px;margin:auto;min-height:100vh;padding-bottom:86px}
+.hero{background:linear-gradient(145deg,var(--navy),#0b6177);color:#fff;padding:24px 18px 20px;border-radius:0 0 28px 28px;box-shadow:0 8px 24px #073b4c2b}
+.hero h1{margin:0;font-size:28px;letter-spacing:-.5px}.hero p{margin:6px 0 0;color:#dff8ff;font-size:13px}
+.hero .pill{display:inline-block;margin-top:14px;background:var(--yellow);color:var(--navy);padding:7px 11px;border-radius:999px;font-weight:800;font-size:12px}
+.section{padding:15px 14px}.section h2{font-size:15px;margin:0 0 10px;color:var(--navy)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.card{background:var(--card);border-radius:17px;padding:13px;box-shadow:0 4px 16px #073b4c12;border:1px solid #e7eef1}
+.metric{font-size:22px;font-weight:850;color:var(--navy)}.label{font-size:11px;color:var(--muted);margin-top:2px}
+.days{display:flex;gap:8px;overflow:auto;padding-bottom:5px}.day{flex:0 0 72px;border:0;background:#fff;border-radius:15px;padding:10px 6px;color:var(--navy);font-weight:800;box-shadow:0 3px 10px #073b4c12}.day.active{background:var(--teal);color:#fff}.day small{display:block;font-weight:600;opacity:.8}
+.route{background:#fff;border-radius:18px;padding:14px;box-shadow:0 4px 16px #073b4c12}
+.routebar{display:flex;align-items:center;gap:0;overflow-x:auto;padding:12px 2px 4px}.node{min-width:72px;text-align:center;font-size:10px;font-weight:800}.dot{width:17px;height:17px;border-radius:50%;background:var(--teal);margin:0 auto 6px;border:4px solid #d9f4fb}.dot.end{background:var(--red);border-color:#ffe0e7}.line{height:4px;background:var(--teal);min-width:28px;border-radius:9px}
+.iconrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.ico{border-radius:14px;color:#fff;text-align:center;padding:10px 5px;font-size:11px;font-weight:800}.ico b{display:block;font-size:18px;margin-bottom:2px}
+.item{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #edf1f3}.item:last-child{border-bottom:0}.item strong{font-size:12px}.item span{font-size:11px;color:var(--muted);text-align:right}
+button.cta{width:100%;border:0;border-radius:14px;background:var(--navy);color:#fff;padding:13px;font-weight:850;margin-top:10px}
+.note{background:#fff8e5;border-left:5px solid var(--yellow);border-radius:12px;padding:10px;font-size:11px;line-height:1.45}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dde7ea;display:flex;justify-content:center;z-index:5}.navin{width:520px;display:grid;grid-template-columns:repeat(4,1fr)}.nav button{border:0;background:#fff;padding:11px 4px;color:var(--muted);font-size:11px;font-weight:800}.nav button.active{color:var(--teal)}.nav b{display:block;font-size:19px}
+.badge{display:inline-block;padding:4px 7px;border-radius:999px;font-size:10px;font-weight:800;background:#e9fbf5;color:#187a5d}
+</style>
+
+<style>
+.expense-form{background:#fff;border-radius:18px;padding:14px;box-shadow:0 4px 16px #073b4c12;margin-top:10px}
+.expense-form select,.expense-form input{width:100%;padding:11px;border:1px solid #dbe6ea;border-radius:11px;margin:5px 0 9px;font-size:13px;background:#fff}
+.expense-form button{width:100%;border:0;border-radius:12px;padding:11px;background:var(--teal);color:#fff;font-weight:850}
+.expense-list{margin-top:10px}.expense-total{font-size:26px;font-weight:900;color:var(--navy)}
+</style>
+
+<style>
+.media-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px}
+.media-box{aspect-ratio:1;border:2px dashed #cbdde2;border-radius:13px;background:#f7fbfc;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;font-weight:800;color:#53717b;cursor:pointer;overflow:hidden}
+.media-box img{width:100%;height:100%;object-fit:cover}
+.media-title{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.media-btn{border:0;border-radius:10px;background:#073B4C;color:#fff;padding:7px 10px;font-size:10px;font-weight:850}
+.receipt{background:#fff8e5;border-left:4px solid #FFD166;padding:9px;border-radius:10px;font-size:11px;margin-top:8px}
+.preview-modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
+.preview-card{background:#fff;border-radius:20px;padding:18px;width:min(460px,100%);max-height:90vh;overflow:auto}
+.preview-card h2{margin-top:0;color:#073B4C}
+</style>
+
+<style>
+.daily-chart{background:#fff;border-radius:18px;padding:15px;box-shadow:0 4px 16px #073b4c12;margin-top:10px}
+.barchart{height:220px;display:flex;align-items:flex-end;gap:8px;padding:12px 2px 0;border-bottom:1px solid #dce7ea;overflow-x:auto}
+.barwrap{height:100%;min-width:36px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+.bar{width:27px;min-height:3px;border-radius:7px 7px 2px 2px;background:var(--teal);position:relative}
+.bar.today{background:var(--orange)}
+.barvalue{font-size:8px;color:var(--navy);font-weight:800;margin-bottom:3px;white-space:nowrap}
+.barlabel{font-size:8px;color:var(--muted);font-weight:800;margin-top:6px}
+.chartlegend{font-size:10px;color:var(--muted);margin-top:8px}
+
+.emergency-card{background:#fff;border-radius:18px;padding:14px;box-shadow:0 4px 16px #073b4c12;border:1px solid #e7eef1;margin-bottom:10px}
+.emergency-card.family{border-left:5px solid var(--red)}
+.emergency-card.gov{border-left:5px solid var(--teal)}
+.emergency-title{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.emergency-number{font-size:20px;font-weight:900;color:var(--navy)}
+.call-btn{display:block;text-align:center;text-decoration:none;border:0;border-radius:12px;background:var(--red);color:#fff;padding:11px;font-weight:900;margin-top:10px}
+.emergency-note{background:#fff8e5;border-left:5px solid var(--yellow);border-radius:12px;padding:10px;font-size:11px;line-height:1.45;margin-top:10px}
+</style>
+
+<meta name="theme-color" content="#111827">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Isan Rider 2026">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <h1>ISAN RIDER 2026</h1>
+    <p>Isan + Mekong Motorcycle Tour • Voge DS900X</p>
+    <span class="pill">28 SEP → 8 OCT • 11 DAYS</span>
+  </header>
+
+  <main id="screen"></main>
+
+  <nav class="nav"><div class="navin">
+    <button class="active" onclick="showHome(this)"><b>⌂</b>HOME</button>
+    <button onclick="showDays(this)"><b>◉</b>RIDES</button>
+    <button onclick="showBudget(this)"><b>฿</b>BUDGET</button>
+     <button onclick="showEmergency(this)"><b>🚨</b>EMERGENCY</button>
+  </div></nav>
+</div>
+
+<script>
+const days=[
+{n:1,date:"28 Sep",km:"280–300",start:"17:00 Thai",route:["Golok","Pattani","Hat Yai"],sleep:"Hat Yai",hotel:"B2 Hat Yai Boutique & Budget",hotelCost:"฿650–800",budget:"±฿2,000",fuel:"Golok FULL → Pattani/Yarang → Hat Yai",poi:"Immigration • fuel • dinner",food:"Khaled Restaurant @ Hat Yai",note:"Entry day. No sightseeing."},
+{n:2,date:"29 Sep",km:"650–700",start:"05:30",route:["Hat Yai","Phatthalung","Surat Thani","Chumphon","Prachuap","Nakhon Sawan"],sleep:"Nakhon Sawan",hotel:"B2 Nakhon Sawan Boutique & Budget",hotelCost:"฿600–800",budget:"±฿3,000–3,300",fuel:"PTT rhythm every ~200–220 km",poi:"Highway day",food:"Roadside / backup food",note:"Keep stops efficient."},
+{n:3,date:"30 Sep",km:"450–520",start:"06:00",route:["Nakhon Sawan","Phitsanulok","Khao Kho","Lom Sak","Loei"],sleep:"Loei",hotel:"King Hotel Loei",hotelCost:"฿550–750",budget:"±฿2,500–2,800",fuel:"Full before Route 203",poi:"Khao Kho viewpoint",food:"Coffee: Lpresso / บ้านเขาคาเฟ่",note:"Skip viewpoint in heavy fog/rain."},
+{n:4,date:"1 Oct",km:"300–350",start:"07:00",route:["Loei","Phu Ruea","Dan Sai","Na Haeo","Loei"],sleep:"Loei",hotel:"King Hotel Loei • Night 2",hotelCost:"฿550–750",budget:"±฿1,800–2,100",fuel:"Loei FULL → Dan Sai → Na Haeo",poi:"Dan Sai / Na Haeo",food:"Love Loei Coffee / local food",note:"No luggage. Rider day."},
+{n:5,date:"2 Oct",km:"250–300",start:"06:30–07:00",route:["Loei","Dan Sai","Na Haeo","Route 2195","Pak Chom","Chiang Khan"],sleep:"Chiang Khan ★",hotel:"With A View Hotel @Chiangkhan",hotelCost:"฿1,200–1,600",budget:"±฿2,800",fuel:"NA HAE0 FULL before 2195",poi:"Mekong • sunset • Walking Street",food:"Bang Tong Islamic Chicken Rice",note:"Signature riding day. Ride Route 2195 to conditions."},
+{n:6,date:"3 Oct",km:"50–100",start:"RELAXED",route:["Chiang Khan","Mekong","Old Town","Chiang Khan"],sleep:"Chiang Khan",hotel:"Private room ~฿700–800",hotelCost:"~฿700–800",budget:"±฿1,300–1,700",fuel:"Short local ride",poi:"Sunrise • Mekong • Walking Street",food:"Breakfast / local food",note:"Slow day + nap. No need to chase mileage."},
+{n:7,date:"4 Oct",km:"300–350",start:"06:30",route:["Chiang Khan","Pak Chom","Sangkhom","Si Chiang Mai","Nong Khai"],sleep:"Nong Khai",hotel:"HOP INN Nong Khai",hotelCost:"฿700–800",budget:"±฿2,100–2,300",fuel:"Chiang Khan → Pak Chom → Sangkhom",poi:"Mekong viewpoints",food:"Bruce Coffee • halal dinner",note:"Route 211 rider day."},
+{n:8,date:"5 Oct",km:"500–600",start:"05:30",route:["Nong Khai","Udon Thani","Khon Kaen","Chum Phae","Lom Sak","Phetchabun"],sleep:"Phetchabun",hotel:"HOP INN Phetchabun",hotelCost:"฿600–750",budget:"±฿2,600–2,900",fuel:"Udon → Khon Kaen → Chum Phae → Lom Sak",poi:"Optional Khao Kho",food:"Coffee if timing allows",note:"Fast day. Detour only if weather + energy are good."},
+{n:9,date:"6 Oct",km:"650–700",start:"05:00",route:["Phetchabun","Nakhon Sawan","Central Thailand","Prachuap","Chumphon"],sleep:"Chumphon",hotel:"HOP INN Chumphon",hotelCost:"฿700–800",budget:"±฿3,100–3,400",fuel:"Long highway fuel rhythm",poi:"Transit day",food:"Farida Cha Roti • halal",note:"Long highway day."},
+{n:10,date:"7 Oct",km:"450–500",start:"06:00",route:["Chumphon","Surat Thani","Nakhon Si","Thung Song","Phatthalung"],sleep:"Phatthalung",hotel:"Private room + secure parking",hotelCost:"฿500–800",budget:"±฿2,300–2,700",fuel:"Chumphon → Surat → Nakhon Si → Thung Song",poi:"Thale Noi optional",food:"Local / backup food",note:"Easier final approach day."},
+{n:11,date:"8 Oct",km:"350–400",start:"07:00–08:00",route:["Phatthalung","Hat Yai","Pattani","Narathiwat","Golok"],sleep:"HOME",hotel:"—",hotelCost:"—",budget:"Fuel + food",fuel:"Phatthalung FULL → Hat Yai → Pattani/Narathiwat",poi:"Final run",food:"Halal: Hat Yai / Pattani",note:"Target border 14:00–16:00 Thai = 15:00–17:00 MY."}
+];
+
+function routeHTML(a){
+ let s='<div class="routebar">';
+ a.forEach((x,i)=>{s+=`<div class="node"><div class="dot ${i===0||i===a.length-1?'end':''}"></div>${x}</div>`; if(i<a.length-1)s+='<div class="line"></div>';});
+ return s+'</div>';
+}
+function getStops(dayNum){
+ const key="isan-rider-stops-v1";
+ const all=JSON.parse(localStorage.getItem(key)||"{}");
+ return all[dayNum]||[];
+}
+function saveStops(dayNum,stops){
+ const key="isan-rider-stops-v1";
+ const all=JSON.parse(localStorage.getItem(key)||"{}");
+ all[dayNum]=stops; localStorage.setItem(key,JSON.stringify(all));
+}
+function addStop(dayNum){
+ const name=prompt("Nama tempat singgah?");
+ if(!name) return;
+ const note=prompt("Nota ringkas (optional):")||"";
+ const stops=getStops(dayNum);
+ stops.push({id:Date.now(),name,note,time:new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}),lat:null,lon:null});
+ saveStops(dayNum,stops); showDay(dayNum);
+}
+function deleteStop(dayNum,id){
+ saveStops(dayNum,getStops(dayNum).filter(s=>s.id!==id)); showDay(dayNum);
+}
+function card(d){
+ const stops=getStops(d.n);
+ return `<section class="section">
+ <div class="route">
+ <div style="display:flex;justify-content:space-between;align-items:start;gap:10px">
+   <div><span class="badge">DAY ${d.n} • ${d.date}</span><h2 style="margin:8px 0 0">${d.route[0]} → ${d.route[d.route.length-1]}</h2></div>
+   <div style="text-align:right"><div class="metric">${d.km}</div><div class="label">${d.start}</div></div>
+ </div>
+ ${routeHTML(d.route)}
+ <div class="iconrow">
+  <div class="ico" style="background:var(--teal)"><b>⛽</b>FUEL</div>
+  <div class="ico" style="background:var(--orange)"><b>⌖</b>POI</div>
+  <div class="ico" style="background:var(--purple)"><b>⌂</b>HOTEL</div>
+  <div class="ico" style="background:var(--green)"><b>🍜</b>FOOD</div>
+  <div class="ico" style="background:var(--red)"><b>฿</b>BUDGET</div>
+  <div class="ico" style="background:var(--navy)"><b>↗</b>NAV</div>
+ </div>
+ <div class="item"><strong>⛽ Fuel</strong><span>${d.fuel}</span></div>
+ <div class="item"><strong>⌖ POI</strong><span>${d.poi}</span></div>
+ <div class="item"><strong>🍜 Food</strong><span>${d.food}</span></div>
+ <div class="item"><strong>⌂ Hotel</strong><span>${d.hotel}<br>${d.hotelCost}</span></div>
+ <div class="item"><strong>฿ Budget</strong><span>${d.budget}</span></div>
+
+ <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center">
+   <h2 style="margin:0">📍 My Stops</h2>
+   <span class="badge">${stops.length} added</span>
+ </div>
+ <div class="note" style="margin-top:8px">
+   Planned stops are shown on the route above. Add any spontaneous place you visit below.
+ </div>
+ ${stops.map(s=>`<div class="card" style="margin-top:8px;padding:11px;background:#f8fbfc">
+   <div style="display:flex;justify-content:space-between;gap:10px">
+     <div><b>📍 ${s.name}</b><div class="label">${s.time}${s.note?" • "+s.note:""}</div></div>
+     <button onclick="deleteStop(${d.n},${s.id})" style="border:0;background:none;color:var(--red);font-weight:800">×</button>
+   </div>
+ </div>`).join("")}
+ <div class="media-title"><h2 style="margin:14px 0 0">📸 Trip Journal</h2><button class="media-btn" onclick="openMedia(${d.n})">ADD MEDIA</button></div>
+ <div class="media-grid">${(JSON.parse(localStorage.getItem(mediaStoreKey(d.n))||"[]")).map(m=>`<div class="media-box"><img src="${m.data}" alt="${m.type}"></div>`).join("")}
+   <label class="media-box">📷<br>Food / POI<input type="file" accept="image/*" multiple hidden onchange="saveMediaPreview(this,${d.n})"></label>
+   <label class="media-box">🧾<br>Receipt<input type="file" accept="image/*" hidden onchange="saveReceiptPreview(this,${d.n})"></label>
+   <div class="media-box" onclick="openMedia(${d.n})">🎬<br>Ride Story</div>
+ </div>
+   <label class="media-box">📷<br>Food / POI<input type="file" accept="image/*" multiple hidden onchange="saveMediaPreview(this,${d.n})"></label>
+   <label class="media-box">🧾<br>Receipt<input type="file" accept="image/*" hidden onchange="saveReceiptPreview(this,${d.n})"></label>
+   <div class="media-box" onclick="openMedia(${d.n})">🎬<br>Ride Story</div>
+ </div>
+ <div class="label" style="margin-top:8px">Photos and receipts are attached to this day. No fixed 6-photo limit in this version.</div>
+ <button class="cta" style="background:var(--teal)" onclick="addStop(${d.n})">＋ ADD UNPLANNED STOP</button>
+ <button class="cta" onclick="navigate('${d.route.join(" → ")}')">OPEN NAVIGATION</button>
+ <div class="note" style="margin-top:10px">⚠️ ${d.note}</div>
+ </div></section>`;
+}
+
+function showEmergency(btn){
+  setActive(btn);
+  document.getElementById("screen").innerHTML=`
+  <section class="section">
+    <h2>🚨 Emergency Contacts</h2>
+    <div class="emergency-note">
+      <b>Family contacts</b> — call these first if you need someone you trust to coordinate help.
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="emergency-card family">
+      <div class="emergency-title">
+        <div><b>👩🏻 Kakak</b><div class="label">Family Emergency Contact</div></div>
+        <div class="emergency-number">+60 19-960 7527</div>
+      </div>
+      <a class="call-btn" href="tel:+60199607527">📞 CALL KAKAK</a>
+    </div>
+
+    <div class="emergency-card family">
+      <div class="emergency-title">
+        <div><b>👨🏻 Suami</b><div class="label">Family Emergency Contact</div></div>
+        <div class="emergency-number">+60 11-1684 7552</div>
+      </div>
+      <a class="call-btn" href="tel:+601116847552">📞 CALL SUAMI</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>🇹🇭 Thailand Emergency</h2>
+
+    <div class="emergency-card gov">
+      <div class="emergency-title"><div><b>👮 Police / General Emergency</b><div class="label">Royal Thai Police</div></div><div class="emergency-number">191</div></div>
+      <a class="call-btn" href="tel:191">📞 CALL 191</a>
+    </div>
+
+    <div class="emergency-card gov">
+      <div class="emergency-title"><div><b>🚑 Medical Emergency</b><div class="label">Emergency Medical Call Center</div></div><div class="emergency-number">1669</div></div>
+      <a class="call-btn" href="tel:1669">📞 CALL 1669</a>
+    </div>
+
+    <div class="emergency-card gov">
+      <div class="emergency-title"><div><b>👮 Tourist Police</b><div class="label">Tourist assistance / multilingual help</div></div><div class="emergency-number">1155</div></div>
+      <a class="call-btn" href="tel:1155">📞 CALL 1155</a>
+    </div>
+
+    <div class="emergency-card gov">
+      <div class="emergency-title"><div><b>🛣️ Highway Police</b><div class="label">Highway assistance</div></div><div class="emergency-number">1193</div></div>
+      <a class="call-btn" href="tel:1193">📞 CALL 1193</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>🇲🇾 Malaysian Representation in Thailand</h2>
+
+    <div class="emergency-card gov">
+      <b>🇲🇾 Embassy of Malaysia, Bangkok</b>
+      <div class="label" style="margin-top:6px">General: +66 2 340 5720<br>Consular: +66 2 340 5731 / 5732<br>Emergency: +66 87 028 4659</div>
+      <a class="call-btn" href="tel:+66870284659">📞 CALL EMBASSY EMERGENCY</a>
+    </div>
+
+    <div class="emergency-card gov">
+      <b>🇲🇾 Consulate General of Malaysia, Songkhla</b>
+      <div class="label" style="margin-top:6px">General: +66 74 311 062<br>Emergency: +66 81 990 1930</div>
+      <a class="call-btn" href="tel:+66819901930">📞 CALL CONSULATE EMERGENCY</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="emergency-note">
+      <b>Important:</b> 1155 is the Tourist Police hotline; 191 is the Royal Thai Police emergency number; 1669 is for medical emergencies. Save these contacts offline before entering rural/mountain sections.
+    </div>
+  </section>`;
+  window.scrollTo(0,0);
+}
+
+function showHome(btn){
+ setActive(btn); document.getElementById("screen").innerHTML=`
+ <section class="section"><div class="grid">
+ <div class="card"><div class="metric">≈3,800–4,100</div><div class="label">TOTAL KM</div></div>
+ <div class="card"><div class="metric">11</div><div class="label">RIDING DAYS</div></div>
+ <div class="card"><div class="metric">฿22.2k–25k</div><div class="label">EST. BUDGET</div></div>
+ <div class="card"><div class="metric">17 L</div><div class="label">DS900X TANK</div></div>
+ </div></section>
+ <section class="section"><h2>Today / Trip Overview</h2><div class="route">${routeHTML(["Golok","Hat Yai","Nakhon Sawan","Loei","Na Haeo","Chiang Khan","Nong Khai","Phetchabun","Chumphon","Phatthalung","Golok"])}</div></section>
+ <section class="section"><h2>Quick Access</h2><div class="days">${days.map(d=>`<button class="day" onclick="showDay(${d.n})"><small>${d.date}</small>DAY ${d.n}<br>${d.km} km</button>`).join("")}</div></section>
+ <section class="section"><div class="note">⛽ HIGHWAY: plan refuel around 200–220 km. 🏔️ RURAL: 150–180 km. 🌧️ Mountain days are weather-sensitive; adjust rather than force the route.</div></section>
+ <section class="section">
+   <div class="card">
+     <h2>🎬 My Ride</h2>
+     <div class="label">Build your trip story from GPS, stops, photos and expenses.</div>
+     <button class="cta" style="background:var(--purple)" onclick="generateRide()">GENERATE MY RIDE</button>
+   </div>
+ </section>`;
+}
+
+function generateRide(){
+ const all=JSON.parse(localStorage.getItem("isan-rider-stops-v1")||"{}");
+ const stops=Object.values(all).flat();
+ const ex=getExpenses();
+ const spend=ex.reduce((s,x)=>s+x.amount,0); const media=days.reduce((n,d)=>n+JSON.parse(localStorage.getItem(mediaStoreKey(d.n))||"[]").length,0);
+ const text=`ISAN RIDER 2026
+
+28 SEP → 8 OCT 2026
+Isan + Mekong Motorcycle Tour
+
+≈3,800–4,100 km
+11 days
+${stops.length} personal stops
+${media} photos/receipts
+฿${spend.toLocaleString("en-US",{maximumFractionDigits:2})} actual spending logged
+
+Your ride data is ready for a future video export:
+• GPS route
+• Planned + unplanned stops
+• Time at stops
+• Photos/videos
+• Expenses
+
+This prototype creates the trip timeline; full MP4 rendering can be connected in the next build.`;
+ alert(text);
+}
+function showDay(n){ document.getElementById("screen").innerHTML=card(days[n-1]); window.scrollTo(0,0);}
+function showDays(btn){setActive(btn);document.getElementById("screen").innerHTML=`<section class="section"><h2>Daily Rides</h2>${days.map(d=>`<div class="card" style="margin-bottom:10px" onclick="showDay(${d.n})"><div style="display:flex;justify-content:space-between"><b>DAY ${d.n} • ${d.date}</b><b>${d.km} km</b></div><div style="font-size:12px;margin-top:6px">${d.route.join(" → ")}</div><div class="label" style="margin-top:6px">Sleep: ${d.sleep} • Start: ${d.start}</div></div>`).join("")}</section>`;window.scrollTo(0,0);}
+function showBudget(btn){renderBudget(btn)}
+function renderBudget(btn){
+ if(btn) setActive(btn);
+ const ex=getExpenses();
+ const total=ex.reduce((s,x)=>s+x.amount,0);
+ const cats=["Fuel","Hotel","Food","Coffee/Snacks","Toll/Parking","Shopping","Other"];
+ const byCat=Object.fromEntries(cats.map(c=>[c,0]));
+ ex.forEach(x=>{if(byCat[x.cat]!==undefined)byCat[x.cat]+=x.amount});
+
+ const daily=days.map(d=>{
+   const items=ex.filter(x=>x.day.startsWith("Day "+d.n+" "));
+   const breakdown=Object.fromEntries(cats.map(c=>[c,0]));
+   items.forEach(x=>{if(breakdown[x.cat]!==undefined)breakdown[x.cat]+=x.amount});
+   return {n:d.n,label:"D"+d.n,date:d.date,amount:items.reduce((s,x)=>s+x.amount,0),breakdown};
+ });
+ const max=Math.max(...daily.map(x=>x.amount),1);
+ const budgetEstimate=24100;
+ const remaining=budgetEstimate-total;
+
+ const palette={
+  "Fuel":"#118AB2","Hotel":"#7B61FF","Food":"#52B788",
+  "Coffee/Snacks":"#F4A261","Toll/Parking":"#EF476F",
+  "Shopping":"#FFD166","Other":"#073B4C"
+ };
+
+ function dayDetail(n){
+   const d=daily[n-1];
+   const items=ex.filter(x=>x.day.startsWith("Day "+n+" "));
+   const rows=cats.filter(c=>d.breakdown[c]>0).map(c=>`
+    <div class="item">
+      <strong>${c}</strong>
+      <span>฿${d.breakdown[c].toLocaleString("en-US",{maximumFractionDigits:0})}</span>
+    </div>`).join("");
+   alert(`DAY ${n} • ${d.date}
+
+TOTAL: ฿${d.amount.toLocaleString("en-US",{maximumFractionDigits:0})}
+
+${cats.filter(c=>d.breakdown[c]>0).map(c=>`${c}: ฿${d.breakdown[c].toLocaleString("en-US",{maximumFractionDigits:0})}`).join("\n") || "No expenses recorded yet."}
+
+${items.length} transaction${items.length===1?"":"s"}`);
+ }
+
+ document.getElementById("screen").innerHTML=`
+ <section class="section">
+  <h2>Actual Budget Tracker</h2>
+  <div class="grid">
+   <div class="card"><div class="metric">฿${total.toLocaleString("en-US",{maximumFractionDigits:0})}</div><div class="label">TOTAL ACTUAL SPEND</div></div>
+   <div class="card"><div class="metric" style="color:${remaining>=0?"var(--green)":"var(--red)"}">฿${Math.abs(remaining).toLocaleString("en-US",{maximumFractionDigits:0})}</div><div class="label">${remaining>=0?"REMAINING":"OVER BUDGET"}</div></div>
+  </div>
+ </section>
+
+ <section class="section">
+  <div class="expense-form">
+   <strong>Add expense</strong>
+   <select id="exDay">${days.map(d=>`<option value="Day ${d.n} • ${d.date}">Day ${d.n} • ${d.date}</option>`).join("")}</select>
+   <select id="exCat">${cats.map(c=>`<option>${c}</option>`).join("")}</select>
+   <input id="exAmount" type="number" inputmode="decimal" step="0.01" placeholder="Amount (THB)">
+   <input id="exNote" type="text" placeholder="Note — e.g. Gasohol 95, hotel, lunch">
+   <button onclick="addExpense()">+ SAVE ACTUAL SPEND</button>
+  </div>
+ </section>
+
+ <section class="section">
+  <h2>Transactions</h2>
+  <div class="expense-list">
+   ${ex.length?ex.slice().reverse().map(x=>`<div class="card" style="margin-bottom:8px;display:flex;justify-content:space-between;gap:10px;align-items:center">
+    <div><b>${x.cat}</b><div class="label">${x.day}${x.note?" • "+x.note:""}</div></div>
+    <div style="text-align:right"><b>฿${x.amount.toLocaleString("en-US",{maximumFractionDigits:2})}</b><br><button onclick="delExpense(${x.id})" style="border:0;background:none;color:var(--red);font-size:10px;font-weight:800">DELETE</button></div>
+   </div>`).join(""):`<div class="note">Belum ada perbelanjaan sebenar. Masukkan setiap kali isi minyak, bayar hotel, makan, tol, parking dan sebagainya.</div>`}
+  </div>
+ </section>
+
+ <section class="section">
+  <div class="daily-chart">
+   <h2 style="margin:0">📊 Daily Spending</h2>
+   <div class="label">Stacked vertical blocks — tap mana-mana hari untuk lihat pecahan expense.</div>
+   <div class="barchart">
+    ${daily.map(d=>{
+      const h=d.amount?Math.max(7,(d.amount/max)*165):3;
+      const segments=cats.filter(c=>d.breakdown[c]>0);
+      const segs=segments.map(c=>{
+        const sh=(d.breakdown[c]/d.amount)*h;
+        return `<div title="${c}: ฿${d.breakdown[c].toLocaleString()}" style="height:${Math.max(2,sh)}px;background:${palette[c]};width:24px"></div>`;
+      }).join("");
+      return `<button class="barwrap" onclick="dayDetail(${d.n})" aria-label="Day ${d.n} spending">
+        <div class="barvalue">${d.amount?"฿"+d.amount.toLocaleString("en-US",{maximumFractionDigits:0}):""}</div>
+        <div class="bar" style="height:${h}px;background:transparent;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end">${segs||'<div style="height:3px;background:#cbdde2;width:24px"></div>'}</div>
+        <div class="barlabel">${d.label}</div>
+      </button>`;
+    }).join("")}
+   </div>
+   <div class="chartlegend">
+    ${cats.map(c=>`<span style="display:inline-flex;align-items:center;margin:4px 8px 0 0"><i style="width:9px;height:9px;border-radius:3px;background:${palette[c]};display:inline-block;margin-right:4px"></i>${c}</span>`).join("")}
+   </div>
+  </div>
+ </section>
+
+ <section class="section">
+  <div class="card">
+   <h2 style="margin:0 0 8px">💳 Spending by Category</h2>
+   ${cats.map(c=>`<div class="item"><strong>${c}</strong><span>฿${byCat[c].toLocaleString("en-US",{maximumFractionDigits:0})}</span></div>`).join("")}
+  </div>
+ </section>
+
+ <section class="section">
+  <div class="card">
+   <h2 style="margin:0 0 8px">📈 Trip Analysis</h2>
+   <div class="item"><strong>Budget estimate</strong><span>฿${budgetEstimate.toLocaleString()}</span></div>
+   <div class="item"><strong>Actual spending</strong><span>฿${total.toLocaleString()}</span></div>
+   <div class="item"><strong>Status</strong><span style="color:${remaining>=0?"var(--green)":"var(--red)"}">${remaining>=0?"Within budget":"Over budget"}</span></div>
+   <div class="item"><strong>Highest spending day</strong><span>${daily.reduce((a,b)=>b.amount>a.amount?b:a).label} • ฿${Math.max(...daily.map(x=>x.amount)).toLocaleString()}</span></div>
+  </div>
+ </section>
+
+ <section class="section">
+  <div class="note">💡 Tap a daily bar to see its expense breakdown. Later we can replace the popup with a full Day Detail screen containing receipts, photos and locations.</div>
+ </section>`;
+ window.scrollTo(0,0);
+}
+function setActive(btn){document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));btn.classList.add("active");}
+function navigate(route){alert("Navigation target:\\n"+route+"\\n\\nPrototype action: connect this button to Google Maps / your preferred navigation app.");}
+showHome(document.querySelector(".nav button"));
+</script>
+
+<script>
+const EXP_KEY="isan-rider-expenses-v1";
+function getExpenses(){return JSON.parse(localStorage.getItem(EXP_KEY)||"[]")}
+function saveExpenses(x){localStorage.setItem(EXP_KEY,JSON.stringify(x))}
+function addExpense(){
+ const day=document.getElementById("exDay").value;
+ const cat=document.getElementById("exCat").value;
+ const amount=parseFloat(document.getElementById("exAmount").value);
+ const note=document.getElementById("exNote").value.trim();
+ if(!amount||amount<=0){alert("Masukkan jumlah bajet sebenar.");return}
+ const arr=getExpenses(); arr.push({id:Date.now(),day,cat,amount,note});
+ saveExpenses(arr); renderBudget(); 
+}
+function delExpense(id){saveExpenses(getExpenses().filter(x=>x.id!==id));renderBudget()}
+function showBudget(btn){renderBudget(btn)}
+</script>
+
+<div id="mediaModal" class="preview-modal">
+ <div class="preview-card">
+  <h2>📸 Add to Trip Journal</h2>
+  <p style="font-size:12px;color:#667781">Choose what you want to record for this day.</p>
+  <label class="media-box" style="aspect-ratio:auto;padding:20px;margin:8px 0">📷 Add Food / POI Photos
+   <input id="modalPhoto" type="file" accept="image/*" multiple hidden>
+  </label>
+  <label class="media-box" style="aspect-ratio:auto;padding:20px;margin:8px 0">🧾 Add Receipt
+   <input id="modalReceipt" type="file" accept="image/*" hidden>
+  </label>
+  <button class="cta" onclick="closeMedia()">DONE</button>
+ </div>
+</div>
+<script>
+let mediaDay=1;
+function openMedia(n){mediaDay=n;document.getElementById("mediaModal").style.display="flex"}
+function closeMedia(){document.getElementById("mediaModal").style.display="none"}
+function mediaStoreKey(n){return "isan-rider-media-v1-day-"+n}
+function saveMediaPreview(input,n){
+ const files=[...input.files]; if(!files.length)return;
+ const key=mediaStoreKey(n); const old=JSON.parse(localStorage.getItem(key)||"[]");
+ files.forEach(f=>{
+   const r=new FileReader();
+   r.onload=()=>{old.push({type:"photo",name:f.name,data:r.result,time:new Date().toLocaleTimeString()});localStorage.setItem(key,JSON.stringify(old));showDay(n)}
+   r.readAsDataURL(f);
+ });
+}
+function saveReceiptPreview(input,n){
+ const f=input.files[0]; if(!f)return;
+ const r=new FileReader();
+ r.onload=()=>{const key=mediaStoreKey(n);const old=JSON.parse(localStorage.getItem(key)||"[]");old.push({type:"receipt",name:f.name,data:r.result,time:new Date().toLocaleTimeString()});localStorage.setItem(key,JSON.stringify(old));showDay(n)}
+ r.readAsDataURL(f);
+}
+</script>
+
+<div id="pwaInstall" style="display:none;position:fixed;left:14px;right:14px;bottom:78px;z-index:9999;background:#111827;color:white;padding:14px 16px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.25);">
+  <div style="font-weight:800;margin-bottom:5px;">Install Isan Rider 2026</div>
+  <div style="font-size:13px;opacity:.85;margin-bottom:10px;">Pasang app ini ke Home Screen untuk akses lebih cepat dan penggunaan offline.</div>
+  <button id="installBtn" style="border:0;border-radius:10px;padding:9px 14px;font-weight:800;">Install App</button>
+  <button id="installClose" style="margin-left:6px;border:0;border-radius:10px;padding:9px 12px;">Later</button>
+</div>
+<div id="offlineBadge" style="position:fixed;top:10px;right:10px;z-index:9998;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:800;background:#16a34a;color:white;display:none;">ONLINE</div>
+<script>
+(function(){
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){ navigator.serviceWorker.register('./sw.js').catch(function(e){console.log('SW:',e);}); });
+  }
+  const badge=document.getElementById('offlineBadge');
+  function net(){
+    if(!navigator.onLine){ badge.textContent='OFFLINE'; badge.style.background='#dc2626'; badge.style.display='block'; }
+    else { badge.textContent='ONLINE'; badge.style.background='#16a34a'; badge.style.display='block'; setTimeout(()=>badge.style.display='none',1800); }
+  }
+  window.addEventListener('online',net); window.addEventListener('offline',net);
+  if(!navigator.onLine) net();
+
+  let deferredPrompt=null;
+  const box=document.getElementById('pwaInstall'), btn=document.getElementById('installBtn'), close=document.getElementById('installClose');
+  window.addEventListener('beforeinstallprompt',function(e){
+    e.preventDefault(); deferredPrompt=e; box.style.display='block';
+  });
+  btn.addEventListener('click',async function(){
+    if(!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt=null; box.style.display='none';
+  });
+  close.addEventListener('click',function(){box.style.display='none';});
+})();
+</script>
+
+</body>
+</html>
