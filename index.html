@@ -352,14 +352,18 @@ function saveRider(){localStorage.setItem("isanRiderGPS",JSON.stringify(riderSta
 function haversine(a,b,c,d){const R=6371,rad=Math.PI/180,x=(c-a)*rad,y=(d-b)*rad,h=Math.sin(x/2)**2+Math.cos(a*rad)*Math.cos(c*rad)*Math.sin(y/2)**2;return R*2*Math.atan2(Math.sqrt(h),Math.sqrt(1-h));}
 function fmtTime(ms){const s=Math.max(0,Math.floor(ms/1000)),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");}
 function compass(deg){if(deg==null)return"—";return ["N","NE","E","SE","S","SW","W","NW"][Math.round(deg/45)%8]+" "+Math.round(deg)+"°";}
-function elapsedRideMs(){return riderState.rideMs+(riderState.running&&riderState.sessionStart?Date.now()-riderState.sessionStart:0);}
-function elapsedRestMs(){return riderState.restMs+(!riderState.running&&riderState.restStart?Date.now()-riderState.restStart:0);}
+function elapsedRideMs(){return Number(riderState.rideMs||0)+(riderState.running&&riderState.sessionStart?Math.max(0,Date.now()-riderState.sessionStart):0);}
+function elapsedRestMs(){return Number(riderState.restMs||0)+(!riderState.running&&riderState.restStart?Math.max(0,Date.now()-riderState.restStart):0);}
+function elapsedTotalMs(){return elapsedRideMs()+elapsedRestMs();}
 function renderRider(){const el=id=>document.getElementById(id);if(!el("riderScreen"))return;
-el("riderDistance").textContent=riderState.distance.toFixed(1)+" km";el("riderSpeed").textContent=(riderState.speed||0).toFixed(0)+" km/h";
-el("riderAccuracy").textContent=riderState.accuracy?Math.round(riderState.accuracy)+" m":"—";el("riderPoints").textContent=riderState.points;
-el("riderLat").textContent=riderState.lat?`${riderState.lat.toFixed(6)}, ${riderState.lon.toFixed(6)}`:"Waiting for GPS…";
-el("riderTime").textContent=fmtTime(elapsedRideMs());el("riderRest").textContent=fmtTime(elapsedRestMs());
-el("riderElapsed").textContent=fmtTime(elapsedRideMs()+elapsedRestMs());
+el("riderDistance").textContent=(Number(riderState.distance)||0).toFixed(1)+" km";
+el("riderSpeed").textContent=(Number(riderState.speed)||0).toFixed(0)+" km/h";
+el("riderAccuracy").textContent=riderState.accuracy?Math.round(riderState.accuracy)+" m":"—";
+el("riderPoints").textContent=Number(riderState.points)||0;
+el("riderLat").textContent=riderState.lat!=null?`${Number(riderState.lat).toFixed(6)}, ${Number(riderState.lon).toFixed(6)}`:"Waiting for GPS…";
+el("riderTime").textContent=fmtTime(elapsedRideMs());
+el("riderRest").textContent=fmtTime(elapsedRestMs());
+el("riderElapsed").textContent=fmtTime(elapsedTotalMs());
 el("riderHeading").textContent=compass(riderState.heading);
 const dot=el("riderGpsDot"),st=el("riderGpsText");if(dot){dot.classList.toggle("on",!!riderState.running);st.textContent=riderState.running?"GPS ON":"PAUSED / GPS OFF";}
 const sb=el("riderStartBtn");if(sb)sb.textContent=riderState.running?"▶ RIDING":"▶ START / RESUME";
@@ -370,15 +374,20 @@ riderState.lastLat=lat;riderState.lastLon=lon;riderState.lat=lat;riderState.lon=
 if(c.heading!=null&&c.heading>=0)riderState.heading=c.heading;saveRider();renderRider();}
 function startRider(){if(!("geolocation"in navigator)){alert("GPS tidak disokong oleh browser/peranti ini.");return;}if(riderState.running)return;
 const now=Date.now();
-if(!riderState.totalStart)riderState.totalStart=now;
-if(riderState.restStart){riderState.restMs+=now-riderState.restStart;riderState.restStart=null;}
+if(!riderState.totalStart)riderState.totalStart=now-(Number(riderState.rideMs)||0)-(Number(riderState.restMs)||0);
+if(riderState.restStart){riderState.restMs=(Number(riderState.restMs)||0)+Math.max(0,now-riderState.restStart);riderState.restStart=null;}
 riderState.running=true;riderState.sessionStart=now;riderState.speed=0;saveRider();renderRider();
-riderWatchId=navigator.geolocation.watchPosition(riderPosition,e=>{const msg={1:"Permission GPS ditolak.",2:"Lokasi tidak dapat ditentukan.",3:"GPS mengambil masa terlalu lama."}[e.code]||"GPS error.";const x=document.getElementById("riderError");if(x)x.textContent=msg;},{enableHighAccuracy:true,maximumAge:5000,timeout:15000});
-riderTimer=setInterval(renderRider,1000);}
-function stopRider(){if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}
-if(riderState.running&&riderState.sessionStart){riderState.rideMs+=Date.now()-riderState.sessionStart;riderState.sessionStart=null;}
-riderState.running=false;riderState.restStart=riderState.totalStart?Date.now():null;riderState.speed=0;saveRider();renderRider();}
-function resetRider(){stopRider();riderState={running:false,distance:0,rideMs:0,restMs:0,totalStart:null,sessionStart:null,restStart:null,lastLat:null,lastLon:null,speed:0,accuracy:null,lat:null,lon:null,points:0,heading:null};saveRider();renderRider();}
+if(riderWatchId===null)riderWatchId=navigator.geolocation.watchPosition(riderPosition,e=>{const msg={1:"Permission GPS ditolak.",2:"Lokasi tidak dapat ditentukan.",3:"GPS mengambil masa terlalu lama."}[e.code]||"GPS error.";const x=document.getElementById("riderError");if(x)x.textContent=msg;},{enableHighAccuracy:true,maximumAge:5000,timeout:15000});
+if(riderTimer===null)riderTimer=setInterval(renderRider,1000);}
+function stopRider(){const now=Date.now();
+if(riderState.running&&riderState.sessionStart){riderState.rideMs=(Number(riderState.rideMs)||0)+Math.max(0,now-riderState.sessionStart);riderState.sessionStart=null;}
+if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}
+if(riderTimer){clearInterval(riderTimer);riderTimer=null;}
+riderState.running=false;
+if(!riderState.restStart)riderState.restStart=now;
+riderState.speed=0;saveRider();renderRider();}
+function resetRider(){if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}
+riderState={running:false,distance:0,rideMs:0,restMs:0,totalStart:null,sessionStart:null,restStart:null,lastLat:null,lastLon:null,speed:0,accuracy:null,lat:null,lon:null,points:0,heading:null};saveRider();renderRider();}
 function mapsHere(){if(riderState.lat==null){alert("GPS belum dapat lokasi. Tekan START GPS dahulu.");return;}window.open("https://www.google.com/maps/search/?api=1&query="+riderState.lat+","+riderState.lon,"_blank");}
 function mapsNavigate(){if(riderState.lat==null){alert("GPS belum dapat lokasi. Tekan START GPS dahulu.");return;}
 const sel=document.getElementById("navDestination");const dest=sel?sel.value:"";if(!dest){alert("Pilih destinasi dahulu.");return;}
@@ -416,7 +425,7 @@ function showRiderMode(btn){if(btn)setActive(btn);document.getElementById("scree
 <div class="riderMetric"><b id="riderElapsed">00:00:00</b><span>TOTAL ELAPSED</span></div>
 <div class="riderMetric"><b id="riderAccuracy">—</b><span>GPS ACCURACY</span></div></div>
 <div class="headingBox"><div><div class="headingBig" id="riderHeading">—</div><div class="headingSmall">DIRECTION / HEADING</div></div><button class="riderBtn reset" onclick="enableOrientation()">🧭 ENABLE COMPASS</button></div>
-<div class="riderBtns"><button id="riderStartBtn" class="riderBtn start" onclick="startRider();enableOrientation()">▶ START / RESUME</button><button class="riderBtn stop" onclick="stopRider()">■ STOP</button><button class="riderBtn reset" style="grid-column:1/3" onclick="resetRider()">↺ RESET TRACK</button></div>
+<div class="riderBtns"><button type="button" id="riderStartBtn" class="riderBtn start" onclick="startRider();enableOrientation()">▶ START / RESUME</button><button type="button" class="riderBtn stop" onclick="stopRider()">■ STOP</button><button class="riderBtn reset" style="grid-column:1/3" onclick="resetRider()">↺ RESET TRACK</button></div>
 <div class="gpsInfo">📍 <span id="riderLat">Waiting for GPS…</span><br>GPS samples: <span id="riderPoints">0</span></div>
 <div id="riderError" style="margin-top:8px;color:#ffd1d1;font-size:11px"></div>
 <button class="emergencyRide" onclick="emergencyRide()">🚨 EMERGENCY / HELP</button>
@@ -436,7 +445,7 @@ ${days.map(d=>`<option value="${d.sleep}">${d.n}. ${d.sleep}</option>`).join("")
 </div>
 <div class="trackNote">Navigation opens Google Maps. Rider Mode continues tracking while this app is in the background only as permitted by the phone/browser.</div>
 </div>
-<div class="trackNote">V13.2 menambah pause/resume timer: Ride Time, Rest Time dan Total Elapsed Time. Untuk penggunaan sebenar ketika menunggang, fokus pada jalan dan gunakan mount/voice guidance.</div>
+<div class="trackNote">V13.3 menambah pause/resume timer: Ride Time, Rest Time dan Total Elapsed Time. Untuk penggunaan sebenar ketika menunggang, fokus pada jalan dan gunakan mount/voice guidance.</div>
 </section>`;
 renderRider();window.scrollTo(0,0);}
 
