@@ -110,6 +110,19 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
 .riderHero .riderGrid{grid-template-columns:repeat(2,1fr)}
 @media (min-width:480px){.riderHero .riderGrid{grid-template-columns:repeat(3,1fr)}}
 </style>
+
+<style>
+.riderBtn.finish{background:#111827;color:#fff;margin-top:10px}
+.riderBtn:disabled{opacity:.45;pointer-events:none}
+.stopModal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center;z-index:9999}
+.stopModal.show{display:flex}
+.stopSheet{width:min(520px,100%);background:#fff;border-radius:24px 24px 0 0;padding:22px;box-shadow:0 -8px 30px rgba(0,0,0,.25)}
+.stopSheet h3{margin:0 0 8px;color:#123d4a}
+.stopSheet p{margin:0 0 16px;color:#64748b}
+.stopSheet button{width:100%;padding:15px;margin:6px 0;border:0;border-radius:14px;font-size:16px;font-weight:700;background:#e9f7fa;color:#123d4a}
+.stopSheet button.cancel{background:#eee;color:#555}
+@media (min-width:480px){.riderHero .riderGrid{grid-template-columns:repeat(3,1fr)}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -228,7 +241,7 @@ function showEmergency(btn){
   document.getElementById("screen").innerHTML=`
   <section class="section">
     <h2>🚨 Emergency Contacts</h2>
-    <div class="emergency-note">
+    <button type="button" id="finishDayBtn" class="riderBtn finish" onclick="finishDay()">🏁 FINISH DAY</button><div class="emergency-note">
       <b>Family contacts</b> — call these first if you need someone you trust to coordinate help.
     </div>
   </section>
@@ -347,14 +360,15 @@ This prototype creates the trip timeline; full MP4 rendering can be connected in
 }
 function showDay(n){ document.getElementById("screen").innerHTML=card(days[n-1]); window.scrollTo(0,0);}
 let riderWatchId=null,riderTimer=null;
-let riderState=JSON.parse(localStorage.getItem("isanRiderGPS")||'{"running":false,"distance":0,"rideMs":0,"restMs":0,"totalStart":null,"sessionStart":null,"restStart":null,"lastLat":null,"lastLon":null,"speed":0,"accuracy":null,"lat":null,"lon":null,"points":0,"heading":null}');
+let riderState=JSON.parse(localStorage.getItem("isanRiderGPS")||'{"running":false,"finished":false,"distance":0,"rideMs":0,"restMs":0,"stopMs":0,"totalStart":null,"sessionStart":null,"stopStart":null,"stopType":null,"lastLat":null,"lastLon":null,"speed":0,"accuracy":null,"lat":null,"lon":null,"points":0,"heading":null}');
 function saveRider(){localStorage.setItem("isanRiderGPS",JSON.stringify(riderState));}
 function haversine(a,b,c,d){const R=6371,rad=Math.PI/180,x=(c-a)*rad,y=(d-b)*rad,h=Math.sin(x/2)**2+Math.cos(a*rad)*Math.cos(c*rad)*Math.sin(y/2)**2;return R*2*Math.atan2(Math.sqrt(h),Math.sqrt(1-h));}
 function fmtTime(ms){const s=Math.max(0,Math.floor(ms/1000)),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");}
 function compass(deg){if(deg==null)return"—";return ["N","NE","E","SE","S","SW","W","NW"][Math.round(deg/45)%8]+" "+Math.round(deg)+"°";}
 function elapsedRideMs(){return Number(riderState.rideMs||0)+(riderState.running&&riderState.sessionStart?Math.max(0,Date.now()-riderState.sessionStart):0);}
-function elapsedRestMs(){return Number(riderState.restMs||0)+(!riderState.running&&riderState.restStart?Math.max(0,Date.now()-riderState.restStart):0);}
-function elapsedTotalMs(){return elapsedRideMs()+elapsedRestMs();}
+function elapsedRestMs(){return Number(riderState.restMs||0)+(riderState.stopType==="rest"&&riderState.stopStart&&!riderState.finished?Math.max(0,Date.now()-riderState.stopStart):0);}
+function elapsedStopMs(){return Number(riderState.stopMs||0)+(riderState.stopType!=="rest"&&riderState.stopType&&riderState.stopStart&&!riderState.finished?Math.max(0,Date.now()-riderState.stopStart):0);}
+function elapsedTotalMs(){return elapsedRideMs()+elapsedRestMs()+elapsedStopMs();}
 function renderRider(){const el=id=>document.getElementById(id);if(!el("riderScreen"))return;
 el("riderDistance").textContent=(Number(riderState.distance)||0).toFixed(1)+" km";
 el("riderSpeed").textContent=(Number(riderState.speed)||0).toFixed(0)+" km/h";
@@ -364,30 +378,35 @@ el("riderLat").textContent=riderState.lat!=null?`${Number(riderState.lat).toFixe
 el("riderTime").textContent=fmtTime(elapsedRideMs());
 el("riderRest").textContent=fmtTime(elapsedRestMs());
 el("riderElapsed").textContent=fmtTime(elapsedTotalMs());
+const stopEl=el("riderStop");if(stopEl)stopEl.textContent=fmtTime(elapsedStopMs());
 el("riderHeading").textContent=compass(riderState.heading);
-const dot=el("riderGpsDot"),st=el("riderGpsText");if(dot){dot.classList.toggle("on",!!riderState.running);st.textContent=riderState.running?"GPS ON":"PAUSED / GPS OFF";}
-const sb=el("riderStartBtn");if(sb)sb.textContent=riderState.running?"▶ RIDING":"▶ START / RESUME";
-}
+const dot=el("riderGpsDot"),st=el("riderGpsText");if(dot){dot.classList.toggle("on",!!riderState.running);st.textContent=riderState.finished?"DAY FINISHED":(riderState.running?"GPS ON":(riderState.stopType==="rest"?"RESTING":"STOPPED"));}
+const sb=el("riderStartBtn"),fb=el("finishDayBtn"),stopb=el("riderStopBtn");if(sb){sb.disabled=!!riderState.finished;sb.textContent=riderState.running?"▶ RIDING":"▶ START / RESUME";}if(stopb)stopb.disabled=!!riderState.finished||!riderState.running;if(fb)fb.disabled=!!riderState.finished;}
 function riderPosition(pos){const c=pos.coords,lat=c.latitude,lon=c.longitude;
 if(riderState.lastLat!=null&&riderState.lastLon!=null){const d=haversine(riderState.lastLat,riderState.lastLon,lat,lon);if(d<1)riderState.distance+=d;}
 riderState.lastLat=lat;riderState.lastLon=lon;riderState.lat=lat;riderState.lon=lon;riderState.speed=c.speed!=null&&c.speed>=0?c.speed*3.6:0;riderState.accuracy=c.accuracy;riderState.points++;
 if(c.heading!=null&&c.heading>=0)riderState.heading=c.heading;saveRider();renderRider();}
-function startRider(){if(!("geolocation"in navigator)){alert("GPS tidak disokong oleh browser/peranti ini.");return;}if(riderState.running)return;
+function startRider(){if(riderState.finished){alert("Hari ini sudah FINISHED. Gunakan START NEW DAY untuk hari seterusnya.");return;}if(!("geolocation"in navigator)){alert("GPS tidak disokong oleh browser/peranti ini.");return;}if(riderState.running)return;
 const now=Date.now();
-if(!riderState.totalStart)riderState.totalStart=now-(Number(riderState.rideMs)||0)-(Number(riderState.restMs)||0);
-if(riderState.restStart){riderState.restMs=(Number(riderState.restMs)||0)+Math.max(0,now-riderState.restStart);riderState.restStart=null;}
+if(!riderState.totalStart)riderState.totalStart=now-(Number(riderState.rideMs)||0)-(Number(riderState.restMs)||0)-(Number(riderState.stopMs)||0);
+if(riderState.stopStart){const d=Math.max(0,now-riderState.stopStart);if(riderState.stopType==="rest")riderState.restMs=(Number(riderState.restMs)||0)+d;else riderState.stopMs=(Number(riderState.stopMs)||0)+d;riderState.stopStart=null;riderState.stopType=null;}
 riderState.running=true;riderState.sessionStart=now;riderState.speed=0;saveRider();renderRider();
 if(riderWatchId===null)riderWatchId=navigator.geolocation.watchPosition(riderPosition,e=>{const msg={1:"Permission GPS ditolak.",2:"Lokasi tidak dapat ditentukan.",3:"GPS mengambil masa terlalu lama."}[e.code]||"GPS error.";const x=document.getElementById("riderError");if(x)x.textContent=msg;},{enableHighAccuracy:true,maximumAge:5000,timeout:15000});
 if(riderTimer===null)riderTimer=setInterval(renderRider,1000);}
-function stopRider(){const now=Date.now();
-if(riderState.running&&riderState.sessionStart){riderState.rideMs=(Number(riderState.rideMs)||0)+Math.max(0,now-riderState.sessionStart);riderState.sessionStart=null;}
-if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}
-if(riderTimer){clearInterval(riderTimer);riderTimer=null;}
-riderState.running=false;
-if(!riderState.restStart)riderState.restStart=now;
-riderState.speed=0;saveRider();renderRider();}
+function openStopOptions(){if(!riderState.running||riderState.finished)return;const m=document.getElementById("stopModal");if(m)m.classList.add("show");}
+function closeStopOptions(){const m=document.getElementById("stopModal");if(m)m.classList.remove("show");}
+function chooseStop(type){closeStopOptions();if(!riderState.running)return;const now=Date.now();
+if(riderState.sessionStart){riderState.rideMs=(Number(riderState.rideMs)||0)+Math.max(0,now-riderState.sessionStart);riderState.sessionStart=null;}
+if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}
+riderState.running=false;riderState.stopStart=now;riderState.stopType=type;riderState.speed=0;saveRider();renderRider();}
+function stopRider(){openStopOptions();}
+function finishDay(){if(riderState.finished)return;const now=Date.now();
+if(riderState.running&&riderState.sessionStart){riderState.rideMs=(Number(riderState.rideMs)||0)+Math.max(0,now-riderState.sessionStart);}
+if(!riderState.running&&riderState.stopStart){const d=Math.max(0,now-riderState.stopStart);if(riderState.stopType==="rest")riderState.restMs=(Number(riderState.restMs)||0)+d;else riderState.stopMs=(Number(riderState.stopMs)||0)+d;}
+if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}
+riderState.running=false;riderState.finished=true;riderState.sessionStart=null;riderState.stopStart=null;riderState.stopType=null;riderState.speed=0;saveRider();renderRider();alert("🏁 DAY FINISHED\\n\\nRide Time: "+fmtTime(riderState.rideMs)+"\\nRest Time: "+fmtTime(riderState.restMs)+"\\nStop Time: "+fmtTime(riderState.stopMs)+"\\nTotal Elapsed: "+fmtTime(riderState.rideMs+riderState.restMs+riderState.stopMs)+"\\nDistance: "+(Number(riderState.distance)||0).toFixed(1)+" km");}
 function resetRider(){if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}
-riderState={running:false,distance:0,rideMs:0,restMs:0,totalStart:null,sessionStart:null,restStart:null,lastLat:null,lastLon:null,speed:0,accuracy:null,lat:null,lon:null,points:0,heading:null};saveRider();renderRider();}
+riderState={running:false,finished:false,distance:0,rideMs:0,restMs:0,stopMs:0,totalStart:null,sessionStart:null,stopStart:null,stopType:null,lastLat:null,lastLon:null,speed:0,accuracy:null,lat:null,lon:null,points:0,heading:null};saveRider();renderRider();}
 function mapsHere(){if(riderState.lat==null){alert("GPS belum dapat lokasi. Tekan START GPS dahulu.");return;}window.open("https://www.google.com/maps/search/?api=1&query="+riderState.lat+","+riderState.lon,"_blank");}
 function mapsNavigate(){if(riderState.lat==null){alert("GPS belum dapat lokasi. Tekan START GPS dahulu.");return;}
 const sel=document.getElementById("navDestination");const dest=sel?sel.value:"";if(!dest){alert("Pilih destinasi dahulu.");return;}
@@ -423,9 +442,10 @@ function showRiderMode(btn){if(btn)setActive(btn);document.getElementById("scree
 <div class="riderMetric"><b id="riderTime">00:00:00</b><span>RIDE TIME</span></div>
 <div class="riderMetric"><b id="riderRest">00:00:00</b><span>REST TIME</span></div>
 <div class="riderMetric"><b id="riderElapsed">00:00:00</b><span>TOTAL ELAPSED</span></div>
+<div class="riderMetric"><b id="riderStop">00:00:00</b><span>FUEL / SHORT STOP</span></div>
 <div class="riderMetric"><b id="riderAccuracy">—</b><span>GPS ACCURACY</span></div></div>
 <div class="headingBox"><div><div class="headingBig" id="riderHeading">—</div><div class="headingSmall">DIRECTION / HEADING</div></div><button class="riderBtn reset" onclick="enableOrientation()">🧭 ENABLE COMPASS</button></div>
-<div class="riderBtns"><button type="button" id="riderStartBtn" class="riderBtn start" onclick="startRider();enableOrientation()">▶ START / RESUME</button><button type="button" class="riderBtn stop" onclick="stopRider()">■ STOP</button><button class="riderBtn reset" style="grid-column:1/3" onclick="resetRider()">↺ RESET TRACK</button></div>
+<div class="riderBtns"><button type="button" id="riderStartBtn" class="riderBtn start" onclick="startRider();enableOrientation()">▶ START / RESUME</button><button type="button" id="riderStopBtn" class="riderBtn stop" onclick="stopRider()">■ STOP</button><button class="riderBtn reset" style="grid-column:1/3" onclick="resetRider()">↺ RESET TRACK</button></div>
 <div class="gpsInfo">📍 <span id="riderLat">Waiting for GPS…</span><br>GPS samples: <span id="riderPoints">0</span></div>
 <div id="riderError" style="margin-top:8px;color:#ffd1d1;font-size:11px"></div>
 <button class="emergencyRide" onclick="emergencyRide()">🚨 EMERGENCY / HELP</button>
@@ -445,7 +465,7 @@ ${days.map(d=>`<option value="${d.sleep}">${d.n}. ${d.sleep}</option>`).join("")
 </div>
 <div class="trackNote">Navigation opens Google Maps. Rider Mode continues tracking while this app is in the background only as permitted by the phone/browser.</div>
 </div>
-<div class="trackNote">V13.3 menambah pause/resume timer: Ride Time, Rest Time dan Total Elapsed Time. Untuk penggunaan sebenar ketika menunggang, fokus pada jalan dan gunakan mount/voice guidance.</div>
+<div class="trackNote">V13.4 menambah pause/resume timer: Ride Time, Rest Time dan Total Elapsed Time. Untuk penggunaan sebenar ketika menunggang, fokus pada jalan dan gunakan mount/voice guidance.</div>
 </section>`;
 renderRider();window.scrollTo(0,0);}
 
@@ -670,5 +690,16 @@ function saveReceiptPreview(input,n){
 })();
 </script>
 
+
+<div id="stopModal" class="stopModal" onclick="if(event.target===this)closeStopOptions()">
+  <div class="stopSheet">
+    <h3>🛑 STOP RIDE</h3>
+    <p>Pilih sebab kau berhenti. Timer akan ikut kategori ini.</p>
+    <button onclick="chooseStop('refuel')">⛽ REFUEL</button>
+    <button onclick="chooseStop('rest')">☕ REST / FOOD</button>
+    <button onclick="chooseStop('short')">📸 PHOTO / SHORT STOP</button>
+    <button class="cancel" onclick="closeStopOptions()">CANCEL</button>
+  </div>
+</div>
 </body>
 </html>
