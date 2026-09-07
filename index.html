@@ -254,7 +254,7 @@ function showEmergency(btn){
   document.getElementById("screen").innerHTML=`
   <section class="section">
     <h2>🚨 Emergency Contacts</h2>
-    <button type="button" id="finishDayBtn" class="riderBtn finish" onclick="finishDay()">🏁 FINISH DAY</button><div class="finishHint">Tekan bila semua ride untuk hari ini sudah selesai.</div><div class="emergency-note">
+    <div class="emergency-note">
       <b>Family contacts</b> — call these first if you need someone you trust to coordinate help.
     </div>
   </section>
@@ -458,7 +458,8 @@ function showRiderMode(btn){if(btn)setActive(btn);document.getElementById("scree
 <div class="riderMetric"><b id="riderStop">00:00:00</b><span>FUEL / SHORT STOP</span></div>
 <div class="riderMetric"><b id="riderAccuracy">—</b><span>GPS ACCURACY</span></div></div>
 <div class="headingBox"><div><div class="headingBig" id="riderHeading">—</div><div class="headingSmall">DIRECTION / HEADING</div></div><button class="riderBtn reset" onclick="enableOrientation()">🧭 ENABLE COMPASS</button></div>
-<div class="riderBtns"><button type="button" id="riderStartBtn" class="riderBtn start" onclick="startRider();enableOrientation()">▶ START / RESUME</button><button type="button" id="riderStopBtn" class="riderBtn stop" onclick="stopRider()">■ STOP</button><button class="riderBtn reset" style="grid-column:1/3" onclick="resetRider()">↺ RESET TRACK</button></div>
+<div class="riderBtns"><button type="button" id="riderStartBtn" class="riderBtn start" onclick="startRider();enableOrientation()">▶ START / RESUME</button><button type="button" id="riderStopBtn" class="riderBtn stop" onclick="stopRider()">■ STOP</button><button class="riderBtn reset" style="grid-column:1/3" onclick="resetRider()">↺ RESET TRACK</button>
+<button type="button" id="finishDayBtn" class="riderBtn finish" style="grid-column:1/3" onclick="finishDay()">🏁 FINISH DAY</button><div class="finishHint" style="grid-column:1/3">Tekan bila semua ride untuk hari ini sudah selesai.</div></div>
 <div class="gpsInfo">📍 <span id="riderLat">Waiting for GPS…</span><br>GPS samples: <span id="riderPoints">0</span></div>
 <div id="riderError" style="margin-top:8px;color:#ffd1d1;font-size:11px"></div>
 <button class="emergencyRide" onclick="emergencyRide()">🚨 EMERGENCY / HELP</button>
