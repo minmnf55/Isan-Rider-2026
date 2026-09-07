@@ -1,3 +1,4 @@
+const CACHE_NAME = 'isan-rider-v13-7';
 const CACHE='isan-rider-v13-4';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));

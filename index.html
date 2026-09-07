@@ -715,5 +715,32 @@ function saveReceiptPreview(input,n){
     <button class="cancel" onclick="closeStopOptions()">CANCEL</button>
   </div>
 </div>
+
+<script>
+(function ensureFinishDayButton(){
+  function addFinish(){
+    if(document.getElementById('finishDayBtn')) return;
+    const buttons=[...document.querySelectorAll('button')];
+    const reset=buttons.find(b => /RESET TRACK/i.test(b.textContent||''));
+    if(!reset) return;
+    const b=document.createElement('button');
+    b.type='button';
+    b.id='finishDayBtn';
+    b.className='riderBtn finish';
+    b.style.cssText='display:block!important;width:100%!important;grid-column:1/3!important;margin:10px 0!important;padding:15px 18px!important;border:0!important;border-radius:14px!important;background:#111827!important;color:#fff!important;font-size:16px!important;font-weight:800!important;min-height:52px!important;';
+    b.textContent='🏁 FINISH DAY';
+    b.onclick=function(){ if(typeof finishDay==='function') finishDay(); };
+    reset.insertAdjacentElement('afterend',b);
+    const hint=document.createElement('div');
+    hint.className='finishHint';
+    hint.style.cssText='grid-column:1/3!important;font-size:12px;color:#64748b;text-align:center;margin:4px 0 10px;';
+    hint.textContent='Tekan bila semua ride untuk hari ini sudah selesai.';
+    b.insertAdjacentElement('afterend',hint);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',addFinish);
+  else addFinish();
+  setTimeout(addFinish,500);
+})();
+</script>
 </body>
 </html>
