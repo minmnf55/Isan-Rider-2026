@@ -420,12 +420,12 @@ function riderPosition(pos){const c=pos.coords,lat=c.latitude,lon=c.longitude;
 if(riderState.lastLat!=null&&riderState.lastLon!=null){const d=haversine(riderState.lastLat,riderState.lastLon,lat,lon);if(d<1)riderState.distance+=d;}
 riderState.lastLat=lat;riderState.lastLon=lon;riderState.lat=lat;riderState.lon=lon;riderState.speed=c.speed!=null&&c.speed>=0?c.speed*3.6:0;riderState.accuracy=c.accuracy;riderState.points++;
 if(c.heading!=null&&c.heading>=0)riderState.heading=c.heading;saveRider();renderRider();}
-function startRider(){if(riderState.finished){alert("Hari ini sudah FINISHED. Gunakan START NEW DAY untuk hari seterusnya.");return;}if(!("geolocation"in navigator)){alert("GPS tidak disokong oleh browser/peranti ini.");return;}if(riderState.running)return;
+function startRider(){if(riderState.finished){alert("Today is already FINISHED. Use START NEW DAY for the next riding day.");return;}if(!("geolocation"in navigator)){alert("GPS is not supported by this browser/device.");return;}if(riderState.running)return;
 const now=Date.now();
 if(!riderState.totalStart)riderState.totalStart=now-(Number(riderState.rideMs)||0)-(Number(riderState.restMs)||0)-(Number(riderState.stopMs)||0);
 if(riderState.stopStart){const d=Math.max(0,now-riderState.stopStart);if(riderState.stopType==="rest")riderState.restMs=(Number(riderState.restMs)||0)+d;else riderState.stopMs=(Number(riderState.stopMs)||0)+d;riderState.stopStart=null;riderState.stopType=null;}
 riderState.running=true;riderState.sessionStart=now;riderState.speed=0;saveRider();renderRider();
-if(riderWatchId===null)riderWatchId=navigator.geolocation.watchPosition(riderPosition,e=>{const msg={1:"Permission GPS ditolak.",2:"Lokasi tidak dapat ditentukan.",3:"GPS mengambil masa terlalu lama."}[e.code]||"GPS error.";const x=document.getElementById("riderError");if(x)x.textContent=msg;},{enableHighAccuracy:true,maximumAge:5000,timeout:15000});
+if(riderWatchId===null)riderWatchId=navigator.geolocation.watchPosition(riderPosition,e=>{const msg={1:"GPS permission was denied.",2:"Location could not be determined.",3:"GPS is taking too long to respond."}[e.code]||"GPS error.";const x=document.getElementById("riderError");if(x)x.textContent=msg;},{enableHighAccuracy:true,maximumAge:5000,timeout:15000});
 if(riderTimer===null)riderTimer=setInterval(renderRider,1000);}
 function openStopOptions(){if(!riderState.running||riderState.finished)return;const m=document.getElementById("stopModal");if(m)m.classList.add("show");}
 function closeStopOptions(){const m=document.getElementById("stopModal");if(m)m.classList.remove("show");}
@@ -438,10 +438,38 @@ function finishDay(){if(riderState.finished)return;const now=Date.now();
 if(riderState.running&&riderState.sessionStart){riderState.rideMs=(Number(riderState.rideMs)||0)+Math.max(0,now-riderState.sessionStart);}
 if(!riderState.running&&riderState.stopStart){const d=Math.max(0,now-riderState.stopStart);if(riderState.stopType==="rest")riderState.restMs=(Number(riderState.restMs)||0)+d;else riderState.stopMs=(Number(riderState.stopMs)||0)+d;}
 if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}
-riderState.running=false;riderState.finished=true;riderState.sessionStart=null;riderState.stopStart=null;riderState.stopType=null;riderState.speed=0;saveRider();renderRider();alert("🏁 DAY FINISHED\\n\\nRide Time: "+fmtTime(riderState.rideMs)+"\\nRest Time: "+fmtTime(riderState.restMs)+"\\nStop Time: "+fmtTime(riderState.stopMs)+"\\nTotal Elapsed: "+fmtTime(riderState.rideMs+riderState.restMs+riderState.stopMs)+"\\nDistance: "+(Number(riderState.distance)||0).toFixed(1)+" km");}
+
+/* Save a permanent daily record BEFORE marking the live session finished. */
+const finishedKey="finishedDays";
+let finishedDays=[];
+try{finishedDays=JSON.parse(localStorage.getItem(finishedKey)||"[]");}catch(e){finishedDays=[];}
+if(!Array.isArray(finishedDays))finishedDays=[];
+const dayNo=finishedDays.length+1;
+const planned=days[dayNo-1]||{};
+const range=String(planned.km||"").replace(/,/g,"").match(/(\d+(?:\.\d+)?)/g)||[];
+let plannedKm=range.length>=2?(Number(range[0])+Number(range[1]))/2:(range.length?Number(range[0]):0);
+const dayLabel=planned.date?`Day ${dayNo} • ${planned.date}`:`Day ${dayNo}`;
+const route=Array.isArray(planned.route)?planned.route.join(" → "):(planned.route||"Ride day");
+const record={
+  day:dayNo,
+  date:dayLabel,
+  route:route,
+  plannedKm:plannedKm,
+  actualKm:Number(riderState.distance)||0,
+  rideSeconds:Math.floor((Number(riderState.rideMs)||0)/1000),
+  restSeconds:Math.floor((Number(riderState.restMs)||0)/1000),
+  fuelSeconds:Math.floor((Number(riderState.stopMs)||0)/1000),
+  finishedAt:new Date(now).toISOString()
+};
+finishedDays.push(record);
+localStorage.setItem(finishedKey,JSON.stringify(finishedDays));
+try{window.dispatchEvent(new Event('isan:dayFinished'));}catch(e){}
+
+riderState.running=false;riderState.finished=true;riderState.sessionStart=null;riderState.stopStart=null;riderState.stopType=null;riderState.speed=0;saveRider();renderRider();
+alert("🏁 DAY FINISHED\\n\\n"+dayLabel+"\\nRide Time: "+fmtTime(riderState.rideMs)+"\\nRest Time: "+fmtTime(riderState.restMs)+"\\nStop Time: "+fmtTime(riderState.stopMs)+"\\nTotal Elapsed: "+fmtTime(riderState.rideMs+riderState.restMs+riderState.stopMs)+"\\nDistance: "+(Number(riderState.distance)||0).toFixed(1)+" km");}
 function resetRider(){if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}
 riderState={running:false,finished:false,distance:0,rideMs:0,restMs:0,stopMs:0,totalStart:null,sessionStart:null,stopStart:null,stopType:null,lastLat:null,lastLon:null,speed:0,accuracy:null,lat:null,lon:null,points:0,heading:null};saveRider();renderRider();}
-function mapsHere(){if(riderState.lat==null){alert("GPS belum dapat lokasi. Tekan START GPS dahulu.");return;}window.open("https://www.google.com/maps/search/?api=1&query="+riderState.lat+","+riderState.lon,"_blank");}
+function mapsHere(){if(riderState.lat==null){alert("GPS location is not available yet. Press START GPS first.");return;}window.open("https://www.google.com/maps/search/?api=1&query="+riderState.lat+","+riderState.lon,"_blank");}
 function openGoogleMaps(url){
   const webUrl=url;
   const encoded=encodeURIComponent(webUrl);
@@ -461,7 +489,7 @@ function getDestination(){
 }
 function mapsNavigate(){
   const dest=getDestination();
-  if(!dest){alert("Taip destinasi dahulu. Contoh: Krabi.");return;}
+  if(!dest){alert("Enter a destination first. Example: Krabi.");return;}
   let url="https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(dest)+"&travelmode=driving";
   if(riderState.lat!=null&&riderState.lon!=null) url+="&origin="+riderState.lat+","+riderState.lon;
   openGoogleMaps(url);
@@ -472,21 +500,21 @@ function mapsSearch(q){
   openGoogleMaps("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(query));
 }
 function mapsDestination(dest){
-  if(!dest){alert("Pilih destinasi dahulu.");return;}
+  if(!dest){alert("Select a destination first.");return;}
   const el=document.getElementById("navDestination");
   if(el)el.value=dest;
   let url="https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(dest)+"&travelmode=driving";
   if(riderState.lat!=null&&riderState.lon!=null) url+="&origin="+riderState.lat+","+riderState.lon;
   openGoogleMaps(url);
 }
-async function shareLocation(){if(riderState.lat==null){alert("GPS belum dapat lokasi. Tekan START GPS dahulu.");return;}
+async function shareLocation(){if(riderState.lat==null){alert("GPS location is not available yet. Press START GPS first.");return;}
 const link="https://www.google.com/maps/search/?api=1&query="+riderState.lat+","+riderState.lon;
 const msg="📍 My current location — Isan Rider 2026\n"+link;
-try{if(navigator.share){await navigator.share({title:"Isan Rider — My Location",text:msg});}else{await navigator.clipboard.writeText(msg);alert("Lokasi telah disalin. Paste ke WhatsApp/SMS.");}}
-catch(e){try{await navigator.clipboard.writeText(msg);alert("Lokasi telah disalin. Paste ke WhatsApp/SMS.");}catch(_){alert(msg);}}}
+try{if(navigator.share){await navigator.share({title:"Isan Rider — My Location",text:msg});}else{await navigator.clipboard.writeText(msg);alert("Location copied. Paste it into WhatsApp/SMS.");}}
+catch(e){try{await navigator.clipboard.writeText(msg);alert("Location copied. Paste it into WhatsApp/SMS.");}catch(_){alert(msg);}}}
 function emergencyRide(){document.getElementById("emergencyRideModal")?.remove();document.body.insertAdjacentHTML("beforeend",`
 <div class="emergencyModal" id="emergencyRideModal" onclick="if(event.target===this)this.remove()"><div class="emergencySheet">
-<h2>🚨 EMERGENCY</h2><div style="font-size:12px;color:#667781">Pilih bantuan. Tap nombor untuk call.</div>
+<h2>🚨 EMERGENCY</h2><div style="font-size:12px;color:#667781">Select the assistance you need. Tap a number to call.</div>
 <a class="emgCall emg191" href="tel:191">🇹🇭 POLICE • 191</a>
 <a class="emgCall emg1669" href="tel:1669">🚑 MEDICAL • 1669</a>
 <a class="emgCall emg1155" href="tel:1155">🧑‍✈️ TOURIST POLICE • 1155</a>
@@ -512,7 +540,7 @@ function showRiderMode(btn){if(btn)setActive(btn);document.getElementById("scree
 <div class="riderMetric"><b id="riderAccuracy">—</b><span>GPS ACCURACY</span></div></div>
 <div class="headingBox"><div><div class="headingBig" id="riderHeading">—</div><div class="headingSmall">DIRECTION / HEADING</div></div><button class="riderBtn reset" onclick="enableOrientation()">🧭 ENABLE COMPASS</button></div>
 <div class="riderBtns"><button type="button" id="riderStartBtn" class="riderBtn start" onclick="startRider();enableOrientation()">▶ START / RESUME</button><button type="button" id="riderStopBtn" class="riderBtn stop" onclick="stopRider()">■ STOP</button><button class="riderBtn reset" style="grid-column:1/3" onclick="resetRider()">↺ RESET TRACK</button>
-<button type="button" id="finishDayBtn" class="riderBtn finish" style="grid-column:1/3" onclick="finishDay()">🏁 FINISH DAY</button><div class="finishHint" style="grid-column:1/3">Tekan bila semua ride untuk hari ini sudah selesai.</div></div>
+<button type="button" id="finishDayBtn" class="riderBtn finish" style="grid-column:1/3" onclick="finishDay()">🏁 FINISH DAY</button><div class="finishHint" style="grid-column:1/3">Press when all riding for today is complete.</div></div>
 <div class="gpsInfo">📍 <span id="riderLat">Waiting for GPS…</span><br>GPS samples: <span id="riderPoints">0</span></div>
 <div id="riderError" style="margin-top:8px;color:#ffd1d1;font-size:11px"></div>
 <button class="emergencyRide" onclick="emergencyRide()">🚨 EMERGENCY / HELP</button>
@@ -532,7 +560,7 @@ ${days.filter(d=>d.sleep!=="HOME").slice(0,6).map(d=>`<button type="button" oncl
 </div>
 <div class="trackNote">Navigation opens Google Maps. Rider Mode continues tracking while this app is in the background only as permitted by the phone/browser.</div>
 </div>
-<div class="trackNote">V15 menambah sambungan terus ke Google Maps: pilih destinasi, buka navigasi turn-by-turn, cari fuel/halal food/hotel dan kongsi lokasi. Untuk penggunaan sebenar ketika menunggang, fokus pada jalan dan gunakan mount/voice guidance.</div>
+<div class="trackNote">Google Maps integration: choose any destination, open turn-by-turn navigation, find nearby fuel/halal food/hotels, and share your location. While riding, keep your attention on the road and use a secure phone mount with voice guidance.</div>
 </section>`;
 renderRider();window.scrollTo(0,0);}
 
@@ -612,14 +640,14 @@ ${items.length} transaction${items.length===1?"":"s"}`);
    ${ex.length?ex.slice().reverse().map(x=>`<div class="card" style="margin-bottom:8px;display:flex;justify-content:space-between;gap:10px;align-items:center">
     <div><b>${x.cat}</b><div class="label">${x.day}${x.note?" • "+x.note:""}</div></div>
     <div style="text-align:right"><b>฿${x.amount.toLocaleString("en-US",{maximumFractionDigits:2})}</b><br><button onclick="delExpense(${x.id})" style="border:0;background:none;color:var(--red);font-size:10px;font-weight:800">DELETE</button></div>
-   </div>`).join(""):`<div class="note">Belum ada perbelanjaan sebenar. Masukkan setiap kali isi minyak, bayar hotel, makan, tol, parking dan sebagainya.</div>`}
+   </div>`).join(""):`<div class="note">No actual expenses recorded yet. Add fuel, hotel, food, toll, parking and other expenses as you go.</div>`}
   </div>
  </section>
 
  <section class="section">
   <div class="daily-chart">
    <h2 style="margin:0">📊 Daily Spending</h2>
-   <div class="label">Stacked vertical blocks — tap mana-mana hari untuk lihat pecahan expense.</div>
+   <div class="label">Stacked vertical blocks — tap any day to view its expense breakdown.</div>
    <div class="barchart">
     ${daily.map(d=>{
       const h=d.amount?Math.max(7,(d.amount/max)*165):3;
@@ -722,7 +750,7 @@ function saveReceiptPreview(input,n){
 
 <div id="pwaStatus">ONLINE</div>
 <button id="installAppBtn" style="display:none">＋ INSTALL APP</button>
-<div id="iosHint">Untuk iPhone/iPad: buka dalam Safari → Share → <b>Add to Home Screen</b>.</div>
+<div id="iosHint">For iPhone/iPad: open in Safari → Share → <b>Add to Home Screen</b>.</div>
 <script>
 (function(){
   const status=document.getElementById('pwaStatus');
@@ -741,7 +769,7 @@ function saveReceiptPreview(input,n){
 })();
 </script>
 
-<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Isan Rider 2026 • V15</div>
+<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Isan Rider 2026 • V15.5</div>
 
 <script>
 (function(){
@@ -762,7 +790,7 @@ function saveReceiptPreview(input,n){
 <div id="stopModal" class="stopModal" onclick="if(event.target===this)closeStopOptions()">
   <div class="stopSheet">
     <h3>🛑 STOP RIDE</h3>
-    <p>Pilih sebab kau berhenti. Timer akan ikut kategori ini.</p>
+    <p>Choose why you are stopping. The timer will record the stop under this category.</p>
     <button onclick="chooseStop('refuel')">⛽ REFUEL</button>
     <button onclick="chooseStop('rest')">☕ REST / FOOD</button>
     <button onclick="chooseStop('short')">📸 PHOTO / SHORT STOP</button>
@@ -788,7 +816,7 @@ function saveReceiptPreview(input,n){
     const hint=document.createElement('div');
     hint.className='finishHint';
     hint.style.cssText='grid-column:1/3!important;font-size:12px;color:#64748b;text-align:center;margin:4px 0 10px;';
-    hint.textContent='Tekan bila semua ride untuk hari ini sudah selesai.';
+    hint.textContent='Press when all riding for today is complete.';
     b.insertAdjacentElement('afterend',hint);
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',addFinish);
@@ -797,7 +825,7 @@ function saveReceiptPreview(input,n){
 })();
 
 // ===== V15 SUMMARY =====
-function fmtTime(sec){
+function fmtSummaryTime(sec){
   sec = Math.max(0, Math.floor(Number(sec)||0));
   const h=String(Math.floor(sec/3600)).padStart(2,'0');
   const m=String(Math.floor((sec%3600)/60)).padStart(2,'0');
@@ -819,7 +847,8 @@ function readPossible(keyNames, fallback){
 function buildV15Summary(){
   const days = readPossible(['finishedDays','rideDays','dailyRideSummary','daySummaries'], []);
   const expenses = readPossible(['expenses','budgetTransactions','transactions'], []);
-  let list = Array.isArray(days) ? days : [];
+  let list = Array.isArray(days) ? days : (days && Array.isArray(days.records) ? days.records : []);
+  list = list.slice().sort((a,b)=>(Number(a.day)||0)-(Number(b.day)||0));
   let totalKm=0, ride=0, rest=0, fuel=0, spent=0;
   list.forEach(d=>{
     totalKm += Number(d.actualKm ?? d.distance ?? d.km ?? 0) || 0;
@@ -833,15 +862,15 @@ function buildV15Summary(){
   const set=(id,v)=>{const el=document.getElementById(id); if(el) el.textContent=v;};
   set('sumDays', list.length);
   set('sumKm', totalKm.toFixed(1)+' km');
-  set('sumRide', fmtTime(ride));
-  set('sumRest', fmtTime(rest));
-  set('sumFuelStop', fmtTime(fuel));
+  set('sumRide', fmtSummaryTime(ride));
+  set('sumRest', fmtSummaryTime(rest));
+  set('sumFuelStop', fmtSummaryTime(fuel));
   set('sumSpend', moneyTHB(spent));
 
   const box=document.getElementById('summaryDays');
   if(!box) return;
   if(!list.length){
-    box.innerHTML='<div class="summary-empty">Belum ada hari yang di-finish. Bila kau tekan FINISH DAY, rekod hari tersebut akan muncul di sini.</div>';
+    box.innerHTML='<div class="summary-empty">No completed days yet. When you press FINISH DAY, the completed day will appear here.</div>';
     return;
   }
   box.innerHTML=list.map((d,i)=>{
@@ -858,9 +887,9 @@ function buildV15Summary(){
       <div class="row"><span>Planned</span><strong>${planned ? planned+' km' : '—'}</strong></div>
       <div class="row"><span>Actual</span><strong>${actual.toFixed(1)} km</strong></div>
       <div class="row"><span>Difference</span><span class="diff">${diffText}</span></div>
-      <div class="row"><span>Ride time</span><strong>${fmtTime(d.rideSeconds ?? d.rideTime ?? 0)}</strong></div>
-      <div class="row"><span>Rest / Food</span><strong>${fmtTime(d.restSeconds ?? d.restTime ?? 0)}</strong></div>
-      <div class="row"><span>Fuel / Short Stop</span><strong>${fmtTime(d.fuelSeconds ?? d.fuelStopSeconds ?? 0)}</strong></div>
+      <div class="row"><span>Ride time</span><strong>${fmtSummaryTime(d.rideSeconds ?? d.rideTime ?? 0)}</strong></div>
+      <div class="row"><span>Rest / Food</span><strong>${fmtSummaryTime(d.restSeconds ?? d.restTime ?? 0)}</strong></div>
+      <div class="row"><span>Fuel / Short Stop</span><strong>${fmtSummaryTime(d.fuelSeconds ?? d.fuelStopSeconds ?? 0)}</strong></div>
       <div class="row"><span>Expenses</span><strong>${moneyTHB(d.expenses ?? daySpend)}</strong></div>
     </div>`;
   }).join('');
@@ -870,7 +899,7 @@ function showSummary(btn){
   setActive(btn);
   const screen=document.getElementById("screen");
   screen.innerHTML=`<section id="summaryPage" class="section">
-    <div class="card"><h2>📊 TRIP SUMMARY</h2><p>Ringkasan sebenar perjalanan berdasarkan tracking dan rekod harian.</p>
+    <div class="card"><h2>📊 TRIP SUMMARY</h2><p>A live summary based on GPS tracking and completed daily records.</p>
       <div class="summary-grid">
         <div class="summary-card"><div class="num" id="sumDays">0</div><div class="lbl">DAYS FINISHED</div></div>
         <div class="summary-card"><div class="num" id="sumKm">0.0 km</div><div class="lbl">TOTAL DISTANCE</div></div>
@@ -880,14 +909,15 @@ function showSummary(btn){
         <div class="summary-card"><div class="num" id="sumSpend">฿0</div><div class="lbl">ACTUAL SPENDING</div></div>
       </div>
     </div>
-    <div class="card"><h2>📈 PLANNED vs ACTUAL</h2><div id="summaryDays"><div class="summary-empty">Belum ada hari yang di-finish.</div></div></div>
+    <div class="card"><h2>📈 PLANNED vs ACTUAL</h2><div id="summaryDays"><div class="summary-empty">No completed days yet.</div></div></div>
   </section>`;
   buildV15Summary(); window.scrollTo(0,0);
 }
 window.addEventListener('storage', buildV15Summary);
+window.addEventListener('isan:dayFinished', buildV15Summary);
 
 </script>
-<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V15.1</div>
+<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V15.5</div>
 
 </body>
 </html>

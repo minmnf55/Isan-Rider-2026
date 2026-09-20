@@ -1,7 +1,7 @@
 {
   "name": "Isan Rider 2026",
   "short_name": "Isan Rider",
-  "description": "Isan + Mekong Motorcycle Tour • Dynamic Navigation & Trip Summary",
+  "description": "Isan + Mekong Motorcycle Tour • GPS Ride Tracking, Dynamic Navigation & Trip Summary",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
