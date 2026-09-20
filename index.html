@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#073B4C">
 <link rel="manifest" href="manifest.webmanifest">
-<title>Isan Rider 2026 • v13 Navigation + Emergency</title>
+<title>Isan Rider 2026 • V16 Rider UX</title>
 <style>
 :root{--navy:#073B4C;--teal:#118AB2;--cyan:#06D6A0;--yellow:#FFD166;--orange:#F78C6B;--red:#EF476F;--purple:#7B61FF;--green:#52B788;--bg:#f4f7fa;--card:#fff;--ink:#18323C;--muted:#667781}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
@@ -153,6 +153,27 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
 
 .quickDest{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:8px}
 .quickDest button{border:1px solid #d7e1e5;background:#f7fbfc;border-radius:10px;padding:9px 6px;font:700 11px system-ui;color:#073b4c}
+</style>
+
+<style>
+/* V16 Rider UX */
+.ride-day-panel{background:linear-gradient(145deg,#fff,#f3fbfd);border:1px solid #dcebef;border-radius:22px;padding:16px;box-shadow:0 8px 22px rgba(7,59,76,.08);margin-bottom:12px}
+.ride-day-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.ride-day-head h2{margin:0;color:var(--navy)}
+.ride-day-select{width:100%;margin-top:12px;padding:13px;border:1px solid #cfe1e6;border-radius:14px;background:#fff;color:var(--ink);font-weight:750;font-size:14px}
+.ride-day-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.ride-day-meta span{background:#eaf7fa;color:#245d6c;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800}
+.ride-status-card{background:linear-gradient(145deg,#073b4c,#118ab2);color:#fff;border-radius:22px;padding:16px;box-shadow:0 10px 24px rgba(7,59,76,.18)}
+.ride-status-card .status-line{display:flex;justify-content:space-between;align-items:center;gap:8px}.ride-status-card .ready{background:#e9fbf5;color:#187a5d;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:850}
+.startRideWide{width:100%;border:0;border-radius:14px;padding:14px;background:#20c968;color:#062b1f;font-weight:900;font-size:15px;margin-top:12px}
+.backBtn{border:0;background:#fff;color:var(--navy);border-radius:12px;padding:9px 13px;font-weight:850;box-shadow:0 3px 10px rgba(0,0,0,.08);margin-bottom:10px}
+.riderDayBanner{display:flex;justify-content:space-between;align-items:center;gap:10px;background:rgba(255,255,255,.12);padding:9px 11px;border-radius:13px;margin:10px 0;font-size:12px}
+.riderDayBanner b{font-size:15px}.changeDayBtn{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;border-radius:10px;padding:7px 9px;font-weight:800}
+.summaryHero{background:linear-gradient(145deg,#073b4c,#118ab2);color:#fff;border-radius:24px;padding:18px;box-shadow:0 10px 25px rgba(7,59,76,.18);overflow:hidden;position:relative}
+.summaryHero:after{content:'🏍️';position:absolute;right:12px;bottom:-10px;font-size:78px;opacity:.13}.summaryHero h2{margin:0 0 4px}.summaryHero p{margin:0;color:#dff8ff;font-size:12px}
+.summaryProgress{margin-top:14px}.summaryProgress .bar{height:9px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden}.summaryProgress .fill{height:100%;background:#20c968;border-radius:999px}.summaryProgress .line{display:flex;justify-content:space-between;font-size:11px;margin-top:6px;color:#e6fbff}
+.summaryStatGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.summaryStat{background:#fff;border-radius:18px;padding:14px;box-shadow:0 5px 16px rgba(0,0,0,.06);border:1px solid #edf2f4}.summaryStat .v{font-size:24px;font-weight:900;color:#164a58}.summaryStat .l{font-size:10px;color:#71808a;font-weight:800;margin-top:3px}.summaryStat.green .v{color:#187a5d}.summaryStat.orange .v{color:#d96b38}.summaryStat.purple .v{color:#684be5}.summaryStat.red .v{color:#d93b62}
+.summarySection{margin-top:14px}.summarySectionTitle{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.summarySectionTitle h3{margin:0;color:var(--navy)}
+.summaryDayCard{background:#fff;border-radius:18px;padding:14px;margin:9px 0;box-shadow:0 5px 16px rgba(0,0,0,.06);border:1px solid #edf2f4}.summaryDayTop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.summaryDayTop h4{margin:0;color:#164a58;font-size:15px}.donePill{background:#e9fbf5;color:#187a5d;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:900}.summaryRoute{font-size:12px;color:#65757d;margin:5px 0 10px}.summaryMiniGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.summaryMini{background:#f7fafb;border-radius:12px;padding:8px}.summaryMini b{display:block;font-size:12px;color:#164a58}.summaryMini span{font-size:9px;color:#71808a}.summaryCompare{margin-top:10px}.summaryCompare .barbg{height:8px;background:#e9eff1;border-radius:999px;overflow:hidden;position:relative}.summaryCompare .planned{height:100%;background:#b9c8ce;border-radius:999px}.summaryCompare .actual{height:100%;background:#20c968;border-radius:999px;position:absolute;left:0;top:0}.summaryCompare small{display:flex;justify-content:space-between;color:#71808a;margin-top:5px;font-size:9px}
+@media(max-width:420px){.summaryStat .v{font-size:21px}.summaryMiniGrid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -420,7 +441,7 @@ function riderPosition(pos){const c=pos.coords,lat=c.latitude,lon=c.longitude;
 if(riderState.lastLat!=null&&riderState.lastLon!=null){const d=haversine(riderState.lastLat,riderState.lastLon,lat,lon);if(d<1)riderState.distance+=d;}
 riderState.lastLat=lat;riderState.lastLon=lon;riderState.lat=lat;riderState.lon=lon;riderState.speed=c.speed!=null&&c.speed>=0?c.speed*3.6:0;riderState.accuracy=c.accuracy;riderState.points++;
 if(c.heading!=null&&c.heading>=0)riderState.heading=c.heading;saveRider();renderRider();}
-function startRider(){if(riderState.finished){alert("Today is already FINISHED. Use START NEW DAY for the next riding day.");return;}if(!("geolocation"in navigator)){alert("GPS is not supported by this browser/device.");return;}if(riderState.running)return;
+function startRider(){ensureActiveRideDay();if(riderState.finished){alert("This ride day is already finished. Go back to Rides and select another day.");return;}if(!("geolocation"in navigator)){alert("GPS is not supported by this browser/device.");return;}if(riderState.running)return;
 const now=Date.now();
 if(!riderState.totalStart)riderState.totalStart=now-(Number(riderState.rideMs)||0)-(Number(riderState.restMs)||0)-(Number(riderState.stopMs)||0);
 if(riderState.stopStart){const d=Math.max(0,now-riderState.stopStart);if(riderState.stopType==="rest")riderState.restMs=(Number(riderState.restMs)||0)+d;else riderState.stopMs=(Number(riderState.stopMs)||0)+d;riderState.stopStart=null;riderState.stopType=null;}
@@ -444,7 +465,7 @@ const finishedKey="finishedDays";
 let finishedDays=[];
 try{finishedDays=JSON.parse(localStorage.getItem(finishedKey)||"[]");}catch(e){finishedDays=[];}
 if(!Array.isArray(finishedDays))finishedDays=[];
-const dayNo=finishedDays.length+1;
+const dayNo=ensureActiveRideDay();
 const planned=days[dayNo-1]||{};
 const range=String(planned.km||"").replace(/,/g,"").match(/(\d+(?:\.\d+)?)/g)||[];
 let plannedKm=range.length>=2?(Number(range[0])+Number(range[1]))/2:(range.length?Number(range[0]):0);
@@ -465,7 +486,7 @@ finishedDays.push(record);
 localStorage.setItem(finishedKey,JSON.stringify(finishedDays));
 try{window.dispatchEvent(new Event('isan:dayFinished'));}catch(e){}
 
-riderState.running=false;riderState.finished=true;riderState.sessionStart=null;riderState.stopStart=null;riderState.stopType=null;riderState.speed=0;saveRider();renderRider();
+riderState.running=false;riderState.finished=true;riderState.sessionStart=null;riderState.stopStart=null;riderState.stopType=null;riderState.speed=0;saveRider();activeRideDay=nextUnfinishedDay();localStorage.setItem("isanActiveRideDay",String(activeRideDay));renderRider();
 alert("🏁 DAY FINISHED\\n\\n"+dayLabel+"\\nRide Time: "+fmtTime(riderState.rideMs)+"\\nRest Time: "+fmtTime(riderState.restMs)+"\\nStop Time: "+fmtTime(riderState.stopMs)+"\\nTotal Elapsed: "+fmtTime(riderState.rideMs+riderState.restMs+riderState.stopMs)+"\\nDistance: "+(Number(riderState.distance)||0).toFixed(1)+" km");}
 function resetRider(){if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}
 riderState={running:false,finished:false,distance:0,rideMs:0,restMs:0,stopMs:0,totalStart:null,sessionStart:null,stopStart:null,stopType:null,lastLat:null,lastLon:null,speed:0,accuracy:null,lat:null,lon:null,points:0,heading:null};saveRider();renderRider();}
@@ -527,51 +548,49 @@ const run=()=>window.addEventListener("deviceorientationabsolute",orientationHan
 if(typeof DeviceOrientationEvent.requestPermission==="function"){DeviceOrientationEvent.requestPermission().then(x=>{if(x==="granted")run();}).catch(()=>{});}else run();
 }
 function orientationHandler(e){let h=e.webkitCompassHeading!=null?e.webkitCompassHeading:(e.alpha!=null?(360-e.alpha):null);if(h!=null){riderState.heading=h;saveRider();renderRider();}}
-function showRiderMode(btn){if(btn)setActive(btn);document.getElementById("screen").innerHTML=`
-<section class="section" id="riderScreen"><div class="riderHero">
-<div class="riderStatus"><b>🏍️ LIVE RIDER MODE</b><span><span id="riderGpsDot" class="gpsDot"></span><span id="riderGpsText">GPS OFF</span></span></div>
-<div class="riderGrid">
-<div class="riderMetric"><b id="riderDistance">0.0 km</b><span>DISTANCE TRACKED</span></div>
-<div class="riderMetric"><b id="riderSpeed">0 km/h</b><span>CURRENT SPEED</span></div>
-<div class="riderMetric"><b id="riderTime">00:00:00</b><span>RIDE TIME</span></div>
-<div class="riderMetric"><b id="riderRest">00:00:00</b><span>REST TIME</span></div>
-<div class="riderMetric"><b id="riderElapsed">00:00:00</b><span>TOTAL ELAPSED</span></div>
-<div class="riderMetric"><b id="riderStop">00:00:00</b><span>FUEL / SHORT STOP</span></div>
-<div class="riderMetric"><b id="riderAccuracy">—</b><span>GPS ACCURACY</span></div></div>
-<div class="headingBox"><div><div class="headingBig" id="riderHeading">—</div><div class="headingSmall">DIRECTION / HEADING</div></div><button class="riderBtn reset" onclick="enableOrientation()">🧭 ENABLE COMPASS</button></div>
-<div class="riderBtns"><button type="button" id="riderStartBtn" class="riderBtn start" onclick="startRider();enableOrientation()">▶ START / RESUME</button><button type="button" id="riderStopBtn" class="riderBtn stop" onclick="stopRider()">■ STOP</button><button class="riderBtn reset" style="grid-column:1/3" onclick="resetRider()">↺ RESET TRACK</button>
-<button type="button" id="finishDayBtn" class="riderBtn finish" style="grid-column:1/3" onclick="finishDay()">🏁 FINISH DAY</button><div class="finishHint" style="grid-column:1/3">Press when all riding for today is complete.</div></div>
-<div class="gpsInfo">📍 <span id="riderLat">Waiting for GPS…</span><br>GPS samples: <span id="riderPoints">0</span></div>
-<div id="riderError" style="margin-top:8px;color:#ffd1d1;font-size:11px"></div>
-<button class="emergencyRide" onclick="emergencyRide()">🚨 EMERGENCY / HELP</button>
-</div>
-<div class="navPanel">
-<b>🗺️ NAVIGATION</b>
-<input id="navDestination" class="destinationSelect" style="margin-top:10px" placeholder="Contoh: Krabi, Ao Nang, Phuket…" autocomplete="off">
-<div class="quickDest">
-${days.filter(d=>d.sleep!=="HOME").slice(0,6).map(d=>`<button type="button" onclick="mapsDestination('${d.sleep.replace(/'/g,"\\'")}')">${d.n}. ${d.sleep}</button>`).join("")}
-</div>
-<div class="navGrid">
-<button class="navBtn map" onclick="mapsNavigate()">🗺️ NAVIGATE</button>
-<button class="navBtn share" onclick="shareLocation()">📍 SEND LOCATION</button>
-<button class="navBtn fuel" onclick="mapsSearch('fuel station')">⛽ NEAREST FUEL</button>
-<button class="navBtn halal" onclick="mapsSearch('halal food')">🕌 HALAL FOOD</button>
-<button class="navBtn hotel" onclick="mapsSearch('hotel')" style="grid-column:1/3">🏨 NEAREST HOTEL</button>
-</div>
-<div class="trackNote">Navigation opens Google Maps. Rider Mode continues tracking while this app is in the background only as permitted by the phone/browser.</div>
-</div>
-<div class="trackNote">Google Maps integration: choose any destination, open turn-by-turn navigation, find nearby fuel/halal food/hotels, and share your location. While riding, keep your attention on the road and use a secure phone mount with voice guidance.</div>
-</section>`;
-renderRider();window.scrollTo(0,0);}
+function showRiderMode(btn){
+ currentView="rider";ensureActiveRideDay();if(btn)setActive(btn);else setActive(document.querySelectorAll(".nav button")[1]);
+ if(location.hash!=="#rider")history.pushState({view:"rider"},"","#rider");
+ const d=days[activeRideDay-1];
+ document.getElementById("screen").innerHTML=`
+ <section class="section" id="riderScreen">
+ <button class="backBtn" onclick="appBackToRides()">‹ Back to Rides</button>
+ <div class="riderHero">
+ <div class="riderStatus"><b>🏍️ LIVE RIDER MODE</b><span><span id="riderGpsDot" class="gpsDot"></span><span id="riderGpsText">GPS OFF</span></span></div>
+ <div class="riderDayBanner"><div><b>Day ${activeRideDay} • ${d.date}</b><div>${d.route.join(" → ")} • Planned ${d.km} km</div></div><button class="changeDayBtn" onclick="appBackToRides()">CHANGE DAY</button></div>
+ <div class="riderGrid">
+ <div class="riderMetric"><b id="riderDistance">0.0 km</b><span>DISTANCE TRACKED</span></div><div class="riderMetric"><b id="riderSpeed">0 km/h</b><span>CURRENT SPEED</span></div>
+ <div class="riderMetric"><b id="riderTime">00:00:00</b><span>RIDE TIME</span></div><div class="riderMetric"><b id="riderRest">00:00:00</b><span>REST TIME</span></div>
+ <div class="riderMetric"><b id="riderElapsed">00:00:00</b><span>TOTAL ELAPSED</span></div><div class="riderMetric"><b id="riderStop">00:00:00</b><span>FUEL / SHORT STOP</span></div>
+ <div class="riderMetric"><b id="riderAccuracy">—</b><span>GPS ACCURACY</span></div></div>
+ <div class="headingBox"><div><div class="headingBig" id="riderHeading">—</div><div class="headingSmall">DIRECTION / HEADING</div></div><button class="riderBtn reset" onclick="enableOrientation()">🧭 ENABLE COMPASS</button></div>
+ <div class="riderBtns"><button type="button" id="riderStartBtn" class="riderBtn start" onclick="startRider();enableOrientation()">▶ START / RESUME</button><button type="button" id="riderStopBtn" class="riderBtn stop" onclick="stopRider()">■ STOP</button><button class="riderBtn reset" style="grid-column:1/3" onclick="resetRider()">↺ RESET TRACK</button><button type="button" id="finishDayBtn" class="riderBtn finish" style="grid-column:1/3" onclick="finishDay()">🏁 FINISH DAY</button><div class="finishHint" style="grid-column:1/3">Press when all riding for today is complete.</div></div>
+ <div class="gpsInfo">📍 <span id="riderLat">Waiting for GPS…</span><br>GPS samples: <span id="riderPoints">0</span></div><div id="riderError" style="margin-top:8px;color:#ffd1d1;font-size:11px"></div><button class="emergencyRide" onclick="emergencyRide()">🚨 EMERGENCY / HELP</button>
+ </div>
+ <div class="navPanel"><b>🗺️ NAVIGATION</b><input id="navDestination" class="destinationSelect" style="margin-top:10px" placeholder="e.g. Krabi, Ao Nang, Phuket…" autocomplete="off"><div class="quickDest">${days.filter(x=>x.sleep!=="HOME").slice(0,6).map(x=>`<button type="button" onclick="mapsDestination('${x.sleep.replace(/'/g,"\'")}')">${x.n}. ${x.sleep}</button>`).join("")}</div><div class="navGrid"><button class="navBtn map" onclick="mapsNavigate()">🗺️ NAVIGATE</button><button class="navBtn share" onclick="shareLocation()">📍 SEND LOCATION</button><button class="navBtn fuel" onclick="mapsSearch('fuel station')">⛽ NEAREST FUEL</button><button class="navBtn halal" onclick="mapsSearch('halal food')">🕌 HALAL FOOD</button><button class="navBtn hotel" onclick="mapsSearch('hotel')" style="grid-column:1/3">🏨 NEAREST HOTEL</button></div><div class="trackNote">Navigation opens Google Maps. Rider Mode continues tracking while this app is in the background only as permitted by the phone/browser.</div></div>
+ </section>`;renderRider();window.scrollTo(0,0);}
 
-function showRides(btn){showDays(btn)}
-function showDays(btn){setActive(btn);document.getElementById("screen").innerHTML=`<section class="section">
-<div class="riderHero" style="margin-bottom:12px">
-<div class="riderStatus"><b>🏍️ LIVE RIDER MODE</b><span><span id="miniGpsDot" class="gpsDot"></span><span id="miniGpsText">GPS OFF</span></span></div>
-<div style="font-size:12px;opacity:.85">Track live position, speed, distance and ride time.</div>
-<button class="riderBtn start" style="width:100%;margin-top:12px" onclick="showRiderMode()">OPEN RIDER MODE</button>
-</div>
-<h2>Daily Rides</h2>${days.map(d=>`<div class="card" style="margin-bottom:10px" onclick="showDay(${d.n})"><div style="display:flex;justify-content:space-between"><b>DAY ${d.n} • ${d.date}</b><b>${d.km} km</b></div><div style="font-size:12px;margin-top:6px">${d.route.join(" → ")}</div><div class="label" style="margin-top:6px">Sleep: ${d.sleep} • Start: ${d.start}</div></div>`).join("")}</section>`;window.scrollTo(0,0);}
+function showRides(btn,fromBack=false){showDays(btn,fromBack)}
+function showDays(btn,fromBack=false){
+ currentView="rides";setActive(btn);const selected=ensureActiveRideDay();const done=getFinishedDays();
+ const d=days[selected-1];
+ const options=days.map(x=>{const isDone=done.some(r=>Number(r.day)===x.n);return `<option value="${x.n}" ${x.n===selected?"selected":""} ${isDone?"disabled":""}>Day ${x.n} • ${x.date} — ${x.route[0]} → ${x.route[x.route.length-1]}${isDone?" ✓":""}</option>`}).join("");
+ const status=riderState.finished?"DAY FINISHED":(riderState.running?"TRACKING":(riderState.stopType?"PAUSED":"READY"));
+ document.getElementById("screen").innerHTML=`<section class="section">
+ <div class="ride-day-panel">
+  <div class="ride-day-head"><h2>📅 Select Ride Day</h2><span class="badge">${done.length}/${days.length} completed</span></div>
+  <select class="ride-day-select" onchange="selectRideDay(Number(this.value))">${options}</select>
+  <div class="ride-day-meta"><span>📍 ${d.route.join(" → ")}</span><span>🛣️ ${d.km} km</span><span>⏰ ${d.start}</span></div>
+ </div>
+ <div class="ride-status-card">
+  <div class="status-line"><div><b style="font-size:17px">🏍️ Live Rider Mode</b><div style="font-size:11px;opacity:.82;margin-top:3px">Day ${selected} • ${d.date}</div></div><span class="ready">${status}</span></div>
+  <div style="font-size:12px;opacity:.86;margin-top:9px">Start tracking only when you are ready to ride. Stops and daily timing will be recorded under the selected day.</div>
+  <button class="startRideWide" onclick="openSelectedRide()">▶ ${riderState.finished?"VIEW FINISHED RIDE":"START / RESUME DAY "+selected}</button>
+ </div>
+ <div class="summarySection"><div class="summarySectionTitle"><h3>Daily Rides</h3><span class="label">Tap a day for details</span></div>
+ ${days.map(x=>{const r=done.find(z=>Number(z.day)===x.n);return `<div class="card" style="margin-bottom:10px;cursor:pointer" onclick="showDay(${x.n})"><div style="display:flex;justify-content:space-between;gap:8px"><b>DAY ${x.n} • ${x.date}</b><b>${x.km} km</b></div><div style="font-size:12px;margin-top:6px">${x.route.join(" → ")}</div><div class="label" style="margin-top:6px">Sleep: ${x.sleep} • Start: ${x.start}${r?` • <b style="color:var(--green)">DONE</b>`:""}</div></div>`}).join("")}
+ </div></section>`;window.scrollTo(0,0);}
+function openSelectedRide(){if(riderState.finished){showRiderMode();return;}showRiderMode();}
 function showBudget(btn){renderBudget(btn)}
 function renderBudget(btn){
  if(btn) setActive(btn);
@@ -691,9 +710,17 @@ ${items.length} transaction${items.length===1?"":"s"}`);
  </section>`;
  window.scrollTo(0,0);
 }
-function setActive(btn){document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));btn.classList.add("active");}
+let currentView="home";
+let activeRideDay=Number(localStorage.getItem("isanActiveRideDay")||0);
+function getFinishedDays(){try{const x=JSON.parse(localStorage.getItem("finishedDays")||"[]");return Array.isArray(x)?x:[]}catch(e){return []}}
+function nextUnfinishedDay(){const done=new Set(getFinishedDays().map(x=>Number(x.day)));return days.find(d=>!done.has(d.n))?.n||days.length;}
+function ensureActiveRideDay(){const done=new Set(getFinishedDays().map(x=>Number(x.day)));if(!activeRideDay||done.has(activeRideDay)||!days.some(d=>d.n===activeRideDay)){activeRideDay=nextUnfinishedDay();localStorage.setItem("isanActiveRideDay",String(activeRideDay));}return activeRideDay;}
+function selectRideDay(n){const done=getFinishedDays().some(x=>Number(x.day)===Number(n));if(done){alert("This ride day is already finished. Choose another day.");return;}activeRideDay=Number(n);localStorage.setItem("isanActiveRideDay",String(activeRideDay));showRides();}
+function setActive(btn){document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));if(btn)btn.classList.add("active");}
+function appBackToRides(){if(currentView==="rider"){history.back();}else{showRides(document.querySelectorAll(".nav button")[1]);}}
+window.addEventListener("popstate",()=>{if(currentView==="rider"){showRides(document.querySelectorAll(".nav button")[1],true);}else{showHome(document.querySelectorAll(".nav button")[0]);}});
 function navigate(route){alert("Navigation target:\\n"+route+"\\n\\nPrototype action: connect this button to Google Maps / your preferred navigation app.");}
-showHome(document.querySelector(".nav button"));
+currentView="home";showHome(document.querySelector(".nav button"));
 </script>
 
 <script>
@@ -769,7 +796,7 @@ function saveReceiptPreview(input,n){
 })();
 </script>
 
-<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Isan Rider 2026 • V15.5</div>
+<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Isan Rider 2026 • V16</div>
 
 <script>
 (function(){
@@ -895,29 +922,18 @@ function buildV15Summary(){
   }).join('');
 }
 
+function buildSummaryDayCard(r){const d=days[Number(r.day)-1]||{};const pct=r.plannedKm?Math.min(100,(Number(r.actualKm||0)/Number(r.plannedKm))*100):0;const diff=Number(r.actualKm||0)-Number(r.plannedKm||0);const cleanDate=String(r.date||d.date||"").replace(/^Day \d+ • /,"");return '<div class="summaryDayCard"><div class="summaryDayTop"><div><h4>Day '+r.day+' • '+cleanDate+'</h4><div class="summaryRoute">'+(r.route||((d.route||[]).join(" → ")) )+'</div></div><span class="donePill">✓ COMPLETED</span></div><div class="summaryMiniGrid"><div class="summaryMini"><b>'+Number(r.actualKm||0).toFixed(1)+' km</b><span>Actual</span></div><div class="summaryMini"><b>'+fmtTime(Number(r.rideSeconds||0)*1000)+'</b><span>Ride time</span></div><div class="summaryMini"><b>'+fmtTime(Number(r.restSeconds||0)*1000)+'</b><span>Rest / food</span></div><div class="summaryMini"><b>'+fmtTime(Number(r.fuelSeconds||0)*1000)+'</b><span>Fuel / short stop</span></div><div class="summaryMini"><b>'+Number(r.plannedKm||0).toFixed(0)+' km</b><span>Planned midpoint</span></div><div class="summaryMini"><b>'+(diff>=0?"+":"")+diff.toFixed(1)+' km</b><span>Difference</span></div></div><div class="summaryCompare"><div class="barbg"><div class="planned" style="width:100%"></div><div class="actual" style="width:'+pct+'%"></div></div><small><span>Planned '+Number(r.plannedKm||0).toFixed(0)+' km</span><span>Actual '+Number(r.actualKm||0).toFixed(1)+' km</span></small></div></div>';}
 function showSummary(btn){
-  setActive(btn);
-  const screen=document.getElementById("screen");
-  screen.innerHTML=`<section id="summaryPage" class="section">
-    <div class="card"><h2>📊 TRIP SUMMARY</h2><p>A live summary based on GPS tracking and completed daily records.</p>
-      <div class="summary-grid">
-        <div class="summary-card"><div class="num" id="sumDays">0</div><div class="lbl">DAYS FINISHED</div></div>
-        <div class="summary-card"><div class="num" id="sumKm">0.0 km</div><div class="lbl">TOTAL DISTANCE</div></div>
-        <div class="summary-card"><div class="num" id="sumRide">00:00:00</div><div class="lbl">TOTAL RIDE TIME</div></div>
-        <div class="summary-card"><div class="num" id="sumRest">00:00:00</div><div class="lbl">REST TIME</div></div>
-        <div class="summary-card"><div class="num" id="sumFuelStop">00:00:00</div><div class="lbl">FUEL / SHORT STOP</div></div>
-        <div class="summary-card"><div class="num" id="sumSpend">฿0</div><div class="lbl">ACTUAL SPENDING</div></div>
-      </div>
-    </div>
-    <div class="card"><h2>📈 PLANNED vs ACTUAL</h2><div id="summaryDays"><div class="summary-empty">No completed days yet.</div></div></div>
-  </section>`;
-  buildV15Summary(); window.scrollTo(0,0);
-}
+ currentView="summary";setActive(btn);const screen=document.getElementById("screen");
+ const finished=getFinishedDays();const totalKm=finished.reduce((a,x)=>a+Number(x.actualKm||0),0);const rideSec=finished.reduce((a,x)=>a+Number(x.rideSeconds||0),0);const restSec=finished.reduce((a,x)=>a+Number(x.restSeconds||0),0);const stopSec=finished.reduce((a,x)=>a+Number(x.fuelSeconds||0),0);const spend=getExpenses().reduce((a,x)=>a+Number(x.amount||0),0);const progress=Math.min(100,(finished.length/days.length)*100);
+ const completedHtml=finished.length?finished.slice().reverse().map(buildSummaryDayCard).join(""):"<div class=\"summaryDayCard\"><div class=\"summary-empty\">Finish a ride day and it will appear here automatically.</div></div>";
+ const next=ensureActiveRideDay(),nd=days[next-1];
+ screen.innerHTML='<section class="section"><div class="summaryHero"><h2>📊 Trip Summary</h2><p>Your real trip progress from completed ride-day records.</p><div class="summaryProgress"><div class="bar"><div class="fill" style="width:'+progress+'%"></div></div><div class="line"><span>'+finished.length+' of '+days.length+' days completed</span><span>'+progress.toFixed(0)+'%</span></div></div></div><div class="summaryStatGrid"><div class="summaryStat"><div class="v">'+finished.length+'/'+days.length+'</div><div class="l">DAYS COMPLETED</div></div><div class="summaryStat"><div class="v">'+totalKm.toFixed(1)+' km</div><div class="l">ACTUAL DISTANCE</div></div><div class="summaryStat green"><div class="v">'+fmtTime(rideSec*1000)+'</div><div class="l">TOTAL RIDE TIME</div></div><div class="summaryStat orange"><div class="v">'+fmtTime(restSec*1000)+'</div><div class="l">REST / FOOD</div></div><div class="summaryStat purple"><div class="v">'+fmtTime(stopSec*1000)+'</div><div class="l">FUEL / SHORT STOP</div></div><div class="summaryStat red"><div class="v">฿'+spend.toLocaleString("en-US",{maximumFractionDigits:0})+'</div><div class="l">ACTUAL SPENDING</div></div></div><div class="summarySection"><div class="summarySectionTitle"><h3>🗓️ Completed Ride Days</h3><span class="label">'+(finished.length?"Latest first":"No completed days yet")+'</span></div>'+completedHtml+'</div><div class="summarySection"><div class="summarySectionTitle"><h3>🧭 Next Ride Day</h3></div><div class="card"><b>Day '+next+' • '+nd.date+'</b><div class="label" style="margin-top:5px">'+nd.route.join(" → ")+' • '+nd.km+' km</div><button class="cta" style="margin-top:10px" onclick="showRides(document.querySelectorAll(\'.nav button\')[1])">GO TO RIDES</button></div></div></section>';window.scrollTo(0,0);}
 window.addEventListener('storage', buildV15Summary);
 window.addEventListener('isan:dayFinished', buildV15Summary);
 
 </script>
-<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V15.5</div>
+<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V16</div>
 
 </body>
 </html>
