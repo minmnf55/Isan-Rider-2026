@@ -428,7 +428,6 @@ function blankRiderState(){return {running:false,finished:false,distance:0,rideM
 let riderState=blankRiderState();
 function loadRiderForDay(dayNo){const key="isanRiderGPS-day-"+dayNo;try{const saved=JSON.parse(localStorage.getItem(key)||"null");if(saved){riderState=Object.assign(blankRiderState(),saved);return;}}catch(e){}try{const legacy=JSON.parse(localStorage.getItem("isanRiderGPS")||"null");if(legacy && (legacy.day==null || Number(legacy.day)===Number(dayNo))){riderState=Object.assign(blankRiderState(),legacy);riderState.day=Number(dayNo);saveRider();return;}}catch(e){}riderState=blankRiderState();riderState.day=Number(dayNo);saveRider();}
 function saveRider(){riderState.day=Number(activeRideDay||riderState.day||1);localStorage.setItem("isanRiderGPS-day-"+riderState.day,JSON.stringify(riderState));localStorage.setItem("isanRiderGPS",JSON.stringify(riderState));}
-loadRiderForDay(activeRideDay||1);
 function haversine(a,b,c,d){const R=6371,rad=Math.PI/180,x=(c-a)*rad,y=(d-b)*rad,h=Math.sin(x/2)**2+Math.cos(a*rad)*Math.cos(c*rad)*Math.sin(y/2)**2;return R*2*Math.atan2(Math.sqrt(h),Math.sqrt(1-h));}
 function fmtTime(ms){const s=Math.max(0,Math.floor(ms/1000)),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");}
 function compass(deg){if(deg==null)return"—";return ["N","NE","E","SE","S","SW","W","NW"][Math.round(deg/45)%8]+" "+Math.round(deg)+"°";}
@@ -704,6 +703,7 @@ ${items.length} transaction${items.length===1?"":"s"}`);
 let currentView="home";
 let activeRideDay=Number(localStorage.getItem("isanActiveRideDay")||0);
 let allowAppExit=false;
+loadRiderForDay(activeRideDay||1);
 function backToHome(){showHome(document.querySelectorAll(".nav button")[0]);}
 function backToRides(){showRides(document.querySelectorAll(".nav button")[1],true);}
 function requestExitApp(){const m=document.getElementById("exitModal");if(m){m.style.display="flex";m.setAttribute("aria-hidden","false");}}
