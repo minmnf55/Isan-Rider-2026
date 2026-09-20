@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#073B4C">
 <link rel="manifest" href="manifest.webmanifest">
-<title>Isan Rider 2026 • V16 Rider UX</title>
+<title>Isan Rider 2026 • V17 Final Rider Experience</title>
 <style>
 :root{--navy:#073B4C;--teal:#118AB2;--cyan:#06D6A0;--yellow:#FFD166;--orange:#F78C6B;--red:#EF476F;--purple:#7B61FF;--green:#52B788;--bg:#f4f7fa;--card:#fff;--ink:#18323C;--muted:#667781}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
@@ -156,7 +156,7 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
 </style>
 
 <style>
-/* V16 Rider UX */
+/* V17 Final Rider Experience */
 .ride-day-panel{background:linear-gradient(145deg,#fff,#f3fbfd);border:1px solid #dcebef;border-radius:22px;padding:16px;box-shadow:0 8px 22px rgba(7,59,76,.08);margin-bottom:12px}
 .ride-day-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.ride-day-head h2{margin:0;color:var(--navy)}
 .ride-day-select{width:100%;margin-top:12px;padding:13px;border:1px solid #cfe1e6;border-radius:14px;background:#fff;color:var(--ink);font-weight:750;font-size:14px}
@@ -175,7 +175,11 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
 .summaryDayCard{background:#fff;border-radius:18px;padding:14px;margin:9px 0;box-shadow:0 5px 16px rgba(0,0,0,.06);border:1px solid #edf2f4}.summaryDayTop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.summaryDayTop h4{margin:0;color:#164a58;font-size:15px}.donePill{background:#e9fbf5;color:#187a5d;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:900}.summaryRoute{font-size:12px;color:#65757d;margin:5px 0 10px}.summaryMiniGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.summaryMini{background:#f7fafb;border-radius:12px;padding:8px}.summaryMini b{display:block;font-size:12px;color:#164a58}.summaryMini span{font-size:9px;color:#71808a}.summaryCompare{margin-top:10px}.summaryCompare .barbg{height:8px;background:#e9eff1;border-radius:999px;overflow:hidden;position:relative}.summaryCompare .planned{height:100%;background:#b9c8ce;border-radius:999px}.summaryCompare .actual{height:100%;background:#20c968;border-radius:999px;position:absolute;left:0;top:0}.summaryCompare small{display:flex;justify-content:space-between;color:#71808a;margin-top:5px;font-size:9px}
 @media(max-width:420px){.summaryStat .v{font-size:21px}.summaryMiniGrid{grid-template-columns:repeat(2,1fr)}}
 </style>
-</head>
+<style>
+.pageBack{display:flex;align-items:center;gap:8px;margin:12px 14px 0}.pageBack button{border:0;background:#fff;color:var(--navy);border-radius:12px;padding:9px 13px;font-weight:850;box-shadow:0 3px 10px rgba(0,0,0,.08)}
+.summaryDetail{background:#fff;border-radius:20px;padding:16px;box-shadow:0 6px 18px rgba(0,0,0,.06);border:1px solid #edf2f4}.summaryDetailHero{background:linear-gradient(145deg,#073b4c,#118ab2);color:#fff;border-radius:18px;padding:16px}.summaryDetailHero h3{margin:0 0 5px;font-size:18px}.summaryDetailHero p{margin:0;color:#dff8ff;font-size:12px}.detailMapBtn{display:block;width:100%;border:0;border-radius:13px;padding:12px;margin-top:10px;background:var(--teal);color:#fff;font-weight:900}
+.exitModal{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:20000;display:none;align-items:center;justify-content:center;padding:20px}.exitCard{width:min(380px,100%);background:#fff;border-radius:22px;padding:20px;box-shadow:0 15px 45px rgba(0,0,0,.3);text-align:center}.exitCard .exitIcon{font-size:40px}.exitCard h2{margin:8px 0 6px;color:var(--navy)}.exitCard p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}.exitActions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}.exitActions button{border:0;border-radius:13px;padding:13px;font-weight:900}.exitNo{background:#edf3f5;color:var(--navy)}.exitYes{background:var(--red);color:#fff}
+</style></head>
 <body>
 <div class="app">
   <header class="hero">
@@ -197,6 +201,7 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
   </nav>
 </div>
 
+<div id="exitModal" class="exitModal" aria-hidden="true"><div class="exitCard"><div class="exitIcon">🚪</div><h2>Exit ISAN RIDER 2026?</h2><p>Are you sure you want to exit the app?</p><div class="exitActions"><button class="exitNo" onclick="closeExitModal()">NO</button><button class="exitYes" onclick="confirmExitApp()">YES, EXIT</button></div></div></div>
 <script>
 const days=[
 {n:1,date:"28 Sep",km:"280–300",start:"17:00 Thai",route:["Golok","Pattani","Hat Yai"],sleep:"Hat Yai",hotel:"B2 Hat Yai Boutique & Budget",hotelCost:"฿650–800",budget:"±฿2,000",fuel:"Golok FULL → Pattani/Yarang → Hat Yai",poi:"Immigration • fuel • dinner",food:"Khaled Restaurant @ Hat Yai",note:"Entry day. No sightseeing."},
@@ -292,8 +297,10 @@ function card(d){
 }
 
 function showEmergency(btn){
+  currentView="emergency";
   setActive(btn);
   document.getElementById("screen").innerHTML=`
+  <div class="pageBack"><button onclick="backToHome()">‹ BACK</button></div>
   <section class="section">
     <h2>🚨 Emergency Contacts</h2>
     <div class="emergency-note">
@@ -368,7 +375,9 @@ function showEmergency(btn){
 }
 
 function showHome(btn){
+ currentView="home";
  setActive(btn); document.getElementById("screen").innerHTML=`
+ <div class="pageBack"><button onclick="requestExitApp()">‹ BACK</button></div>
  <section class="section"><div class="grid">
  <div class="card"><div class="metric">≈3,800–4,100</div><div class="label">TOTAL KM</div></div>
  <div class="card"><div class="metric">11</div><div class="label">RIDING DAYS</div></div>
@@ -413,10 +422,13 @@ Your ride data is ready for a future video export:
 This prototype creates the trip timeline; full MP4 rendering can be connected in the next build.`;
  alert(text);
 }
-function showDay(n){ document.getElementById("screen").innerHTML=card(days[n-1]); window.scrollTo(0,0);}
+function showDay(n){ currentView="rideDetail"; document.getElementById("screen").innerHTML='<div class="pageBack"><button onclick="backToRides()">‹ BACK TO RIDES</button></div>'+card(days[n-1]); window.scrollTo(0,0);}
 let riderWatchId=null,riderTimer=null;
-let riderState=JSON.parse(localStorage.getItem("isanRiderGPS")||'{"running":false,"finished":false,"distance":0,"rideMs":0,"restMs":0,"stopMs":0,"totalStart":null,"sessionStart":null,"stopStart":null,"stopType":null,"lastLat":null,"lastLon":null,"speed":0,"accuracy":null,"lat":null,"lon":null,"points":0,"heading":null}');
-function saveRider(){localStorage.setItem("isanRiderGPS",JSON.stringify(riderState));}
+function blankRiderState(){return {running:false,finished:false,distance:0,rideMs:0,restMs:0,stopMs:0,totalStart:null,sessionStart:null,stopStart:null,stopType:null,lastLat:null,lastLon:null,speed:0,accuracy:null,lat:null,lon:null,points:0,heading:null,day:null};}
+let riderState=blankRiderState();
+function loadRiderForDay(dayNo){const key="isanRiderGPS-day-"+dayNo;try{const saved=JSON.parse(localStorage.getItem(key)||"null");if(saved){riderState=Object.assign(blankRiderState(),saved);return;}}catch(e){}try{const legacy=JSON.parse(localStorage.getItem("isanRiderGPS")||"null");if(legacy && (legacy.day==null || Number(legacy.day)===Number(dayNo))){riderState=Object.assign(blankRiderState(),legacy);riderState.day=Number(dayNo);saveRider();return;}}catch(e){}riderState=blankRiderState();riderState.day=Number(dayNo);saveRider();}
+function saveRider(){riderState.day=Number(activeRideDay||riderState.day||1);localStorage.setItem("isanRiderGPS-day-"+riderState.day,JSON.stringify(riderState));localStorage.setItem("isanRiderGPS",JSON.stringify(riderState));}
+loadRiderForDay(activeRideDay||1);
 function haversine(a,b,c,d){const R=6371,rad=Math.PI/180,x=(c-a)*rad,y=(d-b)*rad,h=Math.sin(x/2)**2+Math.cos(a*rad)*Math.cos(c*rad)*Math.sin(y/2)**2;return R*2*Math.atan2(Math.sqrt(h),Math.sqrt(1-h));}
 function fmtTime(ms){const s=Math.max(0,Math.floor(ms/1000)),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");}
 function compass(deg){if(deg==null)return"—";return ["N","NE","E","SE","S","SW","W","NW"][Math.round(deg/45)%8]+" "+Math.round(deg)+"°";}
@@ -459,37 +471,14 @@ function finishDay(){if(riderState.finished)return;const now=Date.now();
 if(riderState.running&&riderState.sessionStart){riderState.rideMs=(Number(riderState.rideMs)||0)+Math.max(0,now-riderState.sessionStart);}
 if(!riderState.running&&riderState.stopStart){const d=Math.max(0,now-riderState.stopStart);if(riderState.stopType==="rest")riderState.restMs=(Number(riderState.restMs)||0)+d;else riderState.stopMs=(Number(riderState.stopMs)||0)+d;}
 if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}
-
-/* Save a permanent daily record BEFORE marking the live session finished. */
-const finishedKey="finishedDays";
-let finishedDays=[];
-try{finishedDays=JSON.parse(localStorage.getItem(finishedKey)||"[]");}catch(e){finishedDays=[];}
-if(!Array.isArray(finishedDays))finishedDays=[];
-const dayNo=ensureActiveRideDay();
-const planned=days[dayNo-1]||{};
-const range=String(planned.km||"").replace(/,/g,"").match(/(\d+(?:\.\d+)?)/g)||[];
-let plannedKm=range.length>=2?(Number(range[0])+Number(range[1]))/2:(range.length?Number(range[0]):0);
-const dayLabel=planned.date?`Day ${dayNo} • ${planned.date}`:`Day ${dayNo}`;
-const route=Array.isArray(planned.route)?planned.route.join(" → "):(planned.route||"Ride day");
-const record={
-  day:dayNo,
-  date:dayLabel,
-  route:route,
-  plannedKm:plannedKm,
-  actualKm:Number(riderState.distance)||0,
-  rideSeconds:Math.floor((Number(riderState.rideMs)||0)/1000),
-  restSeconds:Math.floor((Number(riderState.restMs)||0)/1000),
-  fuelSeconds:Math.floor((Number(riderState.stopMs)||0)/1000),
-  finishedAt:new Date(now).toISOString()
-};
-finishedDays.push(record);
-localStorage.setItem(finishedKey,JSON.stringify(finishedDays));
-try{window.dispatchEvent(new Event('isan:dayFinished'));}catch(e){}
-
-riderState.running=false;riderState.finished=true;riderState.sessionStart=null;riderState.stopStart=null;riderState.stopType=null;riderState.speed=0;saveRider();activeRideDay=nextUnfinishedDay();localStorage.setItem("isanActiveRideDay",String(activeRideDay));renderRider();
-alert("🏁 DAY FINISHED\\n\\n"+dayLabel+"\\nRide Time: "+fmtTime(riderState.rideMs)+"\\nRest Time: "+fmtTime(riderState.restMs)+"\\nStop Time: "+fmtTime(riderState.stopMs)+"\\nTotal Elapsed: "+fmtTime(riderState.rideMs+riderState.restMs+riderState.stopMs)+"\\nDistance: "+(Number(riderState.distance)||0).toFixed(1)+" km");}
-function resetRider(){if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}
-riderState={running:false,finished:false,distance:0,rideMs:0,restMs:0,stopMs:0,totalStart:null,sessionStart:null,stopStart:null,stopType:null,lastLat:null,lastLon:null,speed:0,accuracy:null,lat:null,lon:null,points:0,heading:null};saveRider();renderRider();}
+const finishedKey="finishedDays";let finishedDays=[];try{finishedDays=JSON.parse(localStorage.getItem(finishedKey)||"[]");}catch(e){finishedDays=[];}if(!Array.isArray(finishedDays))finishedDays=[];
+const dayNo=ensureActiveRideDay();const planned=days[dayNo-1]||{};const range=String(planned.km||"").replace(/,/g,"").match(/(\d+(?:\.\d+)?)/g)||[];const plannedKm=range.length>=2?(Number(range[0])+Number(range[1]))/2:(range.length?Number(range[0]):0);const dayLabel=planned.date?`Day ${dayNo} • ${planned.date}`:`Day ${dayNo}`;const route=Array.isArray(planned.route)?planned.route.join(" → "):(planned.route||"Ride day");
+const record={day:dayNo,date:dayLabel,route:route,plannedKm:plannedKm,actualKm:Number(riderState.distance)||0,rideSeconds:Math.floor((Number(riderState.rideMs)||0)/1000),restSeconds:Math.floor((Number(riderState.restMs)||0)/1000),fuelSeconds:Math.floor((Number(riderState.stopMs)||0)/1000),finishedAt:new Date(now).toISOString()};
+const existingIndex=finishedDays.findIndex(x=>Number(x.day)===Number(dayNo));if(existingIndex>=0)finishedDays[existingIndex]=record;else finishedDays.push(record);localStorage.setItem(finishedKey,JSON.stringify(finishedDays));try{window.dispatchEvent(new Event('isan:dayFinished'));}catch(e){}
+const completedSnapshot=Object.assign({},riderState);riderState.running=false;riderState.finished=true;riderState.sessionStart=null;riderState.stopStart=null;riderState.stopType=null;riderState.speed=0;saveRider();activeRideDay=nextUnfinishedDay();localStorage.setItem("isanActiveRideDay",String(activeRideDay));loadRiderForDay(activeRideDay);
+alert("🏁 DAY FINISHED\n\n"+dayLabel+"\nRide Time: "+fmtTime(completedSnapshot.rideMs)+"\nRest Time: "+fmtTime(completedSnapshot.restMs)+"\nStop Time: "+fmtTime(completedSnapshot.stopMs)+"\nTotal Elapsed: "+fmtTime(completedSnapshot.rideMs+completedSnapshot.restMs+completedSnapshot.stopMs)+"\nDistance: "+(Number(completedSnapshot.distance)||0).toFixed(1)+" km");showRides(document.querySelectorAll(".nav button")[1]);}
+function resetRiderForDay(dayNo){if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}riderState=blankRiderState();riderState.day=Number(dayNo);saveRider();}
+function resetRider(){resetRiderForDay(activeRideDay);renderRider();}
 function mapsHere(){if(riderState.lat==null){alert("GPS location is not available yet. Press START GPS first.");return;}window.open("https://www.google.com/maps/search/?api=1&query="+riderState.lat+","+riderState.lon,"_blank");}
 function openGoogleMaps(url){
   const webUrl=url;
@@ -576,7 +565,7 @@ function showDays(btn,fromBack=false){
  const d=days[selected-1];
  const options=days.map(x=>{const isDone=done.some(r=>Number(r.day)===x.n);return `<option value="${x.n}" ${x.n===selected?"selected":""} ${isDone?"disabled":""}>Day ${x.n} • ${x.date} — ${x.route[0]} → ${x.route[x.route.length-1]}${isDone?" ✓":""}</option>`}).join("");
  const status=riderState.finished?"DAY FINISHED":(riderState.running?"TRACKING":(riderState.stopType?"PAUSED":"READY"));
- document.getElementById("screen").innerHTML=`<section class="section">
+ document.getElementById("screen").innerHTML=`<div class="pageBack"><button onclick="backToHome()">‹ BACK</button></div><section class="section">
  <div class="ride-day-panel">
   <div class="ride-day-head"><h2>📅 Select Ride Day</h2><span class="badge">${done.length}/${days.length} completed</span></div>
   <select class="ride-day-select" onchange="selectRideDay(Number(this.value))">${options}</select>
@@ -585,14 +574,15 @@ function showDays(btn,fromBack=false){
  <div class="ride-status-card">
   <div class="status-line"><div><b style="font-size:17px">🏍️ Live Rider Mode</b><div style="font-size:11px;opacity:.82;margin-top:3px">Day ${selected} • ${d.date}</div></div><span class="ready">${status}</span></div>
   <div style="font-size:12px;opacity:.86;margin-top:9px">Start tracking only when you are ready to ride. Stops and daily timing will be recorded under the selected day.</div>
-  <button class="startRideWide" onclick="openSelectedRide()">▶ ${riderState.finished?"VIEW FINISHED RIDE":"START / RESUME DAY "+selected}</button>
+  <button class="startRideWide" onclick="openSelectedRide()">▶ ${riderState.finished?"START NEW DAY":"START / RESUME DAY "+selected}</button>
  </div>
  <div class="summarySection"><div class="summarySectionTitle"><h3>Daily Rides</h3><span class="label">Tap a day for details</span></div>
  ${days.map(x=>{const r=done.find(z=>Number(z.day)===x.n);return `<div class="card" style="margin-bottom:10px;cursor:pointer" onclick="showDay(${x.n})"><div style="display:flex;justify-content:space-between;gap:8px"><b>DAY ${x.n} • ${x.date}</b><b>${x.km} km</b></div><div style="font-size:12px;margin-top:6px">${x.route.join(" → ")}</div><div class="label" style="margin-top:6px">Sleep: ${x.sleep} • Start: ${x.start}${r?` • <b style="color:var(--green)">DONE</b>`:""}</div></div>`}).join("")}
  </div></section>`;window.scrollTo(0,0);}
-function openSelectedRide(){if(riderState.finished){showRiderMode();return;}showRiderMode();}
+function openSelectedRide(){if(riderState.finished){resetRiderForDay(activeRideDay);}showRiderMode();}
 function showBudget(btn){renderBudget(btn)}
 function renderBudget(btn){
+ currentView="budget";
  if(btn) setActive(btn);
  const ex=getExpenses();
  const total=ex.reduce((s,x)=>s+x.amount,0);
@@ -634,6 +624,7 @@ ${items.length} transaction${items.length===1?"":"s"}`);
  }
 
  document.getElementById("screen").innerHTML=`
+ <div class="pageBack"><button onclick="backToHome()">‹ BACK</button></div>
  <section class="section">
   <h2>Actual Budget Tracker</h2>
   <div class="grid">
@@ -712,13 +703,21 @@ ${items.length} transaction${items.length===1?"":"s"}`);
 }
 let currentView="home";
 let activeRideDay=Number(localStorage.getItem("isanActiveRideDay")||0);
+let allowAppExit=false;
+function backToHome(){showHome(document.querySelectorAll(".nav button")[0]);}
+function backToRides(){showRides(document.querySelectorAll(".nav button")[1],true);}
+function requestExitApp(){const m=document.getElementById("exitModal");if(m){m.style.display="flex";m.setAttribute("aria-hidden","false");}}
+function closeExitModal(){const m=document.getElementById("exitModal");if(m){m.style.display="none";m.setAttribute("aria-hidden","true");}}
+function confirmExitApp(){closeExitModal();allowAppExit=true;try{history.back();}catch(e){}}
+function exitGuard(){if(allowAppExit)return;requestExitApp();try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}}
+try{history.replaceState({appRoot:true},"",location.href);history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}
 function getFinishedDays(){try{const x=JSON.parse(localStorage.getItem("finishedDays")||"[]");return Array.isArray(x)?x:[]}catch(e){return []}}
 function nextUnfinishedDay(){const done=new Set(getFinishedDays().map(x=>Number(x.day)));return days.find(d=>!done.has(d.n))?.n||days.length;}
 function ensureActiveRideDay(){const done=new Set(getFinishedDays().map(x=>Number(x.day)));if(!activeRideDay||done.has(activeRideDay)||!days.some(d=>d.n===activeRideDay)){activeRideDay=nextUnfinishedDay();localStorage.setItem("isanActiveRideDay",String(activeRideDay));}return activeRideDay;}
-function selectRideDay(n){const done=getFinishedDays().some(x=>Number(x.day)===Number(n));if(done){alert("This ride day is already finished. Choose another day.");return;}activeRideDay=Number(n);localStorage.setItem("isanActiveRideDay",String(activeRideDay));showRides();}
+function selectRideDay(n){const done=getFinishedDays().some(x=>Number(x.day)===Number(n));if(done){alert("This ride day is already finished. Choose another day.");return;}activeRideDay=Number(n);localStorage.setItem("isanActiveRideDay",String(activeRideDay));loadRiderForDay(activeRideDay);showRides();}
 function setActive(btn){document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));if(btn)btn.classList.add("active");}
-function appBackToRides(){if(currentView==="rider"){history.back();}else{showRides(document.querySelectorAll(".nav button")[1]);}}
-window.addEventListener("popstate",()=>{if(currentView==="rider"){showRides(document.querySelectorAll(".nav button")[1],true);}else{showHome(document.querySelectorAll(".nav button")[0]);}});
+function appBackToRides(){backToRides();}
+window.addEventListener("popstate",()=>{if(allowAppExit){allowAppExit=false;return;}if(currentView==="rider"||currentView==="rideDetail"||currentView==="summaryDetail"){backToRides();try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}}else if(currentView!=="home"){backToHome();try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}}else{exitGuard();}});
 function navigate(route){alert("Navigation target:\\n"+route+"\\n\\nPrototype action: connect this button to Google Maps / your preferred navigation app.");}
 currentView="home";showHome(document.querySelector(".nav button"));
 </script>
@@ -732,7 +731,7 @@ function addExpense(){
  const cat=document.getElementById("exCat").value;
  const amount=parseFloat(document.getElementById("exAmount").value);
  const note=document.getElementById("exNote").value.trim();
- if(!amount||amount<=0){alert("Masukkan jumlah bajet sebenar.");return}
+ if(!amount||amount<=0){alert("Enter a valid expense amount.");return}
  const arr=getExpenses(); arr.push({id:Date.now(),day,cat,amount,note});
  saveExpenses(arr); renderBudget(); 
 }
@@ -796,7 +795,7 @@ function saveReceiptPreview(input,n){
 })();
 </script>
 
-<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Isan Rider 2026 • V16</div>
+<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Isan Rider 2026 • V17</div>
 
 <script>
 (function(){
@@ -923,6 +922,8 @@ function buildV15Summary(){
 }
 
 function buildSummaryDayCard(r){const d=days[Number(r.day)-1]||{};const pct=r.plannedKm?Math.min(100,(Number(r.actualKm||0)/Number(r.plannedKm))*100):0;const diff=Number(r.actualKm||0)-Number(r.plannedKm||0);const cleanDate=String(r.date||d.date||"").replace(/^Day \d+ • /,"");return '<div class="summaryDayCard"><div class="summaryDayTop"><div><h4>Day '+r.day+' • '+cleanDate+'</h4><div class="summaryRoute">'+(r.route||((d.route||[]).join(" → ")) )+'</div></div><span class="donePill">✓ COMPLETED</span></div><div class="summaryMiniGrid"><div class="summaryMini"><b>'+Number(r.actualKm||0).toFixed(1)+' km</b><span>Actual</span></div><div class="summaryMini"><b>'+fmtTime(Number(r.rideSeconds||0)*1000)+'</b><span>Ride time</span></div><div class="summaryMini"><b>'+fmtTime(Number(r.restSeconds||0)*1000)+'</b><span>Rest / food</span></div><div class="summaryMini"><b>'+fmtTime(Number(r.fuelSeconds||0)*1000)+'</b><span>Fuel / short stop</span></div><div class="summaryMini"><b>'+Number(r.plannedKm||0).toFixed(0)+' km</b><span>Planned midpoint</span></div><div class="summaryMini"><b>'+(diff>=0?"+":"")+diff.toFixed(1)+' km</b><span>Difference</span></div></div><div class="summaryCompare"><div class="barbg"><div class="planned" style="width:100%"></div><div class="actual" style="width:'+pct+'%"></div></div><small><span>Planned '+Number(r.plannedKm||0).toFixed(0)+' km</span><span>Actual '+Number(r.actualKm||0).toFixed(1)+' km</span></small></div></div>';}
+function openSummaryDay(dayNo){const finished=getFinishedDays();const r=finished.find(x=>Number(x.day)===Number(dayNo));if(!r){alert("This ride day has not been completed yet.");return;}const d=days[Number(dayNo)-1]||{};const route=Array.isArray(d.route)?d.route.join(" → "):(r.route||"Ride day");currentView="summaryDetail";document.getElementById("screen").innerHTML=`<div class="pageBack"><button onclick="showSummary(document.querySelectorAll('.nav button')[3])">‹ BACK TO SUMMARY</button></div><section class="section"><div class="summaryDetail"><div class="summaryDetailHero"><h3>🏍️ Day ${r.day} • ${d.date||""}</h3><p>${route}</p></div><div class="summaryStatGrid"><div class="summaryStat"><div class="v">${Number(r.actualKm||0).toFixed(1)} km</div><div class="l">ACTUAL DISTANCE</div></div><div class="summaryStat"><div class="v">${Number(r.plannedKm||0).toFixed(0)} km</div><div class="l">PLANNED MIDPOINT</div></div><div class="summaryStat green"><div class="v">${fmtTime(Number(r.rideSeconds||0)*1000)}</div><div class="l">RIDE TIME</div></div><div class="summaryStat orange"><div class="v">${fmtTime(Number(r.restSeconds||0)*1000)}</div><div class="l">REST / FOOD</div></div><div class="summaryStat purple"><div class="v">${fmtTime(Number(r.fuelSeconds||0)*1000)}</div><div class="l">FUEL / SHORT STOP</div></div><div class="summaryStat red"><div class="v">${moneyTHB(r.expenses||0)}</div><div class="l">EXPENSES</div></div></div><button class="detailMapBtn" onclick="openSummaryRouteMap(${Number(dayNo)})">🗺️ VIEW DAY ROUTE IN GOOGLE MAPS</button></div></section>`;window.scrollTo(0,0);}
+function openSummaryRouteMap(dayNo){const d=days[Number(dayNo)-1];if(!d||!Array.isArray(d.route))return;const origin=d.route[0],destination=d.route[d.route.length-1],waypoints=d.route.slice(1,-1).join("|");let url="https://www.google.com/maps/dir/?api=1&origin="+encodeURIComponent(origin)+"&destination="+encodeURIComponent(destination)+"&travelmode=driving";if(waypoints)url+="&waypoints="+encodeURIComponent(waypoints);openGoogleMaps(url);}
 function showSummary(btn){
  currentView="summary";setActive(btn);const screen=document.getElementById("screen");
  const finished=getFinishedDays();const totalKm=finished.reduce((a,x)=>a+Number(x.actualKm||0),0);const rideSec=finished.reduce((a,x)=>a+Number(x.rideSeconds||0),0);const restSec=finished.reduce((a,x)=>a+Number(x.restSeconds||0),0);const stopSec=finished.reduce((a,x)=>a+Number(x.fuelSeconds||0),0);const spend=getExpenses().reduce((a,x)=>a+Number(x.amount||0),0);const progress=Math.min(100,(finished.length/days.length)*100);
@@ -933,7 +934,7 @@ window.addEventListener('storage', buildV15Summary);
 window.addEventListener('isan:dayFinished', buildV15Summary);
 
 </script>
-<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V16</div>
+<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V17</div>
 
 </body>
 </html>
