@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#073B4C">
 <link rel="manifest" href="manifest.webmanifest">
-<title>Isan Rider 2026 • V21 Clean Dashboard</title>
+<title>Isan Rider 2026 • V22 Clean Dashboard</title>
 <style>
 :root{--navy:#073B4C;--teal:#118AB2;--cyan:#06D6A0;--yellow:#FFD166;--orange:#F78C6B;--red:#EF476F;--purple:#7B61FF;--green:#52B788;--bg:#f4f7fa;--card:#fff;--ink:#18323C;--muted:#667781}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
@@ -340,8 +340,7 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
 </style>
 
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
- integrity="sha256-p4NxAoJBhIINfQ3qk9p8cK0Q3dGQj6Q0Y4s0Q2mQYx8=" crossorigin=""/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style id="v21-map-styles">
 .leaflet-container{font-family:system-ui,-apple-system,Segoe UI,sans-serif}
 .v21-real-map{height:330px;border-radius:18px;overflow:hidden;border:1px solid #dbe7ea;background:#e9f4f5;position:relative}
@@ -385,6 +384,20 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
 .v21-share-note{text-align:center;color:#dceff2;font-size:9px;margin-top:8px;opacity:.85}
 </style>
 
+<style id="v22-premium-completion">
+.v20-finish-title{font-family:Georgia,"Times New Roman",serif!important;font-style:italic!important;font-weight:700!important;letter-spacing:-.8px!important;font-size:46px!important;line-height:1.02!important}
+.v20-finish-route{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif!important;font-weight:500!important}
+.v20-finish-stat{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important;min-height:92px!important;padding:10px 8px!important}
+.v20-finish-stat b,.v20-finish-stat span{width:100%!important;text-align:center!important}
+.v20-finish-stat span{margin-top:6px!important}
+</style>
+<style id="v22-map-fix">
+.leaflet-container{position:relative;overflow:hidden;background:#dfeff1}
+.leaflet-pane,.leaflet-tile-pane,.leaflet-overlay-pane,.leaflet-shadow-pane,.leaflet-marker-pane,.leaflet-tooltip-pane,.leaflet-popup-pane{position:absolute;left:0;top:0}
+.leaflet-tile{position:absolute;left:0;top:0;max-width:none!important}
+.leaflet-tile-container{position:absolute;left:0;top:0}
+.v22-map-tag{position:absolute;z-index:800;right:10px;top:10px;background:#073b4c;color:#fff;border-radius:999px;padding:7px 10px;font-size:10px;font-weight:900;box-shadow:0 3px 12px rgba(0,0,0,.22)}
+</style>
 </head>
 <body>
 <div class="app">
@@ -633,7 +646,7 @@ This prototype creates the trip timeline; full MP4 rendering can be connected in
 }
 function showDay(n){ currentView="rideDetail"; document.getElementById("screen").innerHTML='<div class="pageBack"><button onclick="backToRides()">‹ BACK TO RIDES</button></div>'+card(days[n-1]); window.scrollTo(0,0);}
 let riderWatchId=null,riderTimer=null;
-function blankRiderState(){return {running:false,finished:false,distance:0,rideMs:0,restMs:0,fuelMs:0,shortStopMs:0,stopMs:0,totalStart:null,sessionStart:null,stopStart:null,stopType:null,lastLat:null,lastLon:null,speed:0,accuracy:null,lat:null,lon:null,points:0,heading:null,day:null};}
+function blankRiderState(){return {running:false,finished:false,distance:0,rideMs:0,restMs:0,fuelMs:0,shortStopMs:0,stopMs:0,totalStart:null,sessionStart:null,stopStart:null,stopType:null,lastLat:null,lastLon:null,speed:0,accuracy:null,lat:null,lon:null,points:0,heading:null,day:null,track:[],stopLocations:[]};}
 let riderState=blankRiderState();
 function loadRiderForDay(dayNo){const key="isanRiderGPS-day-"+dayNo;try{const saved=JSON.parse(localStorage.getItem(key)||"null");if(saved){riderState=Object.assign(blankRiderState(),saved);if(!Number(riderState.fuelMs)&&!Number(riderState.shortStopMs)&&Number(riderState.stopMs))riderState.fuelMs=Number(riderState.stopMs)||0;return;}}catch(e){}try{const legacy=JSON.parse(localStorage.getItem("isanRiderGPS")||"null");if(legacy && (legacy.day==null || Number(legacy.day)===Number(dayNo))){riderState=Object.assign(blankRiderState(),legacy);riderState.day=Number(dayNo);saveRider();return;}}catch(e){}riderState=blankRiderState();riderState.day=Number(dayNo);saveRider();}
 function saveRider(){riderState.day=Number(activeRideDay||riderState.day||1);localStorage.setItem("isanRiderGPS-day-"+riderState.day,JSON.stringify(riderState));localStorage.setItem("isanRiderGPS",JSON.stringify(riderState));}
@@ -662,7 +675,12 @@ const sb=el("riderStartBtn"),fb=el("finishDayBtn"),stopb=el("riderStopBtn");if(s
 function riderPosition(pos){const c=pos.coords,lat=c.latitude,lon=c.longitude;
 if(riderState.lastLat!=null&&riderState.lastLon!=null){const d=haversine(riderState.lastLat,riderState.lastLon,lat,lon);if(d<1)riderState.distance+=d;}
 riderState.lastLat=lat;riderState.lastLon=lon;riderState.lat=lat;riderState.lon=lon;riderState.speed=c.speed!=null&&c.speed>=0?c.speed*3.6:0;riderState.accuracy=c.accuracy;riderState.points++;
-if(c.heading!=null&&c.heading>=0)riderState.heading=c.heading;saveRider();renderRider();}
+if(c.heading!=null&&c.heading>=0)riderState.heading=c.heading;
+if(!Array.isArray(riderState.track))riderState.track=[];
+const last=riderState.track[riderState.track.length-1];
+const moved=!last||haversine(last[0],last[1],lat,lon)>=0.03;
+if(moved && (!c.accuracy || c.accuracy<=120)){riderState.track.push([Number(lat),Number(lon)]);if(riderState.track.length>2500)riderState.track.splice(0,riderState.track.length-2500);}
+saveRider();renderRider();}
 function startRider(){ensureActiveRideDay();if(riderState.finished){alert("This ride day is already finished. Go back to Rides and select another day.");return;}if(!("geolocation"in navigator)){alert("GPS is not supported by this browser/device.");return;}if(riderState.running)return;
 const now=Date.now();
 if(!riderState.totalStart)riderState.totalStart=now-(Number(riderState.rideMs)||0)-(Number(riderState.restMs)||0)-(Number(riderState.fuelMs)||0)-(Number(riderState.shortStopMs)||0);
@@ -673,6 +691,8 @@ if(riderTimer===null)riderTimer=setInterval(renderRider,1000);}
 function openStopOptions(){if(!riderState.running||riderState.finished)return;const m=document.getElementById("stopModal");if(m)m.classList.add("show");}
 function closeStopOptions(){const m=document.getElementById("stopModal");if(m)m.classList.remove("show");}
 function chooseStop(type){closeStopOptions();if(!riderState.running)return;const now=Date.now();
+if(!Array.isArray(riderState.stopLocations))riderState.stopLocations=[];
+if(riderState.lat!=null&&riderState.lon!=null)riderState.stopLocations.push({lat:Number(riderState.lat),lon:Number(riderState.lon),type:type,at:new Date(now).toISOString()});
 if(riderState.sessionStart){riderState.rideMs=(Number(riderState.rideMs)||0)+Math.max(0,now-riderState.sessionStart);riderState.sessionStart=null;}
 if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}
 riderState.running=false;riderState.stopStart=now;riderState.stopType=type;riderState.speed=0;saveRider();renderRider();}
@@ -683,7 +703,7 @@ if(!riderState.running&&riderState.stopStart){const d=Math.max(0,now-riderState.
 if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}
 const finishedKey="finishedDays";let finishedDays=[];try{finishedDays=JSON.parse(localStorage.getItem(finishedKey)||"[]");}catch(e){finishedDays=[];}if(!Array.isArray(finishedDays))finishedDays=[];
 const dayNo=ensureActiveRideDay();const planned=days[dayNo-1]||{};const range=String(planned.km||"").replace(/,/g,"").match(/(\d+(?:\.\d+)?)/g)||[];const plannedKm=range.length>=2?(Number(range[0])+Number(range[1]))/2:(range.length?Number(range[0]):0);const dayLabel=planned.date?`Day ${dayNo} • ${planned.date}`:`Day ${dayNo}`;const route=Array.isArray(planned.route)?planned.route.join(" → "):(planned.route||"Ride day");
-const record={day:dayNo,date:dayLabel,route:route,plannedKm:plannedKm,actualKm:Number(riderState.distance)||0,rideSeconds:Math.floor((Number(riderState.rideMs)||0)/1000),restSeconds:Math.floor((Number(riderState.restMs)||0)/1000),fuelSeconds:Math.floor((Number(riderState.fuelMs)||0)/1000),shortStopSeconds:Math.floor((Number(riderState.shortStopMs)||0)/1000),finishedAt:new Date(now).toISOString()};
+const record={day:dayNo,date:dayLabel,route:route,plannedKm:plannedKm,actualKm:Number(riderState.distance)||0,rideSeconds:Math.floor((Number(riderState.rideMs)||0)/1000),restSeconds:Math.floor((Number(riderState.restMs)||0)/1000),fuelSeconds:Math.floor((Number(riderState.fuelMs)||0)/1000),shortStopSeconds:Math.floor((Number(riderState.shortStopMs)||0)/1000),track:Array.isArray(riderState.track)?riderState.track.slice():[],stopLocations:Array.isArray(riderState.stopLocations)?riderState.stopLocations.slice():[],finishedAt:new Date(now).toISOString()};
 const existingIndex=finishedDays.findIndex(x=>Number(x.day)===Number(dayNo));if(existingIndex>=0)finishedDays[existingIndex]=record;else finishedDays.push(record);localStorage.setItem(finishedKey,JSON.stringify(finishedDays));try{window.dispatchEvent(new Event('isan:dayFinished'));}catch(e){}
 const completedSnapshot=Object.assign({},riderState);riderState.running=false;riderState.finished=true;riderState.sessionStart=null;riderState.stopStart=null;riderState.stopType=null;riderState.speed=0;saveRider();activeRideDay=nextUnfinishedDay();localStorage.setItem("isanActiveRideDay",String(activeRideDay));loadRiderForDay(activeRideDay);
 openFinishModal(dayLabel,completedSnapshot);showRides(document.querySelectorAll(".nav button")[1]);}
@@ -1007,7 +1027,7 @@ function saveReceiptPreview(input,n){
 })();
 </script>
 
-<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Isan Rider 2026 • V21</div>
+<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Isan Rider 2026 • V22</div>
 
 <script>
 (function(){
@@ -1140,7 +1160,7 @@ function showSummary(btn){
  currentView="summary"; setActive(btn); const screen=document.getElementById("screen");
  const finished=getFinishedDays().slice().sort((a,b)=>Number(a.day)-Number(b.day));
  const options=days.map(d=>`<option value="${d.n}">Day ${d.n} • ${d.date} — ${d.route.join(" → ")}</option>`).join('');
- const backWell=window.__returnToFinish ? `<button class="summaryBackWell" onclick="returnToWellDone()">← BACK TO WELL DONE</button>` : '';
+ const backWell=window.__returnToFinish ? `<button class="summaryBackWell" onclick="returnToWellDone()">← BACK TO COMPLETION CARD</button>` : '';
  screen.innerHTML=`<section class="section"><div class="summaryHero">${backWell}<div class="dailyHeader"><h2 style="margin:0">📝 Daily Summary</h2><span class="label">${finished.length}/${days.length} completed</span></div><p>Review each completed ride day, timing, distance and route.</p><select id="summaryDaySelect" class="summaryDailySelect" onchange="openSummaryDay(Number(this.value))">${options}</select><div id="dailySummaryBody"></div></div></section>`;
  if(finished.length){const preferred=window.__summaryDay||finished[finished.length-1].day;const has=finished.some(x=>Number(x.day)===Number(preferred));const dayNo=has?preferred:finished[finished.length-1].day;document.getElementById('summaryDaySelect').value=String(dayNo);renderDailySummary(dayNo);}else{document.getElementById('dailySummaryBody').innerHTML='<div class="summary-empty">No completed ride days yet. Finish a ride day and its record will appear here.</div>';}
  window.__summaryDay=null; window.scrollTo(0,0);
@@ -1164,7 +1184,7 @@ function saveFinishCard(){const c=makeFinishCanvas();c.toBlob(blob=>{const a=doc
 async function shareFinishCard(){const c=makeFinishCanvas();c.toBlob(async blob=>{try{const file=new File([blob],'Isan-Rider-Finish.png',{type:'image/png'});if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){await navigator.share({title:'Isan Rider 2026',text:"Finished today's ride.",files:[file]});}else{saveFinishCard();alert('Image saved. You can now share it to Facebook or WhatsApp.');}}catch(e){if(e&&e.name==='AbortError')return;saveFinishCard();}},'image/png');}
 
 </script>
-<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V21</div>
+<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V22</div>
 
 
 <script>
@@ -1209,7 +1229,7 @@ function showHome(btn){
       <div class="v20-tripdash">
         <div class="v20-dash-head">
           <div>
-            <div class="v20-dash-title">📊 Live Trip Dashboard</div>
+            <div class="v20-dash-title">🧭 Live Trip Dashboard</div>
             <div class="v20-dash-sub">Live totals from completed ride days</div>
           </div>
           <div class="v20-dash-complete"><span id="homeDays">0 / ${days.length}</span><br>completed</div>
@@ -1246,7 +1266,7 @@ function showHome(btn){
       </div>
     </section>
 
-    <div class="v20-footer-note">Isan Rider 2026 • V21</div>
+    <div class="v20-footer-note">Isan Rider 2026 • V22</div>
   `;
   renderHomeTripDashboard();
   window.scrollTo(0,0);
@@ -1338,7 +1358,7 @@ function showSummary(btn){
   const finished=getFinishedDays().slice().sort((a,b)=>Number(a.day)-Number(b.day));
   const options=days.map(d=>`<option value="${d.n}">Day ${d.n} • ${d.date} — ${d.route.join(" → ")}</option>`).join("");
   const backBtn=window.__returnToFinish
-    ? `<div class="pageBack"><button onclick="returnToWellDone()">‹ BACK TO WELL DONE</button></div>` : "";
+    ? `<div class="pageBack"><button onclick="returnToWellDone()">‹ BACK TO COMPLETION CARD</button></div>` : "";
   screen.innerHTML=`
     ${backBtn}
     <section class="section">
@@ -1466,213 +1486,107 @@ document.addEventListener("click",function(e){
  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 
-<script id="v21-map-data">
+<script id="v22-map-data">
 const V21_COORDS={
-"Golok":[6.025,101.965],
-"Pattani":[6.868,101.250],
-"Hat Yai":[7.008,100.474],
-"Phatthalung":[7.617,100.078],
-"Surat Thani":[9.138,99.321],
-"Chumphon":[10.493,99.180],
-"Prachuap":[11.812,99.797],
-"Nakhon Sawan":[15.704,100.137],
-"Phitsanulok":[16.821,100.265],
-"Khao Kho":[16.897,101.060],
-"Lom Sak":[16.779,101.242],
-"Loei":[17.486,101.722],
-"Phu Ruea":[17.455,101.361],
-"Dan Sai":[17.281,101.149],
-"Na Haeo":[17.490,101.141],
-"Pak Chom":[17.833,101.903],
-"Chiang Khan":[17.894,101.663],
-"Mekong":[17.894,101.663],
-"Old Town":[17.894,101.663],
-"Sangkhom":[17.827,102.273],
-"Si Chiang Mai":[17.956,102.588],
-"Nong Khai":[17.878,102.742],
-"Udon Thani":[17.414,102.787],
-"Khon Kaen":[16.432,102.823],
-"Chum Phae":[16.543,102.100],
-"Phetchabun":[16.418,101.160],
-"Central Thailand":[14.0,100.5],
-"Nakhon Si":[8.430,99.963],
-"Thung Song":[8.165,99.680],
-"Narathiwat":[6.426,101.825],
-"Route 2195":[17.62,101.43]
+"Golok":[6.025,101.965],"Pattani":[6.868,101.250],"Hat Yai":[7.008,100.474],"Phatthalung":[7.617,100.078],
+"Surat Thani":[9.138,99.321],"Chumphon":[10.493,99.180],"Prachuap":[11.812,99.797],"Nakhon Sawan":[15.704,100.137],
+"Phitsanulok":[16.821,100.265],"Khao Kho":[16.897,101.060],"Lom Sak":[16.779,101.242],"Loei":[17.486,101.722],
+"Phu Ruea":[17.455,101.361],"Dan Sai":[17.281,101.149],"Na Haeo":[17.490,101.141],"Pak Chom":[17.833,101.903],
+"Chiang Khan":[17.894,101.663],"Mekong":[17.894,101.663],"Old Town":[17.894,101.663],"Sangkhom":[17.827,102.273],
+"Si Chiang Mai":[17.956,102.588],"Nong Khai":[17.878,102.742],"Udon Thani":[17.414,102.787],"Khon Kaen":[16.432,102.823],
+"Chum Phae":[16.543,102.100],"Phetchabun":[16.418,101.160],"Central Thailand":[14.0,100.5],"Nakhon Si":[8.430,99.963],
+"Thung Song":[8.165,99.680],"Narathiwat":[6.426,101.825],"Route 2195":[17.62,101.43]
 };
 const V21_MAPS={};
-function v21MapPoint(name){
-  const p=V21_COORDS[name];
-  return p ? [p[0],p[1]] : null;
-}
-function v21RouteUrl(points){
-  const coords=points.map(p=>p[1]+","+p[0]).join(";");
-  return "https://router.project-osrm.org/route/v1/driving/"+coords+"?overview=full&geometries=geojson&steps=false";
-}
+function v21MapPoint(name){const p=V21_COORDS[name];return p?[p[0],p[1]]:null;}
+function v21RouteUrl(points){const coords=points.map(p=>p[1]+","+p[0]).join(";");return "https://router.project-osrm.org/route/v1/driving/"+coords+"?overview=full&geometries=geojson&steps=false";}
+function v22FinishedRecord(dayNo){return getFinishedDays().find(x=>Number(x.day)===Number(dayNo))||null;}
 async function initV21Map(dayNo){
-  const el=document.getElementById("realMap-"+dayNo);
-  if(!el||typeof L==="undefined")return;
+  const el=document.getElementById("realMap-"+dayNo);if(!el||typeof L==="undefined")return;
   if(V21_MAPS[dayNo]){setTimeout(()=>V21_MAPS[dayNo].invalidateSize(),60);return;}
-  const d=days[Number(dayNo)-1]||{};
-  const names=Array.isArray(d.route)?d.route:[];
-  let pts=names.map(v21MapPoint);
-  /* Remove unknown points rather than inventing a coordinate. */
-  pts=pts.filter(Boolean);
-  const map=L.map(el,{scrollWheelZoom:false,zoomControl:true});
-  V21_MAPS[dayNo]=map;
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-    maxZoom:18,attribution:"© OpenStreetMap contributors"
-  }).addTo(map);
-  if(!pts.length){
-    map.setView([17.5,101.7],7);
-    el.insertAdjacentHTML("beforeend",'<div class="v21-map-error">Map anchors are not available for this day yet.</div>');
-    return;
-  }
-  pts.forEach((p,i)=>{
-    const icon=L.divIcon({
-      className:"",
-      html:'<div style="width:18px;height:18px;border-radius:50%;background:'+(i===0?"#ef476f":"#118ab2")+';border:3px solid white;box-shadow:0 2px 7px rgba(0,0,0,.35)"></div>',
-      iconSize:[18,18],iconAnchor:[9,9]
-    });
-    L.marker(p,{icon}).addTo(map).bindTooltip(names[i],{direction:"top",offset:[0,-8]});
-  });
-  map.fitBounds(L.latLngBounds(pts),{padding:[25,25]});
-  const loading=document.createElement("div");loading.className="v21-map-loading";loading.textContent="Building road route…";el.appendChild(loading);
-  try{
-    const res=await fetch(v21RouteUrl(pts),{cache:"no-store"});
-    if(!res.ok)throw new Error("Routing service unavailable");
-    const data=await res.json();
-    if(!data.routes||!data.routes[0])throw new Error("No road route found");
-    const route=data.routes[0];
-    const line=L.geoJSON(route.geometry,{style:{color:"#e83e68",weight:6,opacity:.9}}).addTo(map);
+  const d=days[Number(dayNo)-1]||{},rec=v22FinishedRecord(dayNo);
+  const gps=Array.isArray(rec&&rec.track)?rec.track.filter(p=>Array.isArray(p)&&p.length>=2):[];
+  const hasGps=gps.length>=2,names=Array.isArray(d.route)?d.route:[],planned=names.map(v21MapPoint).filter(Boolean),pts=hasGps?gps:planned;
+  const map=L.map(el,{scrollWheelZoom:false,zoomControl:true});V21_MAPS[dayNo]=map;
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"© OpenStreetMap contributors"}).addTo(map);
+  if(!pts.length){map.setView([17.5,101.7],7);return;}
+  if(hasGps){
+    const line=L.polyline(gps,{color:"#e83e68",weight:5,opacity:.92}).addTo(map);
+    L.circleMarker(gps[0],{radius:8,color:"#fff",weight:3,fillColor:"#ef476f",fillOpacity:1}).addTo(map).bindTooltip("START",{direction:"top"});
+    L.circleMarker(gps[gps.length-1],{radius:8,color:"#fff",weight:3,fillColor:"#06d6a0",fillOpacity:1}).addTo(map).bindTooltip("FINISH",{direction:"top"});
+    const stops=Array.isArray(rec.stopLocations)?rec.stopLocations:[];
+    stops.forEach((st,i)=>{if(st&&Number.isFinite(Number(st.lat))&&Number.isFinite(Number(st.lon))){
+      L.circleMarker([Number(st.lat),Number(st.lon)],{radius:8,color:"#fff",weight:3,fillColor:st.type==="refuel"?"#f4a261":st.type==="short"?"#9b5de5":"#06d6a0",fillOpacity:1}).addTo(map)
+       .bindTooltip((st.type==="refuel"?"REFUEL":st.type==="short"?"SHORT STOP":"REST / FOOD")+" #"+(i+1),{direction:"top"});
+    }});
     map.fitBounds(line.getBounds(),{padding:[28,28]});
-    const km=(route.distance/1000).toFixed(1);
-    el.dataset.routeKm=km;
-    const kmEl=document.getElementById("mapKm-"+dayNo);if(kmEl)kmEl.textContent=km+" km road route";
-  }catch(e){
-    const fallback=L.polyline(pts,{color:"#e83e68",weight:5,dashArray:"8 8",opacity:.8}).addTo(map);
-    map.fitBounds(fallback.getBounds(),{padding:[28,28]});
-    const err=document.createElement("div");err.className="v21-map-error";err.textContent="Live road routing unavailable. Showing waypoint route.";
-    el.appendChild(err);
-  }finally{loading.remove();}
+    const km=(Number(rec.actualKm)||0).toFixed(1),kmEl=document.getElementById("mapKm-"+dayNo);if(kmEl)kmEl.textContent=km+" km GPS track";
+    const tag=document.createElement("div");tag.className="v22-map-tag";tag.textContent="GPS TRACK";el.appendChild(tag);
+  }else{
+    planned.forEach((p,i)=>L.circleMarker(p,{radius:7,color:"#fff",weight:3,fillColor:i===0?"#ef476f":i===planned.length-1?"#06d6a0":"#118ab2",fillOpacity:1}).addTo(map).bindTooltip(names[i]||("Stop "+(i+1)),{direction:"top"}));
+    map.fitBounds(L.latLngBounds(planned),{padding:[25,25]});
+    if(planned.length>=2){
+      try{
+        const res=await fetch(v21RouteUrl(planned),{cache:"no-store"});if(!res.ok)throw new Error();
+        const data=await res.json();if(!data.routes||!data.routes[0])throw new Error();
+        const route=data.routes[0],line=L.geoJSON(route.geometry,{style:{color:"#e83e68",weight:5,opacity:.9}}).addTo(map);
+        map.fitBounds(line.getBounds(),{padding:[28,28]});
+        const km=(route.distance/1000).toFixed(1),kmEl=document.getElementById("mapKm-"+dayNo);if(kmEl)kmEl.textContent=km+" km road route";
+      }catch(e){
+        L.polyline(planned,{color:"#e83e68",weight:5,dashArray:"8 8",opacity:.8}).addTo(map);
+        const err=document.createElement("div");err.className="v21-map-error";err.textContent="Road routing unavailable; showing planned waypoints.";el.appendChild(err);
+      }
+    }
+  }
 }
-function initVisibleV21Maps(){
-  document.querySelectorAll(".v21-real-map").forEach(el=>initV21Map(Number(el.dataset.day)));
-}
+function initVisibleV21Maps(){document.querySelectorAll(".v21-real-map").forEach(el=>initV21Map(Number(el.dataset.day)));}
 </script>
 
 
-<script id="v21-summary-override">
+<script id="v22-summary-override">
 function routeMapPreview(dayNo){
-  const d=days[Number(dayNo)-1]||{};
-  const route=Array.isArray(d.route)?d.route:[];
-  return `<div class="v21-route-card">
-    <div class="v21-route-card-head"><b>🗺️ Route Map</b><span id="mapKm-${dayNo}">Road route</span></div>
-    <div id="realMap-${dayNo}" class="v21-real-map" data-day="${dayNo}"></div>
-    <div class="v21-map-note">Road geometry is generated from route waypoints using OpenStreetMap + OSRM. Open Google Maps for turn-by-turn navigation.</div>
-  </div>`;
+  const d=days[Number(dayNo)-1]||{},rec=v22FinishedRecord(dayNo),hasGps=Array.isArray(rec&&rec.track)&&rec.track.length>=2;
+  return `<div class="v21-route-card"><div class="v21-route-card-head"><b>🗺️ ${hasGps?"GPS Route":"Route Map"}</b><span id="mapKm-${dayNo}">${hasGps?(Number(rec.actualKm||0).toFixed(1)+" km GPS track"):"Road route"}</span></div>
+  <div id="realMap-${dayNo}" class="v21-real-map" data-day="${dayNo}"></div>
+  <div class="v21-map-note">${hasGps?"Pinned from your recorded GPS track and stop locations.":"GPS track will appear here after you ride; this is the planned route for now."}</div></div>`;
 }
 function renderDailySummary(dayNo){
-  const r=getFinishedDays().find(x=>Number(x.day)===Number(dayNo));
-  const box=document.getElementById('dailySummaryBody');if(!box||!r)return;
-  const d=days[Number(dayNo)-1]||{};
-  const planned=Number(r.plannedKm||0),actual=Number(r.actualKm||0),diff=actual-planned;
+  const r=getFinishedDays().find(x=>Number(x.day)===Number(dayNo)),box=document.getElementById('dailySummaryBody');if(!box||!r)return;
+  const d=days[Number(dayNo)-1]||{},planned=Number(r.plannedKm||0),actual=Number(r.actualKm||0),diff=actual-planned;
   const spend=getExpenses().filter(e=>String(e.day||e.date||'').includes(String(d.date))).reduce((a,x)=>a+(Number(x.amount)||0),0);
-  box.innerHTML=`<div class="dailyCard">
-    <h3>Day ${r.day} • ${d.date||''}</h3>
-    <div class="route">${Array.isArray(d.route)?d.route.join(' → '):(r.route||'Ride day')}</div>
-    <div class="dailyGrid">
-      <div><b>${actual.toFixed(1)} km</b><span>ACTUAL DISTANCE</span></div>
-      <div><b>${planned.toFixed(0)} km</b><span>PLANNED MIDPOINT</span></div>
-      <div><b>${fmtSummaryTime(r.rideSeconds)}</b><span>RIDE TIME</span></div>
-      <div><b>${fmtSummaryTime(r.restSeconds)}</b><span>REST / FOOD</span></div>
-      <div><b>${fmtSummaryTime(r.fuelSeconds)}</b><span>FUEL TIME</span></div>
-      <div><b>${fmtSummaryTime(r.shortStopSeconds)}</b><span>SHORT STOP</span></div>
-      <div><b>${diff>=0?'+':''}${diff.toFixed(1)} km</b><span>DIFFERENCE</span></div>
-      <div><b>${moneyTHB(r.expenses||spend)}</b><span>EXPENSES</span></div>
-    </div>
-    ${routeMapPreview(dayNo)}
-    <button class="mapOpenBtn" onclick="openSummaryRouteMap(${Number(dayNo)})">OPEN DAY ROUTE IN GOOGLE MAPS</button>
-  </div>`;
-  window.scrollTo(0,0);
-  setTimeout(()=>initV21Map(Number(dayNo)),80);
+  box.innerHTML=`<div class="dailyCard"><h3>Day ${r.day} • ${d.date||''}</h3><div class="route">${Array.isArray(d.route)?d.route.join(' → '):(r.route||'Ride day')}</div>
+  <div class="dailyGrid"><div><b>${actual.toFixed(1)} km</b><span>ACTUAL DISTANCE</span></div><div><b>${planned.toFixed(0)} km</b><span>PLANNED MIDPOINT</span></div>
+  <div><b>${fmtSummaryTime(r.rideSeconds)}</b><span>RIDE TIME</span></div><div><b>${fmtSummaryTime(r.restSeconds)}</b><span>REST / FOOD</span></div>
+  <div><b>${fmtSummaryTime(r.fuelSeconds)}</b><span>FUEL TIME</span></div><div><b>${fmtSummaryTime(r.shortStopSeconds)}</b><span>SHORT STOP</span></div>
+  <div><b>${diff>=0?'+':''}${diff.toFixed(1)} km</b><span>DIFFERENCE</span></div><div><b>${moneyTHB(r.expenses||spend)}</b><span>EXPENSES</span></div></div>
+  ${routeMapPreview(dayNo)}<button class="mapOpenBtn" onclick="openSummaryRouteMap(${Number(dayNo)})">OPEN DAY ROUTE IN GOOGLE MAPS</button></div>`;
+  window.scrollTo(0,0);setTimeout(()=>initV21Map(Number(dayNo)),120);
 }
 </script>
 
 
-<script id="v21-finish-image">
-function loadV21Scenic(){
-  return new Promise((resolve,reject)=>{
-    const im=new Image();
-    im.onload=()=>resolve(im);
-    im.onerror=reject;
-    im.src="scenic-rider.png";
-  });
-}
-function drawV21Cover(ctx,img,w,h){
-  const scale=Math.max(w/img.width,h/img.height);
-  const sw=img.width*scale,sh=img.height*scale;
-  const sx=(w-sw)/2,sy=(h-sh)/2;
-  ctx.drawImage(img,sx,sy,sw,sh);
-  const ov=ctx.createLinearGradient(0,0,0,h);
-  ov.addColorStop(0,"rgba(3,35,46,.48)");
-  ov.addColorStop(.42,"rgba(3,35,46,.06)");
-  ov.addColorStop(.72,"rgba(3,35,46,.30)");
-  ov.addColorStop(1,"rgba(3,35,46,.88)");
-  ctx.fillStyle=ov;ctx.fillRect(0,0,w,h);
-}
+<script id="v22-finish-image">
+function loadV22Scenic(){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src="./scenic-rider.png?v=22";});}
+function v22RoundRect(ctx,x,y,w,h,r){if(ctx.roundRect){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.closePath();return;}ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
+function v22FitCover(ctx,img,w,h){const scale=Math.max(w/img.width,h/img.height),sw=img.width*scale,sh=img.height*scale;ctx.drawImage(img,(w-sw)/2,(h-sh)/2,sw,sh);const ov=ctx.createLinearGradient(0,0,0,h);ov.addColorStop(0,"rgba(3,35,46,.52)");ov.addColorStop(.34,"rgba(3,35,46,.10)");ov.addColorStop(.70,"rgba(3,35,46,.22)");ov.addColorStop(1,"rgba(3,35,46,.78)");ctx.fillStyle=ov;ctx.fillRect(0,0,w,h);}
+function v22WrapText(ctx,text,x,y,maxWidth,lineHeight,maxLines){const words=String(text||"").split(/\s+/),lines=[];let line="";for(const word of words){const test=line?line+" "+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word;if(lines.length===maxLines-1)break;}else line=test;}if(lines.length<maxLines&&line)lines.push(line);lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lineHeight));}
 async function makeFinishCanvas(){
-  const d=finishCardData();
-  const c=document.createElement("canvas");c.width=1080;c.height=1350;
-  const x=c.getContext("2d");
-  try{
-    const im=await loadV21Scenic();drawV21Cover(x,im,c.width,c.height);
-  }catch(e){
-    x.fillStyle="#073b4c";x.fillRect(0,0,c.width,c.height);
-  }
-  x.fillStyle="rgba(3,35,46,.62)";x.roundRect(55,55,970,350,34);x.fill();
-  x.strokeStyle="#ffd166";x.lineWidth=3;x.stroke();
-  x.fillStyle="#fff";x.font="900 74px system-ui";x.fillText("🏁 WELL DONE!",88,145);
-  x.font="34px system-ui";x.fillText("You finished today's ride.",90,207);
-  x.fillText("Get some rest for tomorrow's adventure.",90,257);
-  x.fillStyle="#ffd166";x.font="900 32px system-ui";x.fillText(d.day.toUpperCase(),90,320);
-  x.fillStyle="#fff";x.font="700 24px system-ui";
-  const route=String(d.route||"");
-  if(route)x.fillText(route.slice(0,72),90,367);
-
-  x.fillStyle="rgba(255,255,255,.95)";
-  x.roundRect(65,940,455,210,28);x.fill();
-  x.roundRect(560,940,455,210,28);x.fill();
-  x.fillStyle="#164a58";x.font="900 65px system-ui";
-  x.fillText(d.distance,100,1028);x.fillText(d.ride,595,1028);
-  x.font="800 25px system-ui";x.fillText("DISTANCE",103,1080);x.fillText("RIDE TIME",598,1080);
-  x.fillStyle="#fff";x.font="800 27px system-ui";x.fillText("ISAN RIDER 2026 • Voge DS900X",70,1245);
-  x.font="italic 25px system-ui";x.fillText("Not just miles, but memories.",70,1295);
-  return c;
+ const d=finishCardData(),c=document.createElement("canvas");c.width=1080;c.height=1350;const x=c.getContext("2d");x.textBaseline="alphabetic";
+ try{const im=await loadV22Scenic();v22FitCover(x,im,c.width,c.height);}catch(e){x.fillStyle="#073b4c";x.fillRect(0,0,c.width,c.height);}
+ x.fillStyle="rgba(3,35,46,.72)";v22RoundRect(x,55,48,970,355,34);x.fill();x.strokeStyle="rgba(255,209,102,.9)";x.lineWidth=3;v22RoundRect(x,55,48,970,355,34);x.stroke();
+ x.fillStyle="#dceff2";x.font='700 22px Arial,sans-serif';x.fillText("ISAN RIDER 2026",88,100);x.fillStyle="#ffd166";x.font='800 20px Arial,sans-serif';x.fillText("DAY COMPLETE",800,100);
+ x.fillStyle="#fff";x.font='700 italic 78px Georgia,"Times New Roman",serif';x.fillText("Well done!",88,178);
+ x.font='32px Arial,sans-serif';x.fillText("You finished today's ride.",90,232);x.fillText("Get some rest for tomorrow's adventure.",90,274);
+ x.fillStyle="#ffd166";x.font='800 30px Arial,sans-serif';x.fillText(String(d.day||"").toUpperCase(),90,332);
+ x.fillStyle="#fff";x.font='600 24px Arial,sans-serif';v22WrapText(x,String(d.route||""),90,368,875,30,2);
+ x.fillStyle="rgba(255,255,255,.95)";v22RoundRect(x,65,945,450,205,28);x.fill();v22RoundRect(x,565,945,450,205,28);x.fill();
+ x.fillStyle="#164a58";x.textAlign="center";x.font='800 64px Arial,sans-serif';x.fillText(String(d.distance||"0.0 km"),290,1035);x.fillText(String(d.ride||"00:00:00"),790,1035);
+ x.font='800 24px Arial,sans-serif';x.fillText("DISTANCE",290,1085);x.fillText("RIDE TIME",790,1085);x.textAlign="left";
+ x.fillStyle="#fff";x.font='700 25px Arial,sans-serif';x.fillText("ISAN RIDER 2026 • Voge DS900X",70,1245);x.font='italic 23px Georgia,"Times New Roman",serif';x.fillText("Not just miles, but memories.",70,1292);
+ return c;
 }
-async function saveFinishCard(){
-  const c=await makeFinishCanvas();
-  c.toBlob(blob=>{
-    const a=document.createElement("a");a.href=URL.createObjectURL(blob);
-    a.download="Isan-Rider-"+finishCardData().day.replace(/[^A-Za-z0-9]+/g,"-")+".png";
-    a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);
-  },"image/png");
-}
-async function shareFinishCard(){
-  const c=await makeFinishCanvas();
-  c.toBlob(async blob=>{
-    try{
-      const file=new File([blob],"Isan-Rider-Finish.png",{type:"image/png"});
-      if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){
-        await navigator.share({title:"Isan Rider 2026",text:"Finished today's ride.",files:[file]});
-      }else{
-        await saveFinishCard();
-      }
-    }catch(e){
-      if(e&&e.name!=="AbortError")await saveFinishCard();
-    }
-  },"image/png");
-}
+async function saveFinishCard(){const c=await makeFinishCanvas();c.toBlob(blob=>{if(!blob){alert("Unable to create the image. Please try again.");return;}const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="Isan-Rider-"+finishCardData().day.replace(/[^A-Za-z0-9]+/g,"-")+".png";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);},"image/png");}
+async function shareFinishCard(){const c=await makeFinishCanvas();c.toBlob(async blob=>{if(!blob){alert("Unable to create the image. Please try again.");return;}try{const file=new File([blob],"Isan-Rider-Finish.png",{type:"image/png"});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"Isan Rider 2026",text:"Finished today's ride.",files:[file]});}else if(navigator.share){await navigator.share({title:"Isan Rider 2026",text:"Finished today's ride."});await saveFinishCard();}else{await saveFinishCard();}}catch(e){if(e&&e.name!=="AbortError")await saveFinishCard();}}, "image/png");}
 </script>
 
 </body>
