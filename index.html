@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#073B4C">
 <link rel="manifest" href="manifest.webmanifest">
-<title>Isan Rider 2026 • V22 Clean Dashboard</title>
+<title>Min's Thailand Road Trip</title>
 <style>
 :root{--navy:#073B4C;--teal:#118AB2;--cyan:#06D6A0;--yellow:#FFD166;--orange:#F78C6B;--red:#EF476F;--purple:#7B61FF;--green:#52B788;--bg:#f4f7fa;--card:#fff;--ink:#18323C;--muted:#667781}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
@@ -327,6 +327,7 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
 }
 .v20-finish-save{background:#06d6a0;color:#073b4c}.v20-finish-share{background:#ff6b6b;color:#fff}
 .v20-finish-full{width:100%;margin-top:8px;background:rgba(255,255,255,.9);color:#073b4c}
+.v23-finish-back{width:100%;border:1px solid #9bb5bc;border-radius:14px;background:#fff;color:#164a58;padding:11px;font-weight:900;margin-top:8px}
 .v20-finish-start{width:100%;margin-top:8px;background:#ffd166;color:#073b4c}
 .v20-finish-plain{width:100%;margin-top:8px;background:rgba(255,255,255,.13);color:#fff;border:1px solid rgba(255,255,255,.2)!important}
 
@@ -402,7 +403,7 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
 <body>
 <div class="app">
   <header class="hero">
-    <h1>ISAN RIDER 2026</h1>
+    <h1>MIN'S THAILAND ROAD TRIP</h1>
     <p>Isan + Mekong Motorcycle Tour • Voge DS900X</p>
     <span class="pill">28 SEP → 8 OCT • 11 DAYS</span>
   </header>
@@ -420,7 +421,7 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
   </nav>
 </div>
 
-<div id="exitModal" class="exitModal" aria-hidden="true"><div class="exitCard"><div class="exitIcon">🚪</div><h2>Exit ISAN RIDER 2026?</h2><p>Are you sure you want to exit the app?</p><div class="exitActions"><button class="exitNo" onclick="closeExitModal()">NO</button><button class="exitYes" onclick="confirmExitApp()">YES, EXIT</button></div></div></div>
+<div id="exitModal" class="exitModal" aria-hidden="true"><div class="exitCard"><div class="exitIcon">🚪</div><h2>Exit MIN'S THAILAND ROAD TRIP?</h2><p>Are you sure you want to exit the app?</p><div class="exitActions"><button class="exitNo" onclick="closeExitModal()">NO</button><button class="exitYes" onclick="confirmExitApp()">YES, EXIT</button></div></div></div>
 <div id="finishModal" class="finishModal" aria-hidden="true"><div class="finishCard"><div class="finishConfetti">🏁 ✨ 🏍️</div><h2>Well done!</h2><p class="finishMsg">You finished today\'s ride.<br>Get some rest for tomorrow\'s adventure.</p><div id="finishStats" class="finishStats"></div><div class="finishActions"><button class="finishPrimary" onclick="saveFinishCard()">💾 SAVE AS IMAGE</button><button class="finishShare" onclick="shareFinishCard()">📤 SHARE</button></div><button class="finishSecondary" onclick="closeFinishModal();showSummary(document.querySelectorAll('.nav button')[3]);">📝 VIEW DAILY SUMMARY</button><button class="finishSecondary" onclick="closeFinishModal();showRides(document.querySelectorAll('.nav button')[1]);">▶ START NEW DAY</button></div></div>
 <script>
 const days=[
@@ -623,7 +624,7 @@ function generateRide(){
  const stops=Object.values(all).flat();
  const ex=getExpenses();
  const spend=ex.reduce((s,x)=>s+x.amount,0); const media=days.reduce((n,d)=>n+JSON.parse(localStorage.getItem(mediaStoreKey(d.n))||"[]").length,0);
- const text=`ISAN RIDER 2026
+ const text=`MIN'S THAILAND ROAD TRIP
 
 28 SEP → 8 OCT 2026
 Isan + Mekong Motorcycle Tour
@@ -750,8 +751,8 @@ function mapsDestination(dest){
 }
 async function shareLocation(){if(riderState.lat==null){alert("GPS location is not available yet. Press START GPS first.");return;}
 const link="https://www.google.com/maps/search/?api=1&query="+riderState.lat+","+riderState.lon;
-const msg="📍 My current location — Isan Rider 2026\n"+link;
-try{if(navigator.share){await navigator.share({title:"Isan Rider — My Location",text:msg});}else{await navigator.clipboard.writeText(msg);alert("Location copied. Paste it into WhatsApp/SMS.");}}
+const msg="📍 My current location — Min's Thailand Road Trip\n"+link;
+try{if(navigator.share){await navigator.share({title:"Min's Thailand Road Trip — My Location",text:msg});}else{await navigator.clipboard.writeText(msg);alert("Location copied. Paste it into WhatsApp/SMS.");}}
 catch(e){try{await navigator.clipboard.writeText(msg);alert("Location copied. Paste it into WhatsApp/SMS.");}catch(_){alert(msg);}}}
 function emergencyRide(){document.getElementById("emergencyRideModal")?.remove();document.body.insertAdjacentHTML("beforeend",`
 <div class="emergencyModal" id="emergencyRideModal" onclick="if(event.target===this)this.remove()"><div class="emergencySheet">
@@ -949,7 +950,16 @@ function ensureActiveRideDay(){const done=new Set(getFinishedDays().map(x=>Numbe
 function selectRideDay(n){const done=getFinishedDays().some(x=>Number(x.day)===Number(n));if(done){alert("This ride day is already finished. Choose another day.");return;}activeRideDay=Number(n);localStorage.setItem("isanActiveRideDay",String(activeRideDay));loadRiderForDay(activeRideDay);showRides();}
 function setActive(btn){document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));if(btn)btn.classList.add("active");}
 function appBackToRides(){backToRides();}
-window.addEventListener("popstate",()=>{if(allowAppExit){allowAppExit=false;return;}if(currentView==="rider"||currentView==="rideDetail"||currentView==="summaryDetail"){backToRides();try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}}else if(currentView!=="home"){backToHome();try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}}else{exitGuard();}});window.addEventListener("hashchange",()=>{if(!allowAppExit&&currentView==="home")exitGuard();});
+window.addEventListener("popstate",()=>{
+  if(allowAppExit){allowAppExit=false;return;}
+  const finish=document.getElementById("finishModal");
+  if(finish && finish.style.display==="flex") {
+    v23BackToRidesFromFinish();
+    try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}
+    return;
+  }
+  if(currentView==="rider"||currentView==="rideDetail"||currentView==="summaryDetail"){backToRides();try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}}else if(currentView!=="home"){backToHome();try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}}else{exitGuard();}
+});window.addEventListener("hashchange",()=>{if(!allowAppExit&&currentView==="home")exitGuard();});
 function navigate(route){alert("Navigation target:\\n"+route+"\\n\\nPrototype action: connect this button to Google Maps / your preferred navigation app.");}
 currentView="home";showHome(document.querySelector(".nav button"));
 </script>
@@ -1027,7 +1037,7 @@ function saveReceiptPreview(input,n){
 })();
 </script>
 
-<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Isan Rider 2026 • V22</div>
+<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Min's Thailand Road Trip • V23</div>
 
 <script>
 (function(){
@@ -1179,12 +1189,12 @@ window.addEventListener('isan:dayFinished', buildV15Summary);
 
 function finishCardData(){const st=window.__finishedRide||{};const dayNo=Number(st.dayNo||0);const d=days[dayNo-1]||{};return {day:st.dayLabel||'Today',distance:(Number(st.distance)||0).toFixed(1)+' km',ride:fmtTime(st.rideMs||0),route:Array.isArray(d.route)?d.route.join(' → '):'',date:d.date||''};}
 function drawMountainLayer(ctx,baseY,amp,seed){ctx.beginPath();ctx.moveTo(0,baseY);for(let i=0;i<=10;i++){const px=i*108;const py=baseY-amp*(0.35+0.65*Math.abs(Math.sin(i*1.37+seed)));ctx.lineTo(px,py);}ctx.lineTo(1080,1350);ctx.lineTo(0,1350);ctx.closePath();ctx.fill();}
-function makeFinishCanvas(){const d=finishCardData();const c=document.createElement('canvas');c.width=1080;c.height=1350;const x=c.getContext('2d');const sky=x.createLinearGradient(0,0,0,900);sky.addColorStop(0,'#073b4c');sky.addColorStop(.55,'#168ba3');sky.addColorStop(1,'#d9f1ef');x.fillStyle=sky;x.fillRect(0,0,1080,1350);x.fillStyle='rgba(255,209,102,.95)';x.beginPath();x.arc(875,245,78,0,Math.PI*2);x.fill();x.fillStyle='#2c6d78';drawMountainLayer(x,690,245,.4);x.fillStyle='#174d5a';drawMountainLayer(x,790,310,1.4);x.fillStyle='#0d3540';drawMountainLayer(x,900,335,2.7);x.fillStyle='#17252b';x.beginPath();x.moveTo(350,1350);x.lineTo(520,900);x.lineTo(560,900);x.lineTo(850,1350);x.closePath();x.fill();x.strokeStyle='#ffd166';x.lineWidth=8;x.setLineDash([35,30]);x.beginPath();x.moveTo(540,1350);x.lineTo(540,910);x.stroke();x.setLineDash([]);x.fillStyle='rgba(7,59,76,.91)';x.roundRect(55,55,970,315,34);x.fill();x.strokeStyle='#ffd166';x.lineWidth=3;x.stroke();x.fillStyle='#fff';x.font='900 70px sans-serif';x.fillText('WELL DONE!',95,145);x.font='34px sans-serif';x.fillText("You finished today's ride.",95,205);x.fillText("Get some rest for tomorrow's adventure.",95,252);x.fillStyle='#ffd166';x.font='900 34px sans-serif';x.fillText(d.day.toUpperCase(),95,322);x.fillStyle='rgba(255,255,255,.96)';x.roundRect(70,955,430,205,26);x.fill();x.roundRect(580,955,430,205,26);x.fill();x.fillStyle='#164a58';x.font='900 66px sans-serif';x.fillText(d.distance,105,1040);x.fillText(d.ride,615,1040);x.font='700 24px sans-serif';x.fillText('DISTANCE',108,1090);x.fillText('RIDE TIME',618,1090);x.fillStyle='#fff';x.font='700 25px sans-serif';x.fillText('ISAN RIDER 2026 • Voge DS900X',70,1265);x.font='22px sans-serif';if(d.route)x.fillText(d.route,70,1305);return c;}
+function makeFinishCanvas(){const d=finishCardData();const c=document.createElement('canvas');c.width=1080;c.height=1350;const x=c.getContext('2d');const sky=x.createLinearGradient(0,0,0,900);sky.addColorStop(0,'#073b4c');sky.addColorStop(.55,'#168ba3');sky.addColorStop(1,'#d9f1ef');x.fillStyle=sky;x.fillRect(0,0,1080,1350);x.fillStyle='rgba(255,209,102,.95)';x.beginPath();x.arc(875,245,78,0,Math.PI*2);x.fill();x.fillStyle='#2c6d78';drawMountainLayer(x,690,245,.4);x.fillStyle='#174d5a';drawMountainLayer(x,790,310,1.4);x.fillStyle='#0d3540';drawMountainLayer(x,900,335,2.7);x.fillStyle='#17252b';x.beginPath();x.moveTo(350,1350);x.lineTo(520,900);x.lineTo(560,900);x.lineTo(850,1350);x.closePath();x.fill();x.strokeStyle='#ffd166';x.lineWidth=8;x.setLineDash([35,30]);x.beginPath();x.moveTo(540,1350);x.lineTo(540,910);x.stroke();x.setLineDash([]);x.fillStyle='rgba(7,59,76,.91)';x.roundRect(55,55,970,315,34);x.fill();x.strokeStyle='#ffd166';x.lineWidth=3;x.stroke();x.fillStyle='#fff';x.font='900 70px sans-serif';x.fillText('WELL DONE!',95,145);x.font='34px sans-serif';x.fillText("You finished today's ride.",95,205);x.fillText("Get some rest for tomorrow's adventure.",95,252);x.fillStyle='#ffd166';x.font='900 34px sans-serif';x.fillText(d.day.toUpperCase(),95,322);x.fillStyle='rgba(255,255,255,.96)';x.roundRect(70,955,430,205,26);x.fill();x.roundRect(580,955,430,205,26);x.fill();x.fillStyle='#164a58';x.font='900 66px sans-serif';x.fillText(d.distance,105,1040);x.fillText(d.ride,615,1040);x.font='700 24px sans-serif';x.fillText('DISTANCE',108,1090);x.fillText('RIDE TIME',618,1090);x.fillStyle='#fff';x.font='700 25px sans-serif';x.fillText("MIN'S THAILAND ROAD TRIP • Voge DS900X",70,1265);x.font='22px sans-serif';if(d.route)x.fillText(d.route,70,1305);return c;}
 function saveFinishCard(){const c=makeFinishCanvas();c.toBlob(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Isan-Rider-'+finishCardData().day.replace(/[^A-Za-z0-9]+/g,'-')+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);},'image/png');}
-async function shareFinishCard(){const c=makeFinishCanvas();c.toBlob(async blob=>{try{const file=new File([blob],'Isan-Rider-Finish.png',{type:'image/png'});if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){await navigator.share({title:'Isan Rider 2026',text:"Finished today's ride.",files:[file]});}else{saveFinishCard();alert('Image saved. You can now share it to Facebook or WhatsApp.');}}catch(e){if(e&&e.name==='AbortError')return;saveFinishCard();}},'image/png');}
+async function shareFinishCard(){const c=makeFinishCanvas();c.toBlob(async blob=>{try{const file=new File([blob],'Isan-Rider-Finish.png',{type:'image/png'});if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){await navigator.share({title:"Min's Thailand Road Trip",text:"Finished today's ride.",files:[file]});}else{saveFinishCard();alert('Image saved. You can now share it to Facebook or WhatsApp.');}}catch(e){if(e&&e.name==='AbortError')return;saveFinishCard();}},'image/png');}
 
 </script>
-<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V22</div>
+<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Min's Thailand Road Trip • V23</div>
 
 
 <script>
@@ -1266,7 +1276,7 @@ function showHome(btn){
       </div>
     </section>
 
-    <div class="v20-footer-note">Isan Rider 2026 • V22</div>
+    <div class="v20-footer-note">Min's Thailand Road Trip • V23</div>
   `;
   renderHomeTripDashboard();
   window.scrollTo(0,0);
@@ -1310,7 +1320,7 @@ function openFinishModal(dayLabel,st){
   m.innerHTML=`
     <div class="v20-finish-card">
       <div class="v20-finish-inner">
-        <div class="v20-finish-brand"><span>ISAN RIDER 2026</span><span>🏁 DAY COMPLETE</span></div>
+        <div class="v20-finish-brand"><span>MIN'S THAILAND ROAD TRIP</span><span>🏁 DAY COMPLETE</span></div>
         <div class="v20-finish-title">Well done!</div>
         <p class="v20-finish-msg">You finished today's ride.<br>Get some rest for tomorrow's adventure.</p>
         <div class="v20-finish-day">Day ${window.__finishedRide.dayNo} • ${d.date||dayLabel}</div>
@@ -1325,6 +1335,7 @@ function openFinishModal(dayLabel,st){
           <button class="v20-finish-share" onclick="shareFinishCard()">📤 SHARE</button>
         </div>
         <button class="v20-finish-full" onclick="v20ViewDailySummaryFromFinish()">📝 VIEW DAILY SUMMARY</button>
+        <button class="v23-finish-back" onclick="v23BackToRidesFromFinish()">‹ BACK TO RIDES</button>
         <button class="v20-finish-start" onclick="v20StartNewDay()">▶ START NEW DAY</button>
       </div>
     </div>`;
@@ -1341,6 +1352,13 @@ function v20ViewDailySummaryFromFinish(){
 function v20StartNewDay(){
   closeFinishModal();
   showRides(document.querySelectorAll(".nav button")[1]);
+}
+
+function v23BackToRidesFromFinish(){
+  closeFinishModal();
+  window.__returnToFinish=false;
+  window.__summaryDay=0;
+  showRides(document.querySelectorAll(".nav button")[1],true);
 }
 
 function returnToWellDone(){
@@ -1433,7 +1451,7 @@ function makeFinishCanvas(){
   x.fillText(d.distance,100,1040);x.fillText(d.ride,600,1040);
   x.font="700 25px system-ui";x.fillText("DISTANCE",104,1090);x.fillText("RIDE TIME",604,1090);
 
-  x.fillStyle="#fff";x.font="800 28px system-ui";x.fillText("ISAN RIDER 2026 • Voge DS900X",70,1260);
+  x.fillStyle="#fff";x.font="800 28px system-ui";x.fillText("MIN'S THAILAND ROAD TRIP • Voge DS900X",70,1260);
   x.font="23px system-ui";
   const route=String(d.route||"");
   if(route){
@@ -1574,7 +1592,7 @@ async function makeFinishCanvas(){
  const d=finishCardData(),c=document.createElement("canvas");c.width=1080;c.height=1350;const x=c.getContext("2d");x.textBaseline="alphabetic";
  try{const im=await loadV22Scenic();v22FitCover(x,im,c.width,c.height);}catch(e){x.fillStyle="#073b4c";x.fillRect(0,0,c.width,c.height);}
  x.fillStyle="rgba(3,35,46,.72)";v22RoundRect(x,55,48,970,355,34);x.fill();x.strokeStyle="rgba(255,209,102,.9)";x.lineWidth=3;v22RoundRect(x,55,48,970,355,34);x.stroke();
- x.fillStyle="#dceff2";x.font='700 22px Arial,sans-serif';x.fillText("ISAN RIDER 2026",88,100);x.fillStyle="#ffd166";x.font='800 20px Arial,sans-serif';x.fillText("DAY COMPLETE",800,100);
+ x.fillStyle="#dceff2";x.font='700 22px Arial,sans-serif';x.fillText("MIN'S THAILAND ROAD TRIP",88,100);x.fillStyle="#ffd166";x.font='800 20px Arial,sans-serif';x.fillText("DAY COMPLETE",800,100);
  x.fillStyle="#fff";x.font='700 italic 78px Georgia,"Times New Roman",serif';x.fillText("Well done!",88,178);
  x.font='32px Arial,sans-serif';x.fillText("You finished today's ride.",90,232);x.fillText("Get some rest for tomorrow's adventure.",90,274);
  x.fillStyle="#ffd166";x.font='800 30px Arial,sans-serif';x.fillText(String(d.day||"").toUpperCase(),90,332);
@@ -1582,11 +1600,11 @@ async function makeFinishCanvas(){
  x.fillStyle="rgba(255,255,255,.95)";v22RoundRect(x,65,945,450,205,28);x.fill();v22RoundRect(x,565,945,450,205,28);x.fill();
  x.fillStyle="#164a58";x.textAlign="center";x.font='800 64px Arial,sans-serif';x.fillText(String(d.distance||"0.0 km"),290,1035);x.fillText(String(d.ride||"00:00:00"),790,1035);
  x.font='800 24px Arial,sans-serif';x.fillText("DISTANCE",290,1085);x.fillText("RIDE TIME",790,1085);x.textAlign="left";
- x.fillStyle="#fff";x.font='700 25px Arial,sans-serif';x.fillText("ISAN RIDER 2026 • Voge DS900X",70,1245);x.font='italic 23px Georgia,"Times New Roman",serif';x.fillText("Not just miles, but memories.",70,1292);
+ x.fillStyle="#fff";x.font='700 25px Arial,sans-serif';x.fillText("MIN'S THAILAND ROAD TRIP • Voge DS900X",70,1245);x.font='italic 23px Georgia,"Times New Roman",serif';x.fillText("Not just miles, but memories.",70,1292);
  return c;
 }
 async function saveFinishCard(){const c=await makeFinishCanvas();c.toBlob(blob=>{if(!blob){alert("Unable to create the image. Please try again.");return;}const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="Isan-Rider-"+finishCardData().day.replace(/[^A-Za-z0-9]+/g,"-")+".png";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);},"image/png");}
-async function shareFinishCard(){const c=await makeFinishCanvas();c.toBlob(async blob=>{if(!blob){alert("Unable to create the image. Please try again.");return;}try{const file=new File([blob],"Isan-Rider-Finish.png",{type:"image/png"});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"Isan Rider 2026",text:"Finished today's ride.",files:[file]});}else if(navigator.share){await navigator.share({title:"Isan Rider 2026",text:"Finished today's ride."});await saveFinishCard();}else{await saveFinishCard();}}catch(e){if(e&&e.name!=="AbortError")await saveFinishCard();}}, "image/png");}
+async function shareFinishCard(){const c=await makeFinishCanvas();c.toBlob(async blob=>{if(!blob){alert("Unable to create the image. Please try again.");return;}try{const file=new File([blob],"Isan-Rider-Finish.png",{type:"image/png"});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"Min's Thailand Road Trip",text:"Finished today's ride.",files:[file]});}else if(navigator.share){await navigator.share({title:"Min's Thailand Road Trip",text:"Finished today's ride."});await saveFinishCard();}else{await saveFinishCard();}}catch(e){if(e&&e.name!=="AbortError")await saveFinishCard();}}, "image/png");}
 </script>
 
 </body>

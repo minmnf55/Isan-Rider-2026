@@ -1,12 +1,12 @@
 {
-  "name": "Isan Rider 2026",
-  "short_name": "Isan Rider",
+  "name": "Min's Thailand Road Trip",
+  "short_name": "Min's Road Trip",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f4f7fa",
   "theme_color": "#073B4C",
-  "description": "Isan + Mekong Motorcycle Tour rider dashboard • V22 GPS Track + Scenic Maps",
+  "description": "Min's Thailand Road Trip • GPS Track + Scenic Maps",
   "icons": [
     {
       "src": "icon-192.png",
