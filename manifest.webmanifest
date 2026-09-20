@@ -6,9 +6,19 @@
   "display": "standalone",
   "background_color": "#f4f7fa",
   "theme_color": "#073B4C",
-  "description": "Isan + Mekong Motorcycle Tour rider dashboard",
+  "description": "Isan + Mekong Motorcycle Tour rider dashboard \u2022 V20",
   "icons": [
-    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
-    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }

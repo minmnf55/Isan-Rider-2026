@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#073B4C">
 <link rel="manifest" href="manifest.webmanifest">
-<title>Isan Rider 2026 • V18.2 Rider Experience</title>
+<title>Isan Rider 2026 • V20 Clean Dashboard</title>
 <style>
 :root{--navy:#073B4C;--teal:#118AB2;--cyan:#06D6A0;--yellow:#FFD166;--orange:#F78C6B;--red:#EF476F;--purple:#7B61FF;--green:#52B788;--bg:#f4f7fa;--card:#fff;--ink:#18323C;--muted:#667781}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
@@ -192,7 +192,154 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
 .summaryBackWell{width:100%;border:0;background:#ffd166;color:#073b4c;border-radius:14px;padding:12px;font-weight:900;margin-bottom:10px}
 .finishModal .finishCard{border:2px solid #ffd166;box-shadow:0 20px 60px rgba(0,0,0,.25);background:linear-gradient(180deg,#ffffff 0%,#f5fbfc 100%)}
 .finishConfetti{font-size:36px;letter-spacing:5px}.finishCard h2{font-size:34px;color:#073b4c}.finishMsg{font-size:15px;line-height:1.5}.finishActions{margin-top:12px}.finishPrimary{background:#06d6a0}.finishShare{background:#ff6b6b}
-</style></head>
+</style>
+<style id="v20-styles">
+/* =========================
+   V20 CLEAN DASHBOARD
+   ========================= */
+.hero{
+  position:relative;
+  overflow:hidden;
+  min-height:210px;
+  padding:28px 18px 22px;
+  background:
+    radial-gradient(circle at 82% 28%,rgba(255,209,102,.95) 0 6%,rgba(255,209,102,.22) 7%,transparent 18%),
+    linear-gradient(180deg,#062f3d 0%,#07556b 44%,#118aa4 72%,#dceff0 100%);
+}
+.hero:before{
+  content:"";
+  position:absolute;left:-8%;right:-8%;bottom:-3px;height:115px;
+  background:
+    linear-gradient(145deg,transparent 43%,rgba(26,77,88,.85) 44% 57%,transparent 58%),
+    linear-gradient(35deg,transparent 43%,rgba(7,59,76,.95) 44% 63%,transparent 64%);
+  opacity:.9;
+}
+.hero:after{
+  content:"🏍️";
+  position:absolute;right:24px;bottom:22px;font-size:62px;
+  filter:drop-shadow(0 8px 8px rgba(0,0,0,.25));
+  transform:scaleX(-1);
+}
+.hero h1,.hero p,.hero .pill{position:relative;z-index:2}
+.hero h1{font-size:31px;letter-spacing:-.7px;text-shadow:0 2px 12px rgba(0,0,0,.18)}
+.hero p{font-size:14px}
+.hero .pill{font-size:12px;padding:8px 12px}
+
+.v20-home-section{padding:13px 14px}
+.v20-overview{
+  background:#fff;border-radius:24px;padding:16px;
+  box-shadow:0 7px 20px rgba(7,59,76,.09);border:1px solid #edf2f4;
+}
+.v20-overview-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.v20-overview-head h2{margin:0;color:var(--navy);font-size:19px}
+.v20-overview-head .v20-route-km{
+  background:#e9f8fb;color:#176277;border-radius:999px;padding:6px 9px;
+  font-size:10px;font-weight:900;white-space:nowrap
+}
+.v20-route-sub{margin:5px 0 10px;color:#4f6670;font-size:13px;font-weight:650}
+.v20-route-wrap{overflow:hidden;border-radius:17px;background:linear-gradient(180deg,#f4fbfc,#fff);padding:8px}
+.v20-route-wrap .routebar{padding:10px 0 2px}
+
+.v20-tripdash{
+  background:linear-gradient(145deg,#063b4c,#087e9b 62%,#1298b3);
+  color:#fff;border-radius:26px;padding:18px;
+  box-shadow:0 13px 30px rgba(7,59,76,.19);position:relative;overflow:hidden
+}
+.v20-tripdash:after{
+  content:"";position:absolute;right:-65px;bottom:-90px;width:230px;height:230px;border-radius:50%;
+  background:rgba(255,255,255,.07)
+}
+.v20-dash-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;position:relative;z-index:1}
+.v20-dash-title{font-size:21px;font-weight:900;margin:0}
+.v20-dash-sub{font-size:12px;opacity:.86;margin-top:3px}
+.v20-dash-complete{text-align:right;font-size:12px;font-weight:800;white-space:nowrap}
+.v20-progress{height:9px;background:rgba(255,255,255,.2);border-radius:99px;margin:12px 0 13px;overflow:hidden}
+.v20-progress i{display:block;height:100%;background:linear-gradient(90deg,#06d6a0,#ffd166);border-radius:99px}
+.v20-dash-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;position:relative;z-index:1}
+.v20-dash-stat{background:rgba(255,255,255,.115);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:12px}
+.v20-dash-stat b{display:block;font-size:20px;line-height:1.1}
+.v20-dash-stat span{display:block;font-size:10px;opacity:.8;margin-top:4px}
+
+.v20-myride{
+  background:#fff;border-radius:23px;padding:16px;
+  box-shadow:0 7px 20px rgba(7,59,76,.08);border:1px solid #edf2f4;position:relative;overflow:hidden
+}
+.v20-myride:after{content:"🏔️";position:absolute;right:15px;top:10px;font-size:62px;opacity:.14}
+.v20-myride h2{margin:0;color:var(--navy);position:relative;z-index:1}
+.v20-myride p{margin:4px 0;color:#687a82;font-size:12px;position:relative;z-index:1}
+.v20-generate{
+  width:100%;border:0;border-radius:15px;padding:14px;
+  background:linear-gradient(90deg,#6f52ed,#7b61ff);color:#fff;font-weight:950;font-size:14px;
+  margin-top:10px;position:relative;z-index:1
+}
+
+.v20-tripinfo{
+  background:linear-gradient(145deg,#fff,#f7fbfc);border-radius:23px;padding:15px;
+  box-shadow:0 7px 20px rgba(7,59,76,.07);border:1px solid #edf2f4
+}
+.v20-tripinfo h2{margin:0 0 10px;color:var(--navy);font-size:19px}
+.v20-info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.v20-info-card{background:#fff;border:1px solid #e8f0f2;border-radius:15px;padding:11px}
+.v20-info-card b{display:block;color:#164a58;font-size:17px;line-height:1.15}
+.v20-info-card span{display:block;color:#73818a;font-size:9px;font-weight:800;margin-top:4px;text-transform:uppercase}
+
+.v20-footer-note{
+  text-align:center;color:#9aa7ad;font-size:10px;padding:4px 14px 90px
+}
+
+/* Completion card: scenic, premium, shareable */
+.finishModal{background:rgba(2,35,46,.72);backdrop-filter:blur(5px);padding:12px}
+.v20-finish-card{
+  width:min(430px,100%);max-height:94vh;overflow:auto;border-radius:30px;
+  color:#fff;position:relative;overflow:hidden;
+  background:
+    radial-gradient(circle at 82% 20%,rgba(255,209,102,.92) 0 4%,transparent 5% 18%),
+    linear-gradient(180deg,#073b4c 0%,#0d7188 48%,#082f3b 100%);
+  border:1.5px solid rgba(255,209,102,.75);
+  box-shadow:0 25px 80px rgba(0,0,0,.48);padding:0;text-align:left
+}
+.v20-finish-card:before{
+  content:"";position:absolute;left:-8%;right:-8%;bottom:0;height:43%;
+  background:
+    linear-gradient(145deg,transparent 34%,rgba(23,77,88,.85) 35% 55%,transparent 56%),
+    linear-gradient(35deg,transparent 35%,rgba(5,45,57,.98) 36% 65%,transparent 66%);
+  opacity:.9
+}
+.v20-finish-card:after{
+  content:"🏍️";position:absolute;right:35px;bottom:245px;font-size:78px;
+  transform:scaleX(-1);filter:drop-shadow(0 10px 10px rgba(0,0,0,.35))
+}
+.v20-finish-inner{position:relative;z-index:2;padding:26px 20px 18px}
+.v20-finish-brand{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:850;opacity:.9}
+.v20-finish-brand span:last-child{background:rgba(255,255,255,.12);padding:6px 9px;border-radius:999px}
+.v20-finish-title{font-size:42px;line-height:1;margin:28px 0 7px;font-weight:950;letter-spacing:-1px}
+.v20-finish-msg{font-size:14px;line-height:1.45;color:#dff8ff;margin:0;max-width:320px}
+.v20-finish-day{margin-top:18px;font-size:12px;font-weight:900;color:#ffd166;text-transform:uppercase}
+.v20-finish-route{margin-top:4px;font-size:12px;color:#eafcff;line-height:1.4}
+.v20-finish-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
+.v20-finish-stat{background:rgba(255,255,255,.95);color:#164a58;border-radius:16px;padding:12px}
+.v20-finish-stat b{display:block;font-size:23px}
+.v20-finish-stat span{font-size:9px;font-weight:850;color:#71808a}
+.v20-finish-quote{text-align:center;margin:17px 0 12px;font-size:12px;font-style:italic;color:#fff}
+.v20-finish-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.v20-finish-actions button,.v20-finish-full{
+  border:0;border-radius:14px;padding:13px;font-weight:950;font-size:12px
+}
+.v20-finish-save{background:#06d6a0;color:#073b4c}.v20-finish-share{background:#ff6b6b;color:#fff}
+.v20-finish-full{width:100%;margin-top:8px;background:rgba(255,255,255,.9);color:#073b4c}
+.v20-finish-start{width:100%;margin-top:8px;background:#ffd166;color:#073b4c}
+.v20-finish-plain{width:100%;margin-top:8px;background:rgba(255,255,255,.13);color:#fff;border:1px solid rgba(255,255,255,.2)!important}
+
+@media(max-width:420px){
+  .hero{min-height:195px}
+  .hero h1{font-size:28px}
+  .hero:after{font-size:52px;right:14px}
+  .v20-dash-stat b{font-size:18px}
+  .v20-finish-title{font-size:38px}
+}
+</style>
+
+</head>
 <body>
 <div class="app">
   <header class="hero">
@@ -814,7 +961,7 @@ function saveReceiptPreview(input,n){
 })();
 </script>
 
-<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Isan Rider 2026 • V18</div>
+<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Isan Rider 2026 • V20</div>
 
 <script>
 (function(){
@@ -971,7 +1118,7 @@ function saveFinishCard(){const c=makeFinishCanvas();c.toBlob(blob=>{const a=doc
 async function shareFinishCard(){const c=makeFinishCanvas();c.toBlob(async blob=>{try{const file=new File([blob],'Isan-Rider-Finish.png',{type:'image/png'});if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){await navigator.share({title:'Isan Rider 2026',text:"Finished today's ride.",files:[file]});}else{saveFinishCard();alert('Image saved. You can now share it to Facebook or WhatsApp.');}}catch(e){if(e&&e.name==='AbortError')return;saveFinishCard();}},'image/png');}
 
 </script>
-<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V18</div>
+<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V20</div>
 
 
 <script>
@@ -981,5 +1128,292 @@ window.openSummaryDay=function(n){window.__summaryDay=Number(n);window.__returnT
 // Rewire the finish modal's Daily Summary button so it can return to the same Well Done card.
 document.addEventListener('click',function(e){const b=e.target.closest && e.target.closest('.finishSecondary');if(!b)return; if((b.textContent||'').includes('VIEW DAILY SUMMARY')){e.preventDefault();e.stopImmediatePropagation();window.__returnToFinish=true;window.__summaryDay=Number(window.__finishedRide&&window.__finishedRide.dayNo||0);closeFinishModal();showSummary(document.querySelectorAll('.nav button')[3]);}},true);
 </script>
+
+<script id="v20-overrides">
+/* =========================
+   V20 SCREEN OVERRIDES
+   ========================= */
+
+function v20CurrentDay(){
+  const n = ensureActiveRideDay();
+  return days[(Number(n)||1)-1] || days[0];
+}
+
+function v20HomeOverview(){
+  const d=v20CurrentDay();
+  const route=Array.isArray(d.route)?d.route:[];
+  return `
+    <div class="v20-overview-head">
+      <h2>📍 Today / Trip Overview</h2>
+      <span class="v20-route-km">${d.km} km</span>
+    </div>
+    <div class="v20-route-sub">Day ${d.n} • ${d.date} • ${route.join(" → ")}</div>
+    <div class="v20-route-wrap">${routeHTML(route)}</div>
+  `;
+}
+
+function showHome(btn){
+  currentView="home"; setActive(btn);
+  const f=getFinishedDays();
+  const d=v20CurrentDay();
+  document.getElementById("screen").innerHTML=`
+    <section class="v20-home-section"><div class="v20-overview">${v20HomeOverview()}</div></section>
+
+    <section class="v20-home-section">
+      <div class="v20-tripdash">
+        <div class="v20-dash-head">
+          <div>
+            <div class="v20-dash-title">📊 Live Trip Dashboard</div>
+            <div class="v20-dash-sub">Live totals from completed ride days</div>
+          </div>
+          <div class="v20-dash-complete"><span id="homeDays">0 / ${days.length}</span><br>completed</div>
+        </div>
+        <div class="v20-progress"><i id="homeProgress" style="width:0%"></i></div>
+        <div class="v20-dash-grid">
+          <div class="v20-dash-stat"><b id="homeKm">0.0 km</b><span>ACTUAL DISTANCE</span></div>
+          <div class="v20-dash-stat"><b id="homeRide">00:00:00</b><span>TOTAL RIDE TIME</span></div>
+          <div class="v20-dash-stat"><b id="homeRest">00:00:00</b><span>REST / FOOD</span></div>
+          <div class="v20-dash-stat"><b id="homeFuel">00:00:00</b><span>FUEL TIME</span></div>
+          <div class="v20-dash-stat"><b id="homeShort">00:00:00</b><span>SHORT STOP</span></div>
+          <div class="v20-dash-stat"><b id="homeSpend">฿0</b><span>ACTUAL SPENDING</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="v20-home-section">
+      <div class="v20-myride">
+        <h2>🎬 My Ride</h2>
+        <p>Build your trip story from GPS, stops, photos and expenses.</p>
+        <button class="v20-generate" onclick="generateRide()">▶ GENERATE MY RIDE</button>
+      </div>
+    </section>
+
+    <section class="v20-home-section">
+      <div class="v20-tripinfo">
+        <h2>ℹ️ Trip Information</h2>
+        <div class="v20-info-grid">
+          <div class="v20-info-card"><b>≈3,800–4,100 km</b><span>Total Distance</span></div>
+          <div class="v20-info-card"><b>11</b><span>Riding Days</span></div>
+          <div class="v20-info-card"><b>฿22.2k–25k</b><span>Estimated Budget</span></div>
+          <div class="v20-info-card"><b>Voge DS900X</b><span>Motorcycle</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="v20-footer-note">Isan Rider 2026 • V20</div>
+  `;
+  renderHomeTripDashboard();
+  window.scrollTo(0,0);
+}
+
+function renderHomeTripDashboard(){
+  const f=getFinishedDays();
+  let km=0,ride=0,rest=0,fuel=0,short=0;
+  f.forEach(d=>{
+    km+=Number(d.actualKm||0);
+    ride+=Number(d.rideSeconds||0);
+    rest+=Number(d.restSeconds||0);
+    fuel+=Number(d.fuelSeconds||0);
+    short+=Number(d.shortStopSeconds||0);
+  });
+  const ex=getExpenses().reduce((a,x)=>a+(Number(x.amount)||0),0);
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('homeDays',f.length+' / '+days.length);
+  set('homeKm',km.toFixed(1)+' km');
+  set('homeRide',fmtSummaryTime(ride));
+  set('homeRest',fmtSummaryTime(rest));
+  set('homeFuel',fmtSummaryTime(fuel));
+  set('homeShort',fmtSummaryTime(short));
+  set('homeSpend',moneyTHB(ex));
+  const p=Math.min(100,f.length/days.length*100);
+  const bar=document.getElementById('homeProgress'); if(bar)bar.style.width=p+'%';
+}
+
+/* Premium in-app completion card */
+function openFinishModal(dayLabel,st){
+  window.__finishedRide=Object.assign({},st||{},{
+    dayLabel:dayLabel,
+    dayNo:Number((st&&st.dayNo)||activeRideDay||0)
+  });
+  const m=document.getElementById("finishModal");
+  if(!m)return;
+  const d=days[Math.max(0,Number(window.__finishedRide.dayNo)-1)]||{};
+  const route=Array.isArray(d.route)?d.route.join(" → "):"";
+  const dist=(Number(window.__finishedRide.distance)||0).toFixed(1)+" km";
+  const ride=fmtTime(window.__finishedRide.rideMs||0);
+  m.innerHTML=`
+    <div class="v20-finish-card">
+      <div class="v20-finish-inner">
+        <div class="v20-finish-brand"><span>ISAN RIDER 2026</span><span>🏁 DAY COMPLETE</span></div>
+        <div class="v20-finish-title">Well done!</div>
+        <p class="v20-finish-msg">You finished today's ride.<br>Get some rest for tomorrow's adventure.</p>
+        <div class="v20-finish-day">Day ${window.__finishedRide.dayNo} • ${d.date||dayLabel}</div>
+        <div class="v20-finish-route">${route}</div>
+        <div class="v20-finish-stats">
+          <div class="v20-finish-stat"><b>${dist}</b><span>DISTANCE</span></div>
+          <div class="v20-finish-stat"><b>${ride}</b><span>RIDE TIME</span></div>
+        </div>
+        <div class="v20-finish-quote">“Not just miles, but memories.”</div>
+        <div class="v20-finish-actions">
+          <button class="v20-finish-save" onclick="saveFinishCard()">💾 SAVE AS IMAGE</button>
+          <button class="v20-finish-share" onclick="shareFinishCard()">📤 SHARE</button>
+        </div>
+        <button class="v20-finish-full" onclick="v20ViewDailySummaryFromFinish()">📝 VIEW DAILY SUMMARY</button>
+        <button class="v20-finish-start" onclick="v20StartNewDay()">▶ START NEW DAY</button>
+      </div>
+    </div>`;
+  m.style.display="flex";m.setAttribute("aria-hidden","false");
+}
+
+function v20ViewDailySummaryFromFinish(){
+  window.__returnToFinish=true;
+  window.__summaryDay=Number(window.__finishedRide&&window.__finishedRide.dayNo||0);
+  closeFinishModal();
+  showSummary(document.querySelectorAll(".nav button")[3]);
+}
+
+function v20StartNewDay(){
+  closeFinishModal();
+  showRides(document.querySelectorAll(".nav button")[1]);
+}
+
+function returnToWellDone(){
+  window.__returnToFinish=false;
+  showRides(document.querySelectorAll(".nav button")[1],true);
+  setTimeout(()=>{
+    if(window.__finishedRide)openFinishModal(window.__finishedRide.dayLabel,window.__finishedRide);
+  },40);
+}
+
+/* Keep the embedded route map directly inside Daily Summary. */
+function showSummary(btn){
+  currentView="summary"; setActive(btn);
+  const screen=document.getElementById("screen");
+  const finished=getFinishedDays().slice().sort((a,b)=>Number(a.day)-Number(b.day));
+  const options=days.map(d=>`<option value="${d.n}">Day ${d.n} • ${d.date} — ${d.route.join(" → ")}</option>`).join("");
+  const backBtn=window.__returnToFinish
+    ? `<div class="pageBack"><button onclick="returnToWellDone()">‹ BACK TO WELL DONE</button></div>` : "";
+  screen.innerHTML=`
+    ${backBtn}
+    <section class="section">
+      <div class="summaryHero">
+        <div class="dailyHeader"><h2 style="margin:0">📝 Daily Summary</h2><span class="label">${finished.length}/${days.length} completed</span></div>
+        <p>Review each completed ride day, timing, distance and route.</p>
+        <select id="summaryDaySelect" class="summaryDailySelect" onchange="openSummaryDay(Number(this.value))">${options}</select>
+        <div id="dailySummaryBody"></div>
+      </div>
+    </section>`;
+  if(finished.length){
+    const preferred=window.__summaryDay||finished[finished.length-1].day;
+    const dayNo=finished.some(x=>Number(x.day)===Number(preferred))?preferred:finished[finished.length-1].day;
+    document.getElementById("summaryDaySelect").value=String(dayNo);
+    renderDailySummary(dayNo);
+  }else{
+    document.getElementById("dailySummaryBody").innerHTML='<div class="summary-empty">No completed ride days yet. Finish a ride day and its record will appear here.</div>';
+  }
+  window.scrollTo(0,0);
+}
+
+function v20BackFromSummary(){
+  if(window.__returnToFinish){
+    returnToWellDone();
+  }else{
+    backToHome();
+  }
+}
+
+/* Upgrade the saved/shareable completion image to match the new visual language. */
+function makeFinishCanvas(){
+  const d=finishCardData();
+  const c=document.createElement("canvas"); c.width=1080; c.height=1350;
+  const x=c.getContext("2d");
+
+  const sky=x.createLinearGradient(0,0,0,900);
+  sky.addColorStop(0,"#052f3e"); sky.addColorStop(.45,"#0b6e85");
+  sky.addColorStop(.72,"#7fc1c7"); sky.addColorStop(1,"#dff0ef");
+  x.fillStyle=sky;x.fillRect(0,0,c.width,c.height);
+
+  /* sun */
+  x.fillStyle="#ffd166";x.beginPath();x.arc(865,250,76,0,Math.PI*2);x.fill();
+
+  /* layered mountains */
+  x.fillStyle="#3c8791";drawMountainLayer(x,690,235,.4);
+  x.fillStyle="#1d6574";drawMountainLayer(x,800,285,1.4);
+  x.fillStyle="#0b3d4a";drawMountainLayer(x,930,340,2.7);
+
+  /* road */
+  x.fillStyle="#17262c";
+  x.beginPath();x.moveTo(330,1350);x.lineTo(505,880);x.lineTo(580,880);x.lineTo(875,1350);x.closePath();x.fill();
+  x.strokeStyle="#ffd166";x.lineWidth=9;x.setLineDash([36,28]);
+  x.beginPath();x.moveTo(548,1350);x.lineTo(548,895);x.stroke();x.setLineDash([]);
+
+  /* dark glass header */
+  x.fillStyle="rgba(3,35,46,.86)";x.roundRect(55,55,970,320,34);x.fill();
+  x.strokeStyle="rgba(255,209,102,.85)";x.lineWidth=3;x.stroke();
+
+  x.fillStyle="#fff";x.font="900 72px system-ui";x.fillText("WELL DONE!",92,145);
+  x.font="34px system-ui";x.fillText("You finished today's ride.",92,205);
+  x.fillText("Get some rest for tomorrow's adventure.",92,253);
+  x.fillStyle="#ffd166";x.font="900 34px system-ui";x.fillText(String(d.day).toUpperCase(),92,322);
+
+  /* motorcycle silhouette */
+  x.font="110px system-ui";x.fillText("🏍️",650,875);
+
+  /* stats cards */
+  x.fillStyle="rgba(255,255,255,.96)";
+  x.roundRect(65,955,450,205,28);x.fill();
+  x.roundRect(565,955,450,205,28);x.fill();
+  x.fillStyle="#164a58";x.font="900 66px system-ui";
+  x.fillText(d.distance,100,1040);x.fillText(d.ride,600,1040);
+  x.font="700 25px system-ui";x.fillText("DISTANCE",104,1090);x.fillText("RIDE TIME",604,1090);
+
+  x.fillStyle="#fff";x.font="800 28px system-ui";x.fillText("ISAN RIDER 2026 • Voge DS900X",70,1260);
+  x.font="23px system-ui";
+  const route=String(d.route||"");
+  if(route){
+    const max=68; const chunks=[];
+    for(let i=0;i<route.length;i+=max)chunks.push(route.slice(i,i+max));
+    chunks.slice(0,2).forEach((s,i)=>x.fillText(s,70,1302+i*29));
+  }
+  return c;
+}
+
+/* Prevent Android Back from jumping away when Daily Summary was opened from completion. */
+window.addEventListener("popstate",function(e){
+  if(window.__v20HandlingPop)return;
+  if(allowAppExit)return;
+  if(currentView==="summary" && window.__returnToFinish){
+    window.__v20HandlingPop=true;
+    try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(_){}
+    returnToWellDone();
+    setTimeout(()=>window.__v20HandlingPop=false,0);
+  }
+},true);
+
+/* Exit confirmation: do not navigate back to Home. Try closing the standalone window;
+   if the browser refuses, remain on the current screen and explain why. */
+function confirmExitApp(){
+  closeExitModal();
+  try{
+    window.close();
+    setTimeout(()=>{
+      if(document.visibilityState==="visible"){
+        const t=document.createElement("div");
+        t.textContent="The browser does not allow this app to close automatically.";
+        t.style.cssText="position:fixed;left:50%;bottom:105px;transform:translateX(-50%);background:#073b4c;color:#fff;padding:11px 14px;border-radius:12px;font-size:12px;font-weight:800;z-index:50000;box-shadow:0 8px 24px rgba(0,0,0,.25);text-align:center;width:min(340px,90vw)";
+        document.body.appendChild(t);setTimeout(()=>t.remove(),3200);
+      }
+    },350);
+  }catch(e){}
+}
+
+/* Make the completion route-back button deterministic. */
+document.addEventListener("click",function(e){
+  const b=e.target.closest && e.target.closest(".summaryBackWell");
+  if(b){e.preventDefault();v20BackFromSummary();}
+},true);
+
+</script>
+
 </body>
 </html>
