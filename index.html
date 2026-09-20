@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#073B4C">
 <link rel="manifest" href="manifest.webmanifest">
-<title>Isan Rider 2026 • V20 Clean Dashboard</title>
+<title>Isan Rider 2026 • V21 Clean Dashboard</title>
 <style>
 :root{--navy:#073B4C;--teal:#118AB2;--cyan:#06D6A0;--yellow:#FFD166;--orange:#F78C6B;--red:#EF476F;--purple:#7B61FF;--green:#52B788;--bg:#f4f7fa;--card:#fff;--ink:#18323C;--muted:#667781}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
@@ -195,7 +195,7 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
 </style>
 <style id="v20-styles">
 /* =========================
-   V20 CLEAN DASHBOARD
+   V21 CLEAN DASHBOARD
    ========================= */
 .hero{
   position:relative;
@@ -337,6 +337,52 @@ background:#fff;color:#111827;border:1px solid #d1d5db;box-shadow:0 5px 18px #00
   .v20-dash-stat b{font-size:18px}
   .v20-finish-title{font-size:38px}
 }
+</style>
+
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+ integrity="sha256-p4NxAoJBhIINfQ3qk9p8cK0Q3dGQj6Q0Y4s0Q2mQYx8=" crossorigin=""/>
+<style id="v21-map-styles">
+.leaflet-container{font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+.v21-real-map{height:330px;border-radius:18px;overflow:hidden;border:1px solid #dbe7ea;background:#e9f4f5;position:relative}
+.v21-map-loading{position:absolute;z-index:900;left:12px;right:12px;top:12px;background:rgba(255,255,255,.93);border-radius:12px;padding:10px 12px;color:#164a58;font-size:12px;font-weight:800;box-shadow:0 4px 15px rgba(0,0,0,.12)}
+.v21-map-note{font-size:9px;color:#72828a;margin-top:5px}
+.v21-map-error{position:absolute;z-index:900;left:12px;right:12px;bottom:12px;background:rgba(7,59,76,.93);color:#fff;border-radius:12px;padding:9px 11px;font-size:10px}
+.leaflet-control-attribution{font-size:8px!important}
+.v21-route-card{margin-top:12px;background:#fff;border:1px solid #e2edef;border-radius:19px;padding:10px}
+.v21-route-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.v21-route-card-head b{color:#164a58;font-size:15px}
+.v21-route-card-head span{font-size:10px;color:#74858c;font-weight:800}
+</style>
+
+
+<style id="v21-scenic-styles">
+/* V21: use the actual generated scenic artwork, not abstract placeholder mountains. */
+.hero{
+  background:
+    linear-gradient(180deg,rgba(3,35,46,.32) 0%,rgba(3,35,46,.12) 35%,rgba(3,35,46,.52) 100%),
+    url("scenic-rider.png") center 58%/cover no-repeat !important;
+  min-height:320px !important;
+  padding:30px 18px 24px !important;
+}
+.hero:before,.hero:after{display:none!important}
+.hero h1{font-weight:950!important;text-shadow:0 3px 14px rgba(0,0,0,.48)!important}
+.hero p{text-shadow:0 2px 8px rgba(0,0,0,.45)!important}
+.v20-finish-card{
+  background:
+    linear-gradient(180deg,rgba(3,35,46,.26) 0%,rgba(3,35,46,.12) 36%,rgba(3,35,46,.92) 100%),
+    url("scenic-rider.png") center/cover no-repeat !important;
+  min-height:720px;
+}
+.v20-finish-card:before,.v20-finish-card:after{display:none!important}
+.v20-finish-inner{padding-top:30px!important}
+.v20-finish-title{font-size:48px!important;text-shadow:0 3px 15px rgba(0,0,0,.35)}
+.v20-finish-msg{font-size:15px!important;text-shadow:0 2px 8px rgba(0,0,0,.3)}
+.v20-finish-route{max-width:350px;text-shadow:0 2px 7px rgba(0,0,0,.4)}
+.v20-finish-quote{font-size:14px!important;text-shadow:0 2px 8px rgba(0,0,0,.35)}
+.v20-finish-stats{margin-top:22px!important}
+.v20-finish-card .v20-finish-stat{background:rgba(255,255,255,.94)!important}
+.v21-share-note{text-align:center;color:#dceff2;font-size:9px;margin-top:8px;opacity:.85}
 </style>
 
 </head>
@@ -961,7 +1007,7 @@ function saveReceiptPreview(input,n){
 })();
 </script>
 
-<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Isan Rider 2026 • V20</div>
+<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Isan Rider 2026 • V21</div>
 
 <script>
 (function(){
@@ -1118,7 +1164,7 @@ function saveFinishCard(){const c=makeFinishCanvas();c.toBlob(blob=>{const a=doc
 async function shareFinishCard(){const c=makeFinishCanvas();c.toBlob(async blob=>{try{const file=new File([blob],'Isan-Rider-Finish.png',{type:'image/png'});if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){await navigator.share({title:'Isan Rider 2026',text:"Finished today's ride.",files:[file]});}else{saveFinishCard();alert('Image saved. You can now share it to Facebook or WhatsApp.');}}catch(e){if(e&&e.name==='AbortError')return;saveFinishCard();}},'image/png');}
 
 </script>
-<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V20</div>
+<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Isan Rider 2026 • V21</div>
 
 
 <script>
@@ -1131,7 +1177,7 @@ document.addEventListener('click',function(e){const b=e.target.closest && e.targ
 
 <script id="v20-overrides">
 /* =========================
-   V20 SCREEN OVERRIDES
+   V21 SCREEN OVERRIDES
    ========================= */
 
 function v20CurrentDay(){
@@ -1200,7 +1246,7 @@ function showHome(btn){
       </div>
     </section>
 
-    <div class="v20-footer-note">Isan Rider 2026 • V20</div>
+    <div class="v20-footer-note">Isan Rider 2026 • V21</div>
   `;
   renderHomeTripDashboard();
   window.scrollTo(0,0);
@@ -1253,7 +1299,7 @@ function openFinishModal(dayLabel,st){
           <div class="v20-finish-stat"><b>${dist}</b><span>DISTANCE</span></div>
           <div class="v20-finish-stat"><b>${ride}</b><span>RIDE TIME</span></div>
         </div>
-        <div class="v20-finish-quote">“Not just miles, but memories.”</div>
+        <div class="v20-finish-quote">“Not just miles, but memories.”</div><div class="v21-share-note">Save or share the same scenic card shown here.</div>
         <div class="v20-finish-actions">
           <button class="v20-finish-save" onclick="saveFinishCard()">💾 SAVE AS IMAGE</button>
           <button class="v20-finish-share" onclick="shareFinishCard()">📤 SHARE</button>
@@ -1413,6 +1459,220 @@ document.addEventListener("click",function(e){
   if(b){e.preventDefault();v20BackFromSummary();}
 },true);
 
+</script>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+ integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+
+<script id="v21-map-data">
+const V21_COORDS={
+"Golok":[6.025,101.965],
+"Pattani":[6.868,101.250],
+"Hat Yai":[7.008,100.474],
+"Phatthalung":[7.617,100.078],
+"Surat Thani":[9.138,99.321],
+"Chumphon":[10.493,99.180],
+"Prachuap":[11.812,99.797],
+"Nakhon Sawan":[15.704,100.137],
+"Phitsanulok":[16.821,100.265],
+"Khao Kho":[16.897,101.060],
+"Lom Sak":[16.779,101.242],
+"Loei":[17.486,101.722],
+"Phu Ruea":[17.455,101.361],
+"Dan Sai":[17.281,101.149],
+"Na Haeo":[17.490,101.141],
+"Pak Chom":[17.833,101.903],
+"Chiang Khan":[17.894,101.663],
+"Mekong":[17.894,101.663],
+"Old Town":[17.894,101.663],
+"Sangkhom":[17.827,102.273],
+"Si Chiang Mai":[17.956,102.588],
+"Nong Khai":[17.878,102.742],
+"Udon Thani":[17.414,102.787],
+"Khon Kaen":[16.432,102.823],
+"Chum Phae":[16.543,102.100],
+"Phetchabun":[16.418,101.160],
+"Central Thailand":[14.0,100.5],
+"Nakhon Si":[8.430,99.963],
+"Thung Song":[8.165,99.680],
+"Narathiwat":[6.426,101.825],
+"Route 2195":[17.62,101.43]
+};
+const V21_MAPS={};
+function v21MapPoint(name){
+  const p=V21_COORDS[name];
+  return p ? [p[0],p[1]] : null;
+}
+function v21RouteUrl(points){
+  const coords=points.map(p=>p[1]+","+p[0]).join(";");
+  return "https://router.project-osrm.org/route/v1/driving/"+coords+"?overview=full&geometries=geojson&steps=false";
+}
+async function initV21Map(dayNo){
+  const el=document.getElementById("realMap-"+dayNo);
+  if(!el||typeof L==="undefined")return;
+  if(V21_MAPS[dayNo]){setTimeout(()=>V21_MAPS[dayNo].invalidateSize(),60);return;}
+  const d=days[Number(dayNo)-1]||{};
+  const names=Array.isArray(d.route)?d.route:[];
+  let pts=names.map(v21MapPoint);
+  /* Remove unknown points rather than inventing a coordinate. */
+  pts=pts.filter(Boolean);
+  const map=L.map(el,{scrollWheelZoom:false,zoomControl:true});
+  V21_MAPS[dayNo]=map;
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+    maxZoom:18,attribution:"© OpenStreetMap contributors"
+  }).addTo(map);
+  if(!pts.length){
+    map.setView([17.5,101.7],7);
+    el.insertAdjacentHTML("beforeend",'<div class="v21-map-error">Map anchors are not available for this day yet.</div>');
+    return;
+  }
+  pts.forEach((p,i)=>{
+    const icon=L.divIcon({
+      className:"",
+      html:'<div style="width:18px;height:18px;border-radius:50%;background:'+(i===0?"#ef476f":"#118ab2")+';border:3px solid white;box-shadow:0 2px 7px rgba(0,0,0,.35)"></div>',
+      iconSize:[18,18],iconAnchor:[9,9]
+    });
+    L.marker(p,{icon}).addTo(map).bindTooltip(names[i],{direction:"top",offset:[0,-8]});
+  });
+  map.fitBounds(L.latLngBounds(pts),{padding:[25,25]});
+  const loading=document.createElement("div");loading.className="v21-map-loading";loading.textContent="Building road route…";el.appendChild(loading);
+  try{
+    const res=await fetch(v21RouteUrl(pts),{cache:"no-store"});
+    if(!res.ok)throw new Error("Routing service unavailable");
+    const data=await res.json();
+    if(!data.routes||!data.routes[0])throw new Error("No road route found");
+    const route=data.routes[0];
+    const line=L.geoJSON(route.geometry,{style:{color:"#e83e68",weight:6,opacity:.9}}).addTo(map);
+    map.fitBounds(line.getBounds(),{padding:[28,28]});
+    const km=(route.distance/1000).toFixed(1);
+    el.dataset.routeKm=km;
+    const kmEl=document.getElementById("mapKm-"+dayNo);if(kmEl)kmEl.textContent=km+" km road route";
+  }catch(e){
+    const fallback=L.polyline(pts,{color:"#e83e68",weight:5,dashArray:"8 8",opacity:.8}).addTo(map);
+    map.fitBounds(fallback.getBounds(),{padding:[28,28]});
+    const err=document.createElement("div");err.className="v21-map-error";err.textContent="Live road routing unavailable. Showing waypoint route.";
+    el.appendChild(err);
+  }finally{loading.remove();}
+}
+function initVisibleV21Maps(){
+  document.querySelectorAll(".v21-real-map").forEach(el=>initV21Map(Number(el.dataset.day)));
+}
+</script>
+
+
+<script id="v21-summary-override">
+function routeMapPreview(dayNo){
+  const d=days[Number(dayNo)-1]||{};
+  const route=Array.isArray(d.route)?d.route:[];
+  return `<div class="v21-route-card">
+    <div class="v21-route-card-head"><b>🗺️ Route Map</b><span id="mapKm-${dayNo}">Road route</span></div>
+    <div id="realMap-${dayNo}" class="v21-real-map" data-day="${dayNo}"></div>
+    <div class="v21-map-note">Road geometry is generated from route waypoints using OpenStreetMap + OSRM. Open Google Maps for turn-by-turn navigation.</div>
+  </div>`;
+}
+function renderDailySummary(dayNo){
+  const r=getFinishedDays().find(x=>Number(x.day)===Number(dayNo));
+  const box=document.getElementById('dailySummaryBody');if(!box||!r)return;
+  const d=days[Number(dayNo)-1]||{};
+  const planned=Number(r.plannedKm||0),actual=Number(r.actualKm||0),diff=actual-planned;
+  const spend=getExpenses().filter(e=>String(e.day||e.date||'').includes(String(d.date))).reduce((a,x)=>a+(Number(x.amount)||0),0);
+  box.innerHTML=`<div class="dailyCard">
+    <h3>Day ${r.day} • ${d.date||''}</h3>
+    <div class="route">${Array.isArray(d.route)?d.route.join(' → '):(r.route||'Ride day')}</div>
+    <div class="dailyGrid">
+      <div><b>${actual.toFixed(1)} km</b><span>ACTUAL DISTANCE</span></div>
+      <div><b>${planned.toFixed(0)} km</b><span>PLANNED MIDPOINT</span></div>
+      <div><b>${fmtSummaryTime(r.rideSeconds)}</b><span>RIDE TIME</span></div>
+      <div><b>${fmtSummaryTime(r.restSeconds)}</b><span>REST / FOOD</span></div>
+      <div><b>${fmtSummaryTime(r.fuelSeconds)}</b><span>FUEL TIME</span></div>
+      <div><b>${fmtSummaryTime(r.shortStopSeconds)}</b><span>SHORT STOP</span></div>
+      <div><b>${diff>=0?'+':''}${diff.toFixed(1)} km</b><span>DIFFERENCE</span></div>
+      <div><b>${moneyTHB(r.expenses||spend)}</b><span>EXPENSES</span></div>
+    </div>
+    ${routeMapPreview(dayNo)}
+    <button class="mapOpenBtn" onclick="openSummaryRouteMap(${Number(dayNo)})">OPEN DAY ROUTE IN GOOGLE MAPS</button>
+  </div>`;
+  window.scrollTo(0,0);
+  setTimeout(()=>initV21Map(Number(dayNo)),80);
+}
+</script>
+
+
+<script id="v21-finish-image">
+function loadV21Scenic(){
+  return new Promise((resolve,reject)=>{
+    const im=new Image();
+    im.onload=()=>resolve(im);
+    im.onerror=reject;
+    im.src="scenic-rider.png";
+  });
+}
+function drawV21Cover(ctx,img,w,h){
+  const scale=Math.max(w/img.width,h/img.height);
+  const sw=img.width*scale,sh=img.height*scale;
+  const sx=(w-sw)/2,sy=(h-sh)/2;
+  ctx.drawImage(img,sx,sy,sw,sh);
+  const ov=ctx.createLinearGradient(0,0,0,h);
+  ov.addColorStop(0,"rgba(3,35,46,.48)");
+  ov.addColorStop(.42,"rgba(3,35,46,.06)");
+  ov.addColorStop(.72,"rgba(3,35,46,.30)");
+  ov.addColorStop(1,"rgba(3,35,46,.88)");
+  ctx.fillStyle=ov;ctx.fillRect(0,0,w,h);
+}
+async function makeFinishCanvas(){
+  const d=finishCardData();
+  const c=document.createElement("canvas");c.width=1080;c.height=1350;
+  const x=c.getContext("2d");
+  try{
+    const im=await loadV21Scenic();drawV21Cover(x,im,c.width,c.height);
+  }catch(e){
+    x.fillStyle="#073b4c";x.fillRect(0,0,c.width,c.height);
+  }
+  x.fillStyle="rgba(3,35,46,.62)";x.roundRect(55,55,970,350,34);x.fill();
+  x.strokeStyle="#ffd166";x.lineWidth=3;x.stroke();
+  x.fillStyle="#fff";x.font="900 74px system-ui";x.fillText("🏁 WELL DONE!",88,145);
+  x.font="34px system-ui";x.fillText("You finished today's ride.",90,207);
+  x.fillText("Get some rest for tomorrow's adventure.",90,257);
+  x.fillStyle="#ffd166";x.font="900 32px system-ui";x.fillText(d.day.toUpperCase(),90,320);
+  x.fillStyle="#fff";x.font="700 24px system-ui";
+  const route=String(d.route||"");
+  if(route)x.fillText(route.slice(0,72),90,367);
+
+  x.fillStyle="rgba(255,255,255,.95)";
+  x.roundRect(65,940,455,210,28);x.fill();
+  x.roundRect(560,940,455,210,28);x.fill();
+  x.fillStyle="#164a58";x.font="900 65px system-ui";
+  x.fillText(d.distance,100,1028);x.fillText(d.ride,595,1028);
+  x.font="800 25px system-ui";x.fillText("DISTANCE",103,1080);x.fillText("RIDE TIME",598,1080);
+  x.fillStyle="#fff";x.font="800 27px system-ui";x.fillText("ISAN RIDER 2026 • Voge DS900X",70,1245);
+  x.font="italic 25px system-ui";x.fillText("Not just miles, but memories.",70,1295);
+  return c;
+}
+async function saveFinishCard(){
+  const c=await makeFinishCanvas();
+  c.toBlob(blob=>{
+    const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+    a.download="Isan-Rider-"+finishCardData().day.replace(/[^A-Za-z0-9]+/g,"-")+".png";
+    a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+  },"image/png");
+}
+async function shareFinishCard(){
+  const c=await makeFinishCanvas();
+  c.toBlob(async blob=>{
+    try{
+      const file=new File([blob],"Isan-Rider-Finish.png",{type:"image/png"});
+      if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){
+        await navigator.share({title:"Isan Rider 2026",text:"Finished today's ride.",files:[file]});
+      }else{
+        await saveFinishCard();
+      }
+    }catch(e){
+      if(e&&e.name!=="AbortError")await saveFinishCard();
+    }
+  },"image/png");
+}
 </script>
 
 </body>
