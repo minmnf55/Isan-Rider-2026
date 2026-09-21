@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#073B4C">
-<link rel="manifest" href="manifest-v26.webmanifest">
+<link rel="manifest" href="manifest-v26.1.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192-v26.png">
 <link rel="apple-touch-icon" href="icon-192-v26.png">
-<meta name="app-version" content="v26">
+<meta name="app-version" content="v26.1">
 <title>Min's Thailand Road Trip</title>
 <style>
 :root{--navy:#073B4C;--teal:#118AB2;--cyan:#06D6A0;--yellow:#FFD166;--orange:#F78C6B;--red:#EF476F;--purple:#7B61FF;--green:#52B788;--bg:#f4f7fa;--card:#fff;--ink:#18323C;--muted:#667781}
@@ -598,30 +598,6 @@ function showEmergency(btn){
   window.scrollTo(0,0);
 }
 
-function showHome(btn){
- currentView="home"; setActive(btn);
- document.getElementById("screen").innerHTML=`
- <section class="section"><div class="tripDash">
-   <div class="tripDashTitle"><h2>🏍️ Trip Dashboard</h2><span class="livePill">LIVE TRIP TOTALS</span></div>
-   <div class="sub">Your progress across all completed ride days.</div>
-   <div class="tripDashGrid">
-    <div class="tripDashStat"><b id="homeDays">0 / 11</b><span>DAYS COMPLETED</span></div>
-    <div class="tripDashStat"><b id="homeKm">0.0 km</b><span>ACTUAL DISTANCE</span></div>
-    <div class="tripDashStat"><b id="homeRide">00:00:00</b><span>TOTAL RIDE TIME</span></div>
-    <div class="tripDashStat"><b id="homeRest">00:00:00</b><span>REST / FOOD</span></div>
-    <div class="tripDashStat"><b id="homeFuel">00:00:00</b><span>FUEL TIME</span></div>
-    <div class="tripDashStat"><b id="homeShort">00:00:00</b><span>SHORT STOP</span></div>
-    <div class="tripDashStat"><b id="homeSpend">฿0</b><span>ACTUAL SPENDING</span></div>
-   </div>
-   <div class="tripProgress"><i id="homeProgress" style="width:0%"></i></div>
- </div></section>
- <section class="section"><h2>Today / Trip Overview</h2><div class="route">${routeHTML(["Golok","Hat Yai","Nakhon Sawan","Loei","Na Haeo","Chiang Khan","Nong Khai","Phetchabun","Chumphon","Phatthalung","Golok"])}</div></section>
- <section class="section"><div class="note">⛽ HIGHWAY: plan refuel around 200–220 km. 🏔️ RURAL: 150–180 km. 🌧️ Mountain days are weather-sensitive; adjust rather than force the route.</div></section>
- <section class="section"><div class="card"><h2>🎬 My Ride</h2><div class="label">Build your trip story from GPS, stops, photos and expenses.</div><button class="cta" style="background:var(--purple)" onclick="generateRide()">GENERATE MY RIDE</button></div></section>`;
- renderHomeTripDashboard();
-}
-function renderHomeTripDashboard(){const f=getFinishedDays();let km=0,ride=0,rest=0,fuel=0,short=0;f.forEach(d=>{km+=Number(d.actualKm||0);ride+=Number(d.rideSeconds||0);rest+=Number(d.restSeconds||0);fuel+=Number(d.fuelSeconds||0);short+=Number(d.shortStopSeconds||0);});const ex=getExpenses().reduce((a,x)=>a+(Number(x.amount)||0),0);const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};set('homeDays',f.length+' / '+days.length);set('homeKm',km.toFixed(1)+' km');set('homeRide',fmtSummaryTime(ride));set('homeRest',fmtSummaryTime(rest));set('homeFuel',fmtSummaryTime(fuel));set('homeShort',fmtSummaryTime(short));set('homeSpend',moneyTHB(ex));const p=Math.min(100,f.length/days.length*100);const bar=document.getElementById('homeProgress');if(bar)bar.style.width=p+'%';}
-
 function generateRide(){
  const all=JSON.parse(localStorage.getItem("isan-rider-stops-v1")||"{}");
  const stops=Object.values(all).flat();
@@ -1049,7 +1025,7 @@ function saveReceiptPreview(input,n){
 })();
 </script>
 
-<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Min's Thailand Road Trip • V26</div>
+<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Min's Thailand Road Trip • V26.1</div>
 
 <script>
 (function(){
@@ -1206,7 +1182,7 @@ function saveFinishCard(){const c=makeFinishCanvas();c.toBlob(blob=>{const a=doc
 async function shareFinishCard(){const c=makeFinishCanvas();c.toBlob(async blob=>{try{const file=new File([blob],'Isan-Rider-Finish.png',{type:'image/png'});if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){await navigator.share({title:"Min's Thailand Road Trip",text:"Finished today's ride.",files:[file]});}else{saveFinishCard();alert('Image saved. You can now share it to Facebook or WhatsApp.');}}catch(e){if(e&&e.name==='AbortError')return;saveFinishCard();}},'image/png');}
 
 </script>
-<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Min's Thailand Road Trip • V26</div>
+<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Min's Thailand Road Trip • V26.1</div>
 
 
 <script>
@@ -1218,6 +1194,7 @@ document.addEventListener('click',function(e){const b=e.target.closest && e.targ
 </script>
 
 <script id="v20-overrides">
+/* V26.1: cleaned duplicate Home renderer; V21 scenic Home remains the active shell. */
 /* =========================
    V21 SCREEN OVERRIDES
    ========================= */
@@ -1288,7 +1265,7 @@ function showHome(btn){
       </div>
     </section>
 
-    <div class="v20-footer-note">Min's Thailand Road Trip • V26</div>
+    <div class="v20-footer-note">Min's Thailand Road Trip • V26.1</div>
   `;
   renderHomeTripDashboard();
   window.scrollTo(0,0);

@@ -1,8 +1,8 @@
-const CACHE = 'min-thailand-road-trip-v26';
+const CACHE = 'min-thailand-road-trip-v26.1';
 const APP_SHELL = [
   './',
   './index.html',
-  './manifest-v26.webmanifest',
+  './manifest-v26.1.webmanifest',
   './icon-192-v26.png',
   './icon-512-v26.png',
   './scenic-rider.png'
