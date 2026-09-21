@@ -500,7 +500,7 @@ function card(d){
  <div class="item"><strong>฿ Budget</strong><span>${d.budget}</span></div>
 
  <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center">
-   <h2 style="margin:0">📍 My Stops</h2>
+   <h2 style="margin:0">🏁 Pit Stops</h2>
    <span class="badge">${stops.length} added</span>
  </div>
  <div class="note" style="margin-top:8px">
@@ -523,7 +523,7 @@ function card(d){
    <div class="media-box" onclick="openMedia(${d.n})">🎬<br>Ride Story</div>
  </div>
  <div class="label" style="margin-top:8px">Photos and receipts are attached to this day. No fixed 6-photo limit in this version.</div>
- <button class="cta" style="background:var(--teal)" onclick="addStop(${d.n})">＋ ADD UNPLANNED STOP</button>
+ <button class="cta" style="background:var(--teal)" onclick="addStop(${d.n})">＋ ADD PIT STOP</button>
  <button class="cta" onclick="navigate('${d.route.join(" → ")}')">OPEN NAVIGATION</button>
  <div class="note" style="margin-top:10px">⚠️ ${d.note}</div>
  </div></section>`;
@@ -1036,7 +1036,7 @@ function saveReceiptPreview(input,n){
 })();
 </script>
 
-<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Min's Thailand Road Trip • V26.1.2</div>
+<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Min's Thailand Road Trip • V26.1.3</div>
 
 <script>
 (function(){
@@ -1283,7 +1283,7 @@ function showHome(btn){
       </div>
     </section>
 
-    <div class="v20-footer-note">Min's Thailand Road Trip • V26.1.2</div>
+    <div class="v20-footer-note">Min's Thailand Road Trip • V26.1.3</div>
   `;
   renderHomeTripDashboard();
   window.scrollTo(0,0);
@@ -1312,7 +1312,7 @@ function renderHomeTripDashboard(){
   const bar=document.getElementById('homeProgress'); if(bar)bar.style.width=p+'%';
 }
 
-/* V26.1.2: render Home only after the final Home renderer has been defined. */
+/* V26.1.3: render Home only after the final Home renderer has been defined. */
 showHome(document.querySelector(".nav button"));
 
 /* Premium in-app completion card */
@@ -1618,5 +1618,155 @@ async function saveFinishCard(){const c=await makeFinishCanvas();c.toBlob(blob=>
 async function shareFinishCard(){const c=await makeFinishCanvas();c.toBlob(async blob=>{if(!blob){alert("Unable to create the image. Please try again.");return;}try{const file=new File([blob],"Isan-Rider-Finish.png",{type:"image/png"});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"Min's Thailand Road Trip",text:"Finished today's ride.",files:[file]});}else if(navigator.share){await navigator.share({title:"Min's Thailand Road Trip",text:"Finished today's ride."});await saveFinishCard();}else{await saveFinishCard();}}catch(e){if(e&&e.name!=="AbortError")await saveFinishCard();}}, "image/png");}
 </script>
 
+<script id="v2613-time-pit-report">
+(() => {
+  const css = `
+  .pitModal{position:fixed;inset:0;background:rgba(3,35,46,.72);backdrop-filter:blur(5px);z-index:23000;display:none;align-items:center;justify-content:center;padding:18px}
+  .pitModal.show{display:flex}.pitCard{width:min(420px,100%);background:#fff;border-radius:24px;padding:20px;box-shadow:0 22px 70px rgba(0,0,0,.35);border:2px solid #ffd166;color:#073b4c}
+  .pitHead{display:flex;justify-content:space-between;align-items:center;gap:10px}.pitHead h2{margin:0;font-size:23px}.pitClose{border:0;background:#eef5f7;border-radius:50%;width:34px;height:34px;font-size:20px;color:#073b4c}
+  .pitLabel{display:block;font-size:11px;font-weight:900;letter-spacing:.05em;margin:13px 0 6px;text-transform:uppercase;color:#58707a}
+  .pitInput,.pitSelect,.pitTextarea{width:100%;box-sizing:border-box;border:1px solid #d8e5e9;border-radius:12px;padding:11px 12px;font:600 14px system-ui;color:#073b4c;background:#fbfdfe}
+  .pitTextarea{min-height:78px;resize:vertical}.pitTypes{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.pitType{border:1px solid #d8e5e9;background:#f5fafb;border-radius:11px;padding:9px 4px;font-size:11px;font-weight:900;color:#176277}.pitType.active{background:#073b4c;color:#fff;border-color:#073b4c}
+  .pitMeta{margin-top:10px;background:#eef9fb;border-radius:12px;padding:10px;font-size:11px;line-height:1.5}.pitActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.pitSave{border:0;border-radius:13px;background:#06d6a0;color:#073b4c;padding:13px;font-weight:950}.pitCancel{border:0;border-radius:13px;background:#eef2f4;color:#073b4c;padding:13px;font-weight:900}
+  .v2613-report-note{font-size:11px;color:#5b6d75;margin-top:6px}.v2613-timeline{margin-top:12px;padding:12px;background:#f7fbfc;border-radius:16px}.v2613-timeline-row{display:grid;grid-template-columns:60px 28px 1fr;gap:6px;align-items:start;padding:6px 0;border-bottom:1px solid #e5eef0;font-size:11px}.v2613-timeline-row:last-child{border-bottom:0}.v2613-timeline-time{font-weight:950;color:#073b4c}.v2613-timeline-dot{font-size:15px;text-align:center}.v2613-timeline-main b{display:block;color:#073b4c}.v2613-timeline-main span{color:#71818a}
+  `;
+  const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+
+  function ensurePitModal(){
+    let m=document.getElementById('pitStopModal2613');
+    if(m)return m;
+    m=document.createElement('div');m.id='pitStopModal2613';m.className='pitModal';m.innerHTML=`
+      <div class="pitCard">
+        <div class="pitHead"><h2>🏁 Pit Stop</h2><button class="pitClose" onclick="closePitStopModal()">×</button></div>
+        <label class="pitLabel">Type</label>
+        <div class="pitTypes">
+          <button type="button" class="pitType active" data-type="other">📍 Other</button>
+          <button type="button" class="pitType" data-type="cafe">☕ Cafe</button>
+          <button type="button" class="pitType" data-type="food">🍜 Food</button>
+          <button type="button" class="pitType" data-type="viewpoint">📸 View</button>
+          <button type="button" class="pitType" data-type="refuel">⛽ Fuel</button>
+          <button type="button" class="pitType" data-type="hotel">🏨 Hotel</button>
+          <button type="button" class="pitType" data-type="maintenance">🛠️ Bike</button>
+          <button type="button" class="pitType" data-type="photo">📷 Photo</button>
+        </div>
+        <label class="pitLabel">Place / Spot Name <span style="font-weight:600;text-transform:none">(optional)</span></label>
+        <input id="pitName2613" class="pitInput" placeholder="e.g. Khao Kho Viewpoint" autocomplete="off">
+        <label class="pitLabel">Notes <span style="font-weight:600;text-transform:none">(optional)</span></label>
+        <textarea id="pitNote2613" class="pitTextarea" placeholder="What happened here?"></textarea>
+        <div id="pitMeta2613" class="pitMeta">📍 GPS will be captured from your latest rider location.<br>🕐 Time will be recorded automatically.</div>
+        <div class="pitActions"><button class="pitCancel" onclick="closePitStopModal()">CANCEL</button><button class="pitSave" onclick="savePitStop2613()">SAVE PIT STOP</button></div>
+      </div>`;
+    document.body.appendChild(m);
+    m.querySelectorAll('.pitType').forEach(b=>b.addEventListener('click',()=>{m.querySelectorAll('.pitType').forEach(x=>x.classList.remove('active'));b.classList.add('active');}));
+    return m;
+  }
+  window.closePitStopModal=()=>{const m=document.getElementById('pitStopModal2613');if(m)m.classList.remove('show');};
+  window.addStop=function(dayNum){
+    const m=ensurePitModal();m.dataset.day=String(dayNum);
+    document.getElementById('pitName2613').value='';document.getElementById('pitNote2613').value='';
+    m.querySelectorAll('.pitType').forEach(x=>x.classList.remove('active'));m.querySelector('.pitType[data-type="other"]').classList.add('active');
+    const saved=getSavedRiderDay(dayNum);const lat=saved&&Number.isFinite(Number(saved.lat))?Number(saved.lat):null;const lon=saved&&Number.isFinite(Number(saved.lon))?Number(saved.lon):null;
+    document.getElementById('pitMeta2613').innerHTML=(lat!=null&&lon!=null?`📍 GPS: ${lat.toFixed(6)}, ${lon.toFixed(6)}`:'📍 GPS: waiting for a saved rider location')+`<br>🕐 ${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`;
+    m.classList.add('show');
+  };
+  window.savePitStop2613=function(){
+    const m=document.getElementById('pitStopModal2613');if(!m)return;const dayNum=Number(m.dataset.day)||Number(activeRideDay)||1;
+    const btn=m.querySelector('.pitType.active');const type=btn?btn.dataset.type:'other';const typeLabel=btn?btn.textContent.replace(/^\S+\s*/,'').trim():'Other';
+    const name=document.getElementById('pitName2613').value.trim();const note=document.getElementById('pitNote2613').value.trim();const now=new Date();
+    const saved=getSavedRiderDay(dayNum);const lat=saved&&Number.isFinite(Number(saved.lat))?Number(saved.lat):null;const lon=saved&&Number.isFinite(Number(saved.lon))?Number(saved.lon):null;
+    const stops=getStops(dayNum);const stop={id:Date.now(),name:name||typeLabel,note,time:now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),at:now.toISOString(),lat,lon,type,category:typeLabel};stops.push(stop);saveStops(dayNum,stops);
+    let rs=getSavedRiderDay(dayNum);if(rs){rs=Object.assign(blankRiderState(),rs);if(!Array.isArray(rs.events))rs.events=[];rs.events.push({kind:'pit',type,name:stop.name,at:stop.at,lat,lon,note});localStorage.setItem('isanRiderGPS-day-'+dayNum,JSON.stringify(rs));if(Number(activeRideDay)===dayNum){riderState=rs;saveRider();}}
+    const fd=getFinishedDays();const idx=fd.findIndex(x=>Number(x.day)===dayNum);if(idx>=0){fd[idx].pitStops=stops.slice();localStorage.setItem('finishedDays',JSON.stringify(fd));}
+    closePitStopModal();showDay(dayNum);
+  };
+
+  function ensureEvents(s){if(!Array.isArray(s.events))s.events=[];return s.events;}
+  function pushEvent(s,e){ensureEvents(s).push(e);}
+  function eventLabel(ev){const t=ev.type;return t==='refuel'?'REFUEL':t==='rest'?'REST / FOOD':t==='short'?'SHORT STOP':t==='pit'?'PIT STOP':ev.kind==='finish'?'FINISH':ev.kind==='resume'?'RESUME':'START';}
+  function eventIcon(ev){const t=ev.type;return t==='refuel'?'⛽':t==='rest'?'☕':t==='short'?'📸':t==='pit'?'🏁':ev.kind==='finish'?'🏁':ev.kind==='resume'?'▶️':'🏍️';}
+  function timeHM(iso){try{return new Date(iso).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});}catch(e){return '—';}}
+  function elapsedFromRecord(r){if(r&&r.startTime&&r.endTime)return Math.max(0,new Date(r.endTime)-new Date(r.startTime));return (Number(r&&r.rideSeconds||0)+Number(r&&r.restSeconds||0)+Number(r&&r.fuelSeconds||0)+Number(r&&r.shortStopSeconds||0))*1000;}
+
+  // Override rider start/stop/finish so the app keeps a true day start/end and timeline.
+  window.startRider=function(){
+    ensureActiveRideDay();if(riderState.finished){alert('This ride day is already finished. Go back to Rides and select another day.');return;}if(!('geolocation'in navigator)){alert('GPS is not supported by this browser/device.');return;}if(riderState.running)return;
+    const now=Date.now();if(!riderState.startTime)riderState.startTime=new Date(now).toISOString();
+    if(!riderState.totalStart)riderState.totalStart=now;
+    if(riderState.stopStart){const d=Math.max(0,now-riderState.stopStart);if(riderState.stopType==='rest')riderState.restMs=(Number(riderState.restMs)||0)+d;else if(riderState.stopType==='refuel')riderState.fuelMs=(Number(riderState.fuelMs)||0)+d;else if(riderState.stopType==='short')riderState.shortStopMs=(Number(riderState.shortStopMs)||0)+d;riderState.stopStart=null;riderState.stopType=null;}
+    pushEvent(riderState,{kind:riderState.events&&riderState.events.length?'resume':'start',at:new Date(now).toISOString(),lat:riderState.lat,lon:riderState.lon});
+    riderState.running=true;riderState.sessionStart=now;riderState.speed=0;saveRider();renderRider();
+    if(riderWatchId===null)riderWatchId=navigator.geolocation.watchPosition(riderPosition,e=>{const msg={1:'GPS permission was denied.',2:'Location could not be determined.',3:'GPS is taking too long to respond.'}[e.code]||'GPS error.';const x=document.getElementById('riderError');if(x)x.textContent=msg;},{enableHighAccuracy:true,maximumAge:5000,timeout:15000});
+    if(riderTimer===null)riderTimer=setInterval(renderRider,1000);
+  };
+  window.chooseStop=function(type){
+    closeStopOptions();if(!riderState.running)return;const now=Date.now();
+    if(!Array.isArray(riderState.stopLocations))riderState.stopLocations=[];if(riderState.lat!=null&&riderState.lon!=null)riderState.stopLocations.push({lat:Number(riderState.lat),lon:Number(riderState.lon),type,at:new Date(now).toISOString()});
+    if(riderState.sessionStart){riderState.rideMs=(Number(riderState.rideMs)||0)+Math.max(0,now-riderState.sessionStart);riderState.sessionStart=null;}
+    if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}
+    pushEvent(riderState,{kind:'stop',type,at:new Date(now).toISOString(),lat:riderState.lat,lon:riderState.lon});
+    if(riderTimer===null)riderTimer=setInterval(renderRider,1000);
+    riderState.running=false;riderState.stopStart=now;riderState.stopType=type;riderState.speed=0;saveRider();renderRider();
+  };
+  window.finishDay=function(){
+    if(riderState.finished)return;const now=Date.now();
+    if(riderState.running&&riderState.sessionStart){riderState.rideMs=(Number(riderState.rideMs)||0)+Math.max(0,now-riderState.sessionStart);riderState.sessionStart=null;}
+    if(!riderState.running&&riderState.stopStart){const d=Math.max(0,now-riderState.stopStart);if(riderState.stopType==='rest')riderState.restMs=(Number(riderState.restMs)||0)+d;else if(riderState.stopType==='refuel')riderState.fuelMs=(Number(riderState.fuelMs)||0)+d;else if(riderState.stopType==='short')riderState.shortStopMs=(Number(riderState.shortStopMs)||0)+d;riderState.stopStart=null;riderState.stopType=null;}
+    if(!riderState.startTime)riderState.startTime=new Date(now).toISOString();riderState.endTime=new Date(now).toISOString();pushEvent(riderState,{kind:'finish',at:riderState.endTime,lat:riderState.lat,lon:riderState.lon});
+    if(riderWatchId!==null){navigator.geolocation.clearWatch(riderWatchId);riderWatchId=null;}if(riderTimer){clearInterval(riderTimer);riderTimer=null;}
+    const dayNo=ensureActiveRideDay(),planned=days[dayNo-1]||{},range=String(planned.km||'').replace(/,/g,'').match(/(\d+(?:\.\d+)?)/g)||[],plannedKm=range.length>=2?(Number(range[0])+Number(range[1]))/2:(range.length?Number(range[0]):0);
+    let finishedDays=getFinishedDays();const dayLabel=planned.date?`Day ${dayNo} • ${planned.date}`:`Day ${dayNo}`;const route=Array.isArray(planned.route)?planned.route.join(' → '):(planned.route||'Ride day');const pitStops=getStops(dayNo);
+    const record={day:dayNo,date:dayLabel,route,plannedKm,actualKm:Number(riderState.distance)||0,rideSeconds:Math.floor((Number(riderState.rideMs)||0)/1000),restSeconds:Math.floor((Number(riderState.restMs)||0)/1000),fuelSeconds:Math.floor((Number(riderState.fuelMs)||0)/1000),shortStopSeconds:Math.floor((Number(riderState.shortStopMs)||0)/1000),track:Array.isArray(riderState.track)?riderState.track.slice():[],stopLocations:Array.isArray(riderState.stopLocations)?riderState.stopLocations.slice():[],pitStops:pitStops.slice(),events:Array.isArray(riderState.events)?riderState.events.slice():[],startTime:riderState.startTime,endTime:riderState.endTime,finishedAt:riderState.endTime};
+    const idx=finishedDays.findIndex(x=>Number(x.day)===dayNo);if(idx>=0)finishedDays[idx]=record;else finishedDays.push(record);localStorage.setItem('finishedDays',JSON.stringify(finishedDays));try{window.dispatchEvent(new Event('isan:dayFinished'));}catch(e){}
+    const snapshot=Object.assign({},riderState,{dayNo,dayLabel,startTime:riderState.startTime,endTime:riderState.endTime,events:Array.isArray(riderState.events)?riderState.events.slice():[]});riderState.running=false;riderState.finished=true;riderState.sessionStart=null;riderState.stopStart=null;riderState.stopType=null;riderState.speed=0;saveRider();activeRideDay=nextUnfinishedDay();localStorage.setItem('isanActiveRideDay',String(activeRideDay));loadRiderForDay(activeRideDay);openFinishModal(dayLabel,snapshot);showRides(document.querySelectorAll('.nav button')[1]);
+  };
+
+  window.reopenCompletionCard=function(dayNo){const r=getFinishedDays().find(x=>Number(x.day)===Number(dayNo));if(!r){alert('This ride day has not been completed yet.');return;}const d=days[Number(dayNo)-1]||{};const st={distance:Number(r.actualKm)||0,rideMs:(Number(r.rideSeconds)||0)*1000,restMs:(Number(r.restSeconds)||0)*1000,fuelMs:(Number(r.fuelSeconds)||0)*1000,shortStopMs:(Number(r.shortStopSeconds)||0)*1000,dayNo:Number(dayNo),startTime:r.startTime,endTime:r.endTime,events:r.events||[],pitStops:r.pitStops||getStops(dayNo),track:Array.isArray(r.track)?r.track.slice():[]};window.__returnToFinish=false;openFinishModal(`Day ${dayNo} • ${d.date||''}`,st);};
+
+  window.finishCardData=function(){
+    const st=window.__finishedRide||{},dayNo=Number(st.dayNo||0),d=days[dayNo-1]||{},rawKm=String(d.km||'').replace(/,/g,''),nums=rawKm.match(/\d+(?:\.\d+)?/g)||[],plannedMid=nums.length>=2?(Number(nums[0])+Number(nums[1]))/2:(nums.length?Number(nums[0]):0),plannedRange=rawKm||'—';const actual=Number(st.distance)||0;
+    const rest=Number(st.restMs||0),fuel=Number(st.fuelMs||0),short=Number(st.shortStopMs||0),ride=Number(st.rideMs||0),elapsed=st.startTime&&st.endTime?Math.max(0,new Date(st.endTime)-new Date(st.startTime)):ride+rest+fuel+short;
+    return {day:st.dayLabel||'Today',dayNo,date:d.date||'',route:Array.isArray(d.route)?d.route.join(' → '):'',distance:actual.toFixed(1)+' km',planned:plannedRange+' km',plannedMid, diff:(actual-plannedMid),ride:fmtTime(ride),track:Array.isArray(st.track)?st.track:[],rest:fmtTime(rest),fuel:fmtTime(fuel),short:fmtTime(short),elapsed:fmtTime(elapsed),start:st.startTime?timeHM(st.startTime):'—',end:st.endTime?timeHM(st.endTime):'—',pitStops:Array.isArray(st.pitStops)?st.pitStops:[],events:Array.isArray(st.events)?st.events:[]};
+  };
+
+  window.openFinishModal=function(dayLabel,st){
+    const parsedDay=Number(String(dayLabel||'').match(/Day\s+(\d+)/)?.[1]||0);window.__finishedRide=Object.assign({},st,{dayLabel,dayNo:Number(st&&st.dayNo)||parsedDay||Number(activeRideDay)||0});const m=document.getElementById('finishModal');if(!m)return;m.style.display='flex';m.setAttribute('aria-hidden','false');
+    const d=finishCardData();m.innerHTML=`<div class="v20-finish-card"><div class="v20-finish-inner"><div class="v20-finish-brand"><span>MIN'S THAILAND ROAD TRIP</span><span>🏁 DAY COMPLETE</span></div><div class="v20-finish-title">Well done!</div><p class="v20-finish-msg">You finished today's ride.<br>Get some rest for tomorrow's adventure.</p><div class="v20-finish-day">${d.day}</div><div class="v20-finish-route">${d.route}</div><div class="v20-finish-stats"><div class="v20-finish-stat"><b>${d.distance}</b><span>ACTUAL DISTANCE</span></div><div class="v20-finish-stat"><b>${d.ride}</b><span>RIDE TIME</span></div><div class="v20-finish-stat"><b>${d.elapsed}</b><span>TOTAL ELAPSED</span></div><div class="v20-finish-stat"><b>${d.start} → ${d.end}</b><span>START / END</span></div></div><div class="v20-finish-quote">“Not just miles, but memories.”</div><div class="v21-share-note">Save or share the same scenic card shown here.</div><div class="v20-finish-actions"><button class="v20-finish-save" onclick="saveFinishCard()">💾 SAVE AS IMAGE</button><button class="v20-finish-share" onclick="shareFinishCard()">📤 SHARE</button></div><button class="v20-finish-full" onclick="v20ViewDailySummaryFromFinish()">📝 VIEW DAILY SUMMARY</button><button class="v23-finish-back" onclick="v23BackToRidesFromFinish()">‹ BACK TO RIDES</button><button class="v20-finish-start" onclick="v20StartNewDay()">▶ START NEW DAY</button></div></div>`;
+  };
+
+  function drawFlagMY(ctx,x,y,w,h){ctx.save();for(let i=0;i<14;i++){ctx.fillStyle=i%2?'#fff':'#c8102e';ctx.fillRect(x,y+i*h/14,w,h/14);}ctx.fillStyle='#012169';ctx.fillRect(x,y,w*.42,h*.55);ctx.fillStyle='#ffcc00';ctx.beginPath();ctx.arc(x+w*.18,y+h*.275,h*.14,0,Math.PI*2);ctx.fill();ctx.restore();}
+  function drawFlagTH(ctx,x,y,w,h){ctx.save();const cols=['#c8102e','#fff','#241d4f','#fff','#c8102e'];cols.forEach((c,i)=>{ctx.fillStyle=c;ctx.fillRect(x,y+i*h/5,w,h/5);});ctx.restore();}
+  function drawRouteSketch(ctx,x,y,w,h,d){ctx.save();ctx.fillStyle='#eef6f3';ctx.roundRect(x,y,w,h,24);ctx.fill();ctx.strokeStyle='#c9dfe0';ctx.lineWidth=2;ctx.stroke();for(let gx=x+30;gx<x+w;gx+=70){ctx.strokeStyle='rgba(7,59,76,.07)';ctx.beginPath();ctx.moveTo(gx,y);ctx.lineTo(gx,y+h);ctx.stroke();}for(let gy=y+30;gy<y+h;gy+=55){ctx.beginPath();ctx.moveTo(x,gy);ctx.lineTo(x+w,gy);ctx.stroke();}
+    const track=Array.isArray((window.__finishedRide||{}).track)?(window.__finishedRide||{}).track:[];let pts=track.filter(p=>Array.isArray(p)&&p.length>=2);if(pts.length<2){const n=Math.max(2,(d.route||'').split(' → ').length);pts=Array.from({length:n},(_,i)=>[i,Math.sin(i*.9)*.4+i*.25]);}
+    const minA=Math.min(...pts.map(p=>p[0])),maxA=Math.max(...pts.map(p=>p[0])),minB=Math.min(...pts.map(p=>p[1])),maxB=Math.max(...pts.map(p=>p[1]));const sx=a=>x+24+(a-minA)/Math.max(.0001,maxA-minA)*(w-48),sy=b=>y+h-24-(b-minB)/Math.max(.0001,maxB-minB)*(h-48);
+    ctx.strokeStyle='#e83e68';ctx.lineWidth=7;ctx.lineCap='round';ctx.beginPath();pts.forEach((p,i)=>{const px=sx(p[0]),py=sy(p[1]);if(i)ctx.lineTo(px,py);else ctx.moveTo(px,py);});ctx.stroke();const first=pts[0],last=pts[pts.length-1];ctx.fillStyle='#06d6a0';ctx.beginPath();ctx.arc(sx(first[0]),sy(first[1]),10,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ef476f';ctx.beginPath();ctx.arc(sx(last[0]),sy(last[1]),10,0,Math.PI*2);ctx.fill();
+    (d.pitStops||[]).filter(s=>Number.isFinite(Number(s.lat))&&Number.isFinite(Number(s.lon))).slice(0,10).forEach((s,i)=>{const idx=Math.min(pts.length-1,Math.max(0,Math.round((i+1)/(Math.max(1,(d.pitStops||[]).length+1))*(pts.length-1))));const p=pts[idx];ctx.fillStyle='#7b61ff';ctx.beginPath();ctx.arc(sx(p[0]),sy(p[1]),8,0,Math.PI*2);ctx.fill();});
+    ctx.fillStyle='#073b4c';ctx.font='900 22px Arial';ctx.fillText('ACTUAL GPS TRACK',x+24,y+34);ctx.fillStyle='#5b6d75';ctx.font='600 16px Arial';ctx.fillText((d.pitStops||[]).length+' pit stop'+((d.pitStops||[]).length===1?'':'s'),x+w-120,y+34);ctx.restore();}
+
+  window.makeFinishCanvas=async function(){
+    const d=finishCardData(),c=document.createElement('canvas');c.width=1080;c.height=1550;const x=c.getContext('2d');x.textBaseline='alphabetic';
+    try{const im=await loadV22Scenic();const scale=Math.max(c.width/im.width,900/im.height),sw=im.width*scale,sh=im.height*scale;x.drawImage(im,(c.width-sw)/2,(900-sh)/2,sw,sh);const ov=x.createLinearGradient(0,0,0,900);ov.addColorStop(0,'rgba(3,35,46,.68)');ov.addColorStop(1,'rgba(3,35,46,.18)');x.fillStyle=ov;x.fillRect(0,0,c.width,900);}catch(e){x.fillStyle='#073b4c';x.fillRect(0,0,c.width,900);}
+    x.fillStyle='rgba(3,35,46,.76)';v22RoundRect(x,50,45,980,285,30);x.fill();x.strokeStyle='#ffd166';x.lineWidth=3;v22RoundRect(x,50,45,980,285,30);x.stroke();x.fillStyle='#fff';x.font='900 28px Arial';x.fillText("MIN'S THAILAND ROAD TRIP",82,92);x.fillStyle='#ffd166';x.font='900 22px Arial';x.fillText('DAY COMPLETE',810,92);x.fillStyle='#fff';x.font='italic 72px Georgia';x.fillText('Well done!',82,170);x.font='30px Arial';x.fillText("You finished today's ride.",84,220);x.fillText("Not just miles, but memories.",84,264);x.fillStyle='#ffd166';x.font='900 29px Arial';x.fillText(String(d.day).toUpperCase(),84,310);
+    x.fillStyle='#fff';x.font='900 22px Arial';x.fillText(d.route,65,360);
+    // Main stats
+    const stats=[[''+d.distance,'ACTUAL DISTANCE'],[d.planned,'PLANNED MIDPOINT'],[d.diff>=0?'+'+d.diff.toFixed(1)+' km':d.diff.toFixed(1)+' km','DIFFERENCE'],[d.start,'START TIME'],[d.end,'END TIME'],[d.elapsed,'TOTAL ELAPSED'],[d.ride,'RIDE TIME'],[d.rest,'REST / FOOD'],[d.fuel,'FUEL TIME'],[d.short,'SHORT STOP']];
+    stats.forEach((s,i)=>{const col=i%5,row=Math.floor(i/5),bx=50+col*196,by=400+row*112;x.fillStyle='rgba(255,255,255,.96)';v22RoundRect(x,bx,by,182,94,16);x.fill();x.fillStyle='#164a58';x.font='900 24px Arial';x.fillText(s[0],bx+12,by+39);x.fillStyle='#60737b';x.font='800 12px Arial';x.fillText(s[1],bx+12,by+65);});
+    drawRouteSketch(x,50,635,560,350,d);
+    x.fillStyle='#fff';v22RoundRect(x,630,635,400,350,24);x.fill();x.fillStyle='#073b4c';x.font='900 24px Arial';x.fillText('TIMELINE',655,675);let events=(d.events||[]).slice().sort((a,b)=>new Date(a.at)-new Date(b.at));if(!events.length){events=[...(d.start?[{kind:'start',at:d.startTime}]:[]),...(d.end?[{kind:'finish',at:d.endTime}]:[])];}events.slice(0,8).forEach((ev,i)=>{const yy=710+i*32;x.fillStyle='#073b4c';x.font='900 14px Arial';x.fillText(timeHM(ev.at),655,yy);x.fillStyle='#e83e68';x.font='900 14px Arial';x.fillText(eventIcon(ev),710,yy);x.fillStyle='#164a58';x.font='800 13px Arial';x.fillText(eventLabel(ev)+(ev.name?' — '+ev.name:''),735,yy);});
+    x.fillStyle='#fff';v22RoundRect(x,50,1015,980,270,24);x.fill();x.fillStyle='#073b4c';x.font='900 24px Arial';x.fillText('PIT STOPS',75,1055);const pits=d.pitStops||[];if(!pits.length){x.fillStyle='#60737b';x.font='18px Arial';x.fillText('No pit stops recorded.',75,1095);}else{pits.slice(0,6).forEach((p,i)=>{const yy=1095+i*29;x.fillStyle='#164a58';x.font='800 16px Arial';x.fillText((p.time||'—')+'  •  '+(p.category||p.type||'Pit Stop')+'  •  '+(p.name||'Unnamed spot'),75,yy);});}
+    drawFlagMY(x,75,1235,78,48);drawFlagTH(x,175,1235,78,48);x.fillStyle='#073b4c';x.font='900 18px Arial';x.fillText("MIN'S THAILAND ROAD TRIP",280,1265);x.fillStyle='#5b6d75';x.font='italic 17px Georgia';x.fillText('GOOD ROADS • PEOPLE • PLACES • GREAT STORIES',280,1292);x.fillStyle='#073b4c';x.font='700 15px Arial';x.fillText('Voge DS900X  •  Isan + Mekong Motorcycle Tour 2026',75,1340);
+    return c;
+  };
+
+  window.renderDailySummary=function(dayNo){
+    const r=getFinishedDays().find(x=>Number(x.day)===Number(dayNo)),box=document.getElementById('dailySummaryBody');if(!box||!r)return;const d=days[Number(dayNo)-1]||{},planned=Number(r.plannedKm||0),actual=Number(r.actualKm||0),diff=actual-planned,elapsed=elapsedFromRecord(r);const spend=getExpenses().filter(e=>String(e.day||e.date||'').includes(String(d.date))).reduce((a,x)=>a+(Number(x.amount)||0),0);const pits=Array.isArray(r.pitStops)?r.pitStops:getStops(dayNo);
+    const events=Array.isArray(r.events)?r.events:[];const timeline=events.slice().sort((a,b)=>new Date(a.at)-new Date(b.at)).slice(0,12).map(ev=>`<div class="v2613-timeline-row"><div class="v2613-timeline-time">${timeHM(ev.at)}</div><div class="v2613-timeline-dot">${eventIcon(ev)}</div><div class="v2613-timeline-main"><b>${eventLabel(ev)}${ev.name?' — '+ev.name:''}</b><span>${ev.note||''}</span></div></div>`).join('');
+    box.innerHTML=`<div class="dailyCard"><h3>Day ${r.day} • ${d.date||''}</h3><div class="route">${Array.isArray(d.route)?d.route.join(' → '):(r.route||'Ride day')}</div><div class="dailyGrid"><div><b>${actual.toFixed(1)} km</b><span>ACTUAL DISTANCE</span></div><div><b>${planned.toFixed(0)} km</b><span>PLANNED MIDPOINT</span></div><div><b>${fmtSummaryTime(r.rideSeconds)}</b><span>RIDE TIME</span></div><div><b>${fmtSummaryTime(r.restSeconds)}</b><span>REST / FOOD</span></div><div><b>${fmtSummaryTime(r.fuelSeconds)}</b><span>FUEL TIME</span></div><div><b>${fmtSummaryTime(r.shortStopSeconds)}</b><span>SHORT STOP</span></div><div><b>${diff>=0?'+':''}${diff.toFixed(1)} km</b><span>DIFFERENCE</span></div><div><b>${moneyTHB(r.expenses||spend)}</b><span>EXPENSES</span></div><div><b>${r.startTime?timeHM(r.startTime):'—'}</b><span>START</span></div><div><b>${r.endTime?timeHM(r.endTime):'—'}</b><span>END</span></div></div>${routeMapPreview(dayNo)}<div class="v2613-timeline"><b>⏱️ Timeline</b>${timeline||'<div class="v2613-report-note">No timeline events recorded for this day.</div>'}</div><div class="v2613-report-note">Total elapsed: <b>${fmtTime(elapsed)}</b> • Pit stops: <b>${pits.length}</b></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><button class="mapOpenBtn" style="margin-top:0" onclick="openSummaryRouteMap(${Number(dayNo)})">OPEN DAY ROUTE IN GOOGLE MAPS</button><button class="mapOpenBtn" style="margin-top:0;background:#ffd166;color:#073b4c" onclick="reopenCompletionCard(${Number(dayNo)})">VIEW COMPLETION CARD</button></div></div>`;window.scrollTo(0,0);setTimeout(()=>initV21Map(Number(dayNo)),120);
+  };
+
+  // Make legacy UI copy English-only where the old prompt used BM.
+  const oldAdd=document.querySelector('button[onclick*="addStop"]');if(oldAdd)oldAdd.textContent='＋ ADD PIT STOP';
+})();
+
+</script>
 </body>
 </html>
