@@ -4,9 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#073B4C">
-<link rel="manifest" href="manifest-v24.webmanifest">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192-v24.png">
-<link rel="apple-touch-icon" href="icon-192-v24.png">
+<link rel="manifest" href="manifest-v26.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192-v26.png">
+<link rel="apple-touch-icon" href="icon-192-v26.png">
+<meta name="app-version" content="v26">
 <title>Min's Thailand Road Trip</title>
 <style>
 :root{--navy:#073B4C;--teal:#118AB2;--cyan:#06D6A0;--yellow:#FFD166;--orange:#F78C6B;--red:#EF476F;--purple:#7B61FF;--green:#52B788;--bg:#f4f7fa;--card:#fff;--ink:#18323C;--muted:#667781}
@@ -943,25 +944,34 @@ function backToHome(){showHome(document.querySelectorAll(".nav button")[0]);}
 function backToRides(){showRides(document.querySelectorAll(".nav button")[1],true);}
 function requestExitApp(){const m=document.getElementById("exitModal");if(m){m.style.display="flex";m.setAttribute("aria-hidden","false");}}
 function closeExitModal(){const m=document.getElementById("exitModal");if(m){m.style.display="none";m.setAttribute("aria-hidden","true");}}
-function confirmExitApp(){closeExitModal();allowAppExit=true;try{history.back();}catch(e){}}
+function confirmExitApp(){
+  closeExitModal();
+  // Standalone PWAs cannot be force-closed by JavaScript. Keep the app open
+  // and let Android's Home/Recent Apps controls handle leaving it.
+  showExitHint();
+}
+function showExitHint(){
+  const old=document.getElementById("exitHint");
+  if(old)old.remove();
+  const d=document.createElement("div");
+  d.id="exitHint";
+  d.textContent="App is ready to close. Use the Android Home or Recent Apps button.";
+  d.style.cssText="position:fixed;left:18px;right:18px;bottom:96px;z-index:25000;background:#073B4C;color:#fff;border-radius:14px;padding:13px 15px;text-align:center;font-weight:800;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.25)";
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(),3200);
+}
 function exitGuard(){if(allowAppExit)return;requestExitApp();try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}}
-try{history.replaceState({appRoot:true},"",location.href);history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}
+try{
+  const rootUrl=location.href.split("#")[0];
+  history.replaceState({appRoot:true},"",rootUrl);
+  history.pushState({appGuard:true},"",rootUrl);
+}catch(e){}
 function getFinishedDays(){try{const x=JSON.parse(localStorage.getItem("finishedDays")||"[]");return Array.isArray(x)?x:[]}catch(e){return []}}
 function nextUnfinishedDay(){const done=new Set(getFinishedDays().map(x=>Number(x.day)));return days.find(d=>!done.has(d.n))?.n||days.length;}
 function ensureActiveRideDay(){const done=new Set(getFinishedDays().map(x=>Number(x.day)));if(!activeRideDay||done.has(activeRideDay)||!days.some(d=>d.n===activeRideDay)){activeRideDay=nextUnfinishedDay();localStorage.setItem("isanActiveRideDay",String(activeRideDay));}return activeRideDay;}
 function selectRideDay(n){const done=getFinishedDays().some(x=>Number(x.day)===Number(n));if(done){alert("This ride day is already finished. Choose another day.");return;}activeRideDay=Number(n);localStorage.setItem("isanActiveRideDay",String(activeRideDay));loadRiderForDay(activeRideDay);showRides();}
 function setActive(btn){document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));if(btn)btn.classList.add("active");}
 function appBackToRides(){backToRides();}
-window.addEventListener("popstate",()=>{
-  if(allowAppExit){allowAppExit=false;return;}
-  const finish=document.getElementById("finishModal");
-  if(finish && finish.style.display==="flex") {
-    v23BackToRidesFromFinish();
-    try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}
-    return;
-  }
-  if(currentView==="rider"||currentView==="rideDetail"||currentView==="summaryDetail"){backToRides();try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}}else if(currentView!=="home"){backToHome();try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}}else{exitGuard();}
-});window.addEventListener("hashchange",()=>{if(!allowAppExit&&currentView==="home")exitGuard();});
 function navigate(route){alert("Navigation target:\\n"+route+"\\n\\nPrototype action: connect this button to Google Maps / your preferred navigation app.");}
 currentView="home";showHome(document.querySelector(".nav button"));
 </script>
@@ -1039,7 +1049,7 @@ function saveReceiptPreview(input,n){
 })();
 </script>
 
-<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Min's Thailand Road Trip • V23</div>
+<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Min's Thailand Road Trip • V26</div>
 
 <script>
 (function(){
@@ -1196,7 +1206,7 @@ function saveFinishCard(){const c=makeFinishCanvas();c.toBlob(blob=>{const a=doc
 async function shareFinishCard(){const c=makeFinishCanvas();c.toBlob(async blob=>{try{const file=new File([blob],'Isan-Rider-Finish.png',{type:'image/png'});if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){await navigator.share({title:"Min's Thailand Road Trip",text:"Finished today's ride.",files:[file]});}else{saveFinishCard();alert('Image saved. You can now share it to Facebook or WhatsApp.');}}catch(e){if(e&&e.name==='AbortError')return;saveFinishCard();}},'image/png');}
 
 </script>
-<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Min's Thailand Road Trip • V23</div>
+<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Min's Thailand Road Trip • V26</div>
 
 
 <script>
@@ -1278,7 +1288,7 @@ function showHome(btn){
       </div>
     </section>
 
-    <div class="v20-footer-note">Min's Thailand Road Trip • V23</div>
+    <div class="v20-footer-note">Min's Thailand Road Trip • V26</div>
   `;
   renderHomeTripDashboard();
   window.scrollTo(0,0);
@@ -1464,30 +1474,30 @@ function makeFinishCanvas(){
   return c;
 }
 
-/* Prevent Android Back from jumping away when Daily Summary was opened from completion. */
-window.addEventListener("popstate",function(e){
-  if(window.__v20HandlingPop)return;
-  if(allowAppExit)return;
-  if(currentView==="summary" && window.__returnToFinish){
-    window.__v20HandlingPop=true;
-    try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(_){}
-    returnToWellDone();
-    setTimeout(()=>window.__v20HandlingPop=false,0);
+/* V26: one deterministic Android Back handler. */
+window.addEventListener("popstate",function(){
+  if(allowAppExit){ allowAppExit=false; return; }
+  const finish=document.getElementById("finishModal");
+  if(finish && finish.style.display==="flex"){
+    v23BackToRidesFromFinish();
+    try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}
+    return;
   }
-},true);
-
-/* Exit confirmation: browsers/PWAs do not permit script-forced closing.
-   YES now exits the app's guarded navigation state without showing a misleading
-   browser error. On Android, the user can then leave the standalone app normally
-   with the system Home/Recent Apps controls. */
-function confirmExitApp(){
-  closeExitModal();
-  allowAppExit=true;
-  try{
-    history.back();
-  }catch(e){}
-  setTimeout(()=>{allowAppExit=false;},700);
-}
+  if(currentView==="summary" && window.__returnToFinish){
+    returnToWellDone();
+    try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}
+    return;
+  }
+  if(currentView!=="home"){
+    backToHome();
+    try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}
+    return;
+  }
+  // At Home, Android Back never exits silently. Show the app exit confirmation
+  // and immediately restore the guard entry so another Back cannot escape.
+  requestExitApp();
+  try{history.pushState({appGuard:true},"",location.href.split("#")[0]);}catch(e){}
+});
 
 /* Make the completion route-back button deterministic. */
 document.addEventListener("click",function(e){
