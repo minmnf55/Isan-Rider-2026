@@ -1036,7 +1036,7 @@ function saveReceiptPreview(input,n){
 })();
 </script>
 
-<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Min's Thailand Road Trip • V26.1.3</div>
+<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Min's Thailand Road Trip • V26.1.3.1.1</div>
 
 <script>
 (function(){
@@ -1198,8 +1198,8 @@ window.addEventListener('isan:dayFinished', buildV15Summary);
 function finishCardData(){const st=window.__finishedRide||{};const dayNo=Number(st.dayNo||0);const d=days[dayNo-1]||{};return {day:st.dayLabel||'Today',distance:(Number(st.distance)||0).toFixed(1)+' km',ride:fmtTime(st.rideMs||0),route:Array.isArray(d.route)?d.route.join(' → '):'',date:d.date||''};}
 function drawMountainLayer(ctx,baseY,amp,seed){ctx.beginPath();ctx.moveTo(0,baseY);for(let i=0;i<=10;i++){const px=i*108;const py=baseY-amp*(0.35+0.65*Math.abs(Math.sin(i*1.37+seed)));ctx.lineTo(px,py);}ctx.lineTo(1080,1350);ctx.lineTo(0,1350);ctx.closePath();ctx.fill();}
 function makeFinishCanvas(){const d=finishCardData();const c=document.createElement('canvas');c.width=1080;c.height=1350;const x=c.getContext('2d');const sky=x.createLinearGradient(0,0,0,900);sky.addColorStop(0,'#073b4c');sky.addColorStop(.55,'#168ba3');sky.addColorStop(1,'#d9f1ef');x.fillStyle=sky;x.fillRect(0,0,1080,1350);x.fillStyle='rgba(255,209,102,.95)';x.beginPath();x.arc(875,245,78,0,Math.PI*2);x.fill();x.fillStyle='#2c6d78';drawMountainLayer(x,690,245,.4);x.fillStyle='#174d5a';drawMountainLayer(x,790,310,1.4);x.fillStyle='#0d3540';drawMountainLayer(x,900,335,2.7);x.fillStyle='#17252b';x.beginPath();x.moveTo(350,1350);x.lineTo(520,900);x.lineTo(560,900);x.lineTo(850,1350);x.closePath();x.fill();x.strokeStyle='#ffd166';x.lineWidth=8;x.setLineDash([35,30]);x.beginPath();x.moveTo(540,1350);x.lineTo(540,910);x.stroke();x.setLineDash([]);x.fillStyle='rgba(7,59,76,.91)';x.roundRect(55,55,970,315,34);x.fill();x.strokeStyle='#ffd166';x.lineWidth=3;x.stroke();x.fillStyle='#fff';x.font='900 70px sans-serif';x.fillText('WELL DONE!',95,145);x.font='34px sans-serif';x.fillText("You finished today's ride.",95,205);x.fillText("Get some rest for tomorrow's adventure.",95,252);x.fillStyle='#ffd166';x.font='900 34px sans-serif';x.fillText(d.day.toUpperCase(),95,322);x.fillStyle='rgba(255,255,255,.96)';x.roundRect(70,955,430,205,26);x.fill();x.roundRect(580,955,430,205,26);x.fill();x.fillStyle='#164a58';x.font='900 66px sans-serif';x.fillText(d.distance,105,1040);x.fillText(d.ride,615,1040);x.font='700 24px sans-serif';x.fillText('DISTANCE',108,1090);x.fillText('RIDE TIME',618,1090);x.fillStyle='#fff';x.font='700 25px sans-serif';x.fillText("MIN'S THAILAND ROAD TRIP • Voge DS900X",70,1265);x.font='22px sans-serif';if(d.route)x.fillText(d.route,70,1305);return c;}
-function saveFinishCard(){const c=makeFinishCanvas();c.toBlob(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Isan-Rider-'+finishCardData().day.replace(/[^A-Za-z0-9]+/g,'-')+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);},'image/png');}
-async function shareFinishCard(){const c=makeFinishCanvas();c.toBlob(async blob=>{try{const file=new File([blob],'Isan-Rider-Finish.png',{type:'image/png'});if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){await navigator.share({title:"Min's Thailand Road Trip",text:"Finished today's ride.",files:[file]});}else{saveFinishCard();alert('Image saved. You can now share it to Facebook or WhatsApp.');}}catch(e){if(e&&e.name==='AbortError')return;saveFinishCard();}},'image/png');}
+function saveFinishCard(){window.makeFinishCanvas().then(c=>c.toBlob(blob=>{if(!blob)return;const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Min-Thailand-Road-Trip-'+finishCardData().day.replace(/[^A-Za-z0-9]+/g,'-')+'.png';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);},'image/png'));}
+async function shareFinishCard(){const c=await window.makeFinishCanvas();c.toBlob(async blob=>{try{const file=new File([blob],'Min-Thailand-Road-Trip-Finish.png',{type:'image/png'});if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){await navigator.share({title:"Min's Thailand Road Trip",text:"Finished today's ride.",files:[file]});}else{saveFinishCard();alert('Image saved. You can now share it to Facebook or WhatsApp.');}}catch(e){if(e&&e.name==='AbortError')return;saveFinishCard();}},'image/png');}
 
 </script>
 
@@ -1283,7 +1283,7 @@ function showHome(btn){
       </div>
     </section>
 
-    <div class="v20-footer-note">Min's Thailand Road Trip • V26.1.3</div>
+    <div class="v20-footer-note">Min's Thailand Road Trip • V26.1.3.1.1</div>
   `;
   renderHomeTripDashboard();
   window.scrollTo(0,0);
@@ -1312,7 +1312,7 @@ function renderHomeTripDashboard(){
   const bar=document.getElementById('homeProgress'); if(bar)bar.style.width=p+'%';
 }
 
-/* V26.1.3: render Home only after the final Home renderer has been defined. */
+/* V26.1.3.1.1: render Home only after the final Home renderer has been defined. */
 showHome(document.querySelector(".nav button"));
 
 /* Premium in-app completion card */
@@ -1733,14 +1733,26 @@ async function shareFinishCard(){const c=await makeFinishCanvas();c.toBlob(async
     const d=finishCardData();m.innerHTML=`<div class="v20-finish-card"><div class="v20-finish-inner"><div class="v20-finish-brand"><span>MIN'S THAILAND ROAD TRIP</span><span>🏁 DAY COMPLETE</span></div><div class="v20-finish-title">Well done!</div><p class="v20-finish-msg">You finished today's ride.<br>Get some rest for tomorrow's adventure.</p><div class="v20-finish-day">${d.day}</div><div class="v20-finish-route">${d.route}</div><div class="v20-finish-stats"><div class="v20-finish-stat"><b>${d.distance}</b><span>ACTUAL DISTANCE</span></div><div class="v20-finish-stat"><b>${d.ride}</b><span>RIDE TIME</span></div><div class="v20-finish-stat"><b>${d.elapsed}</b><span>TOTAL ELAPSED</span></div><div class="v20-finish-stat"><b>${d.start} → ${d.end}</b><span>START / END</span></div></div><div class="v20-finish-quote">“Not just miles, but memories.”</div><div class="v21-share-note">Save or share the same scenic card shown here.</div><div class="v20-finish-actions"><button class="v20-finish-save" onclick="saveFinishCard()">💾 SAVE AS IMAGE</button><button class="v20-finish-share" onclick="shareFinishCard()">📤 SHARE</button></div><button class="v20-finish-full" onclick="v20ViewDailySummaryFromFinish()">📝 VIEW DAILY SUMMARY</button><button class="v23-finish-back" onclick="v23BackToRidesFromFinish()">‹ BACK TO RIDES</button><button class="v20-finish-start" onclick="v20StartNewDay()">▶ START NEW DAY</button></div></div>`;
   };
 
-  function drawFlagMY(ctx,x,y,w,h){ctx.save();for(let i=0;i<14;i++){ctx.fillStyle=i%2?'#fff':'#c8102e';ctx.fillRect(x,y+i*h/14,w,h/14);}ctx.fillStyle='#012169';ctx.fillRect(x,y,w*.42,h*.55);ctx.fillStyle='#ffcc00';ctx.beginPath();ctx.arc(x+w*.18,y+h*.275,h*.14,0,Math.PI*2);ctx.fill();ctx.restore();}
-  function drawFlagTH(ctx,x,y,w,h){ctx.save();const cols=['#c8102e','#fff','#241d4f','#fff','#c8102e'];cols.forEach((c,i)=>{ctx.fillStyle=c;ctx.fillRect(x,y+i*h/5,w,h/5);});ctx.restore();}
+  function drawFlagMY(ctx,x,y,w,h){ctx.save();
+    // Malaysia: 14 alternating red/white stripes, blue canton, yellow crescent + 14-point star.
+    for(let i=0;i<14;i++){ctx.fillStyle=i%2===0?'#c8102e':'#fff';ctx.fillRect(x,y+i*h/14,w,h/14);}
+    const cw=w*0.5,ch=h*0.55;ctx.fillStyle='#012169';ctx.fillRect(x,y,cw,ch);
+    // crescent: yellow disc with blue cut-out
+    const cx=x+cw*0.43,cy=y+ch*0.5,r=ch*0.23;ctx.fillStyle='#ffcc00';ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#012169';ctx.beginPath();ctx.arc(cx+r*0.38,cy-r*0.10,r*0.92,0,Math.PI*2);ctx.fill();
+    // 14-point star
+    const sx=x+cw*0.68,sy=y+ch*0.50,ro=ch*0.18,ri=ch*0.075;ctx.fillStyle='#ffcc00';ctx.beginPath();
+    for(let i=0;i<28;i++){const a=-Math.PI/2+i*Math.PI/14,rr=i%2===0?ro:ri;const px=sx+Math.cos(a)*rr,py=sy+Math.sin(a)*rr;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}ctx.closePath();ctx.fill();ctx.restore();}
+  function drawFlagTH(ctx,x,y,w,h){ctx.save();
+    // Thailand: red-white-blue-white-red, with blue band twice the height of each red/white band.
+    const bands=[['#c8102e',1],['#fff',1],['#2d2a63',2],['#fff',1],['#c8102e',1]],total=6;let yy=y;
+    bands.forEach(([c,n])=>{ctx.fillStyle=c;const bh=h*n/total;ctx.fillRect(x,yy,w,bh);yy+=bh;});ctx.restore();}
   function drawRouteSketch(ctx,x,y,w,h,d){ctx.save();ctx.fillStyle='#eef6f3';ctx.roundRect(x,y,w,h,24);ctx.fill();ctx.strokeStyle='#c9dfe0';ctx.lineWidth=2;ctx.stroke();for(let gx=x+30;gx<x+w;gx+=70){ctx.strokeStyle='rgba(7,59,76,.07)';ctx.beginPath();ctx.moveTo(gx,y);ctx.lineTo(gx,y+h);ctx.stroke();}for(let gy=y+30;gy<y+h;gy+=55){ctx.beginPath();ctx.moveTo(x,gy);ctx.lineTo(x+w,gy);ctx.stroke();}
     const track=Array.isArray((window.__finishedRide||{}).track)?(window.__finishedRide||{}).track:[];let pts=track.filter(p=>Array.isArray(p)&&p.length>=2);if(pts.length<2){const n=Math.max(2,(d.route||'').split(' → ').length);pts=Array.from({length:n},(_,i)=>[i,Math.sin(i*.9)*.4+i*.25]);}
     const minA=Math.min(...pts.map(p=>p[0])),maxA=Math.max(...pts.map(p=>p[0])),minB=Math.min(...pts.map(p=>p[1])),maxB=Math.max(...pts.map(p=>p[1]));const sx=a=>x+24+(a-minA)/Math.max(.0001,maxA-minA)*(w-48),sy=b=>y+h-24-(b-minB)/Math.max(.0001,maxB-minB)*(h-48);
     ctx.strokeStyle='#e83e68';ctx.lineWidth=7;ctx.lineCap='round';ctx.beginPath();pts.forEach((p,i)=>{const px=sx(p[0]),py=sy(p[1]);if(i)ctx.lineTo(px,py);else ctx.moveTo(px,py);});ctx.stroke();const first=pts[0],last=pts[pts.length-1];ctx.fillStyle='#06d6a0';ctx.beginPath();ctx.arc(sx(first[0]),sy(first[1]),10,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ef476f';ctx.beginPath();ctx.arc(sx(last[0]),sy(last[1]),10,0,Math.PI*2);ctx.fill();
     (d.pitStops||[]).filter(s=>Number.isFinite(Number(s.lat))&&Number.isFinite(Number(s.lon))).slice(0,10).forEach((s,i)=>{const idx=Math.min(pts.length-1,Math.max(0,Math.round((i+1)/(Math.max(1,(d.pitStops||[]).length+1))*(pts.length-1))));const p=pts[idx];ctx.fillStyle='#7b61ff';ctx.beginPath();ctx.arc(sx(p[0]),sy(p[1]),8,0,Math.PI*2);ctx.fill();});
-    ctx.fillStyle='#073b4c';ctx.font='900 22px Arial';ctx.fillText('ACTUAL GPS TRACK',x+24,y+34);ctx.fillStyle='#5b6d75';ctx.font='600 16px Arial';ctx.fillText((d.pitStops||[]).length+' pit stop'+((d.pitStops||[]).length===1?'':'s'),x+w-120,y+34);ctx.restore();}
+    ctx.fillStyle='#073b4c';ctx.font='900 22px Arial';ctx.fillText('ROUTE MAP',x+24,y+34);ctx.strokeStyle='#e83e68';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(x+190,y+27);ctx.lineTo(x+250,y+27);ctx.stroke();ctx.fillStyle='#5b6d75';ctx.font='700 13px Arial';ctx.fillText('Actual GPS',x+258,y+32);ctx.strokeStyle='#168ba3';ctx.lineWidth=4;ctx.setLineDash([10,8]);ctx.beginPath();ctx.moveTo(x+355,y+27);ctx.lineTo(x+415,y+27);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#5b6d75';ctx.fillText('Planned',x+423,y+32);ctx.fillText((d.pitStops||[]).length+' pit stop'+((d.pitStops||[]).length===1?'':'s'),x+w-95,y+32);ctx.restore();}
 
   window.makeFinishCanvas=async function(){
     const d=finishCardData(),c=document.createElement('canvas');c.width=1080;c.height=1550;const x=c.getContext('2d');x.textBaseline='alphabetic';
@@ -1748,8 +1760,8 @@ async function shareFinishCard(){const c=await makeFinishCanvas();c.toBlob(async
     x.fillStyle='rgba(3,35,46,.76)';v22RoundRect(x,50,45,980,285,30);x.fill();x.strokeStyle='#ffd166';x.lineWidth=3;v22RoundRect(x,50,45,980,285,30);x.stroke();x.fillStyle='#fff';x.font='900 28px Arial';x.fillText("MIN'S THAILAND ROAD TRIP",82,92);x.fillStyle='#ffd166';x.font='900 22px Arial';x.fillText('DAY COMPLETE',810,92);x.fillStyle='#fff';x.font='italic 72px Georgia';x.fillText('Well done!',82,170);x.font='30px Arial';x.fillText("You finished today's ride.",84,220);x.fillText("Not just miles, but memories.",84,264);x.fillStyle='#ffd166';x.font='900 29px Arial';x.fillText(String(d.day).toUpperCase(),84,310);
     x.fillStyle='#fff';x.font='900 22px Arial';x.fillText(d.route,65,360);
     // Main stats
-    const stats=[[''+d.distance,'ACTUAL DISTANCE'],[d.planned,'PLANNED MIDPOINT'],[d.diff>=0?'+'+d.diff.toFixed(1)+' km':d.diff.toFixed(1)+' km','DIFFERENCE'],[d.start,'START TIME'],[d.end,'END TIME'],[d.elapsed,'TOTAL ELAPSED'],[d.ride,'RIDE TIME'],[d.rest,'REST / FOOD'],[d.fuel,'FUEL TIME'],[d.short,'SHORT STOP']];
-    stats.forEach((s,i)=>{const col=i%5,row=Math.floor(i/5),bx=50+col*196,by=400+row*112;x.fillStyle='rgba(255,255,255,.96)';v22RoundRect(x,bx,by,182,94,16);x.fill();x.fillStyle='#164a58';x.font='900 24px Arial';x.fillText(s[0],bx+12,by+39);x.fillStyle='#60737b';x.font='800 12px Arial';x.fillText(s[1],bx+12,by+65);});
+    const stats=[['📍',''+d.distance,'ACTUAL DISTANCE'],['🗺️',d.planned,'PLANNED MIDPOINT'],['↕️',d.diff>=0?'+'+d.diff.toFixed(1)+' km':d.diff.toFixed(1)+' km','DIFFERENCE'],['🕐',d.start,'START TIME'],['🏁',d.end,'END TIME'],['⏱️',d.elapsed,'TOTAL ELAPSED'],['🏍️',d.ride,'RIDE TIME'],['☕',d.rest,'REST / FOOD'],['⛽',d.fuel,'FUEL TIME'],['📸',d.short,'SHORT STOP']];
+    stats.forEach((s,i)=>{const col=i%5,row=Math.floor(i/5),bx=50+col*196,by=400+row*112;x.fillStyle='rgba(255,255,255,.96)';v22RoundRect(x,bx,by,182,94,16);x.fill();x.font='24px "Segoe UI Emoji", Arial';x.fillStyle='#168ba3';x.fillText(s[0],bx+12,by+33);x.fillStyle='#164a58';x.font='900 22px Arial';x.fillText(s[1],bx+45,by+34);x.fillStyle='#60737b';x.font='800 11px Arial';x.fillText(s[2],bx+45,by+61);});
     drawRouteSketch(x,50,635,560,350,d);
     x.fillStyle='#fff';v22RoundRect(x,630,635,400,350,24);x.fill();x.fillStyle='#073b4c';x.font='900 24px Arial';x.fillText('TIMELINE',655,675);let events=(d.events||[]).slice().sort((a,b)=>new Date(a.at)-new Date(b.at));if(!events.length){events=[...(d.start?[{kind:'start',at:d.startTime}]:[]),...(d.end?[{kind:'finish',at:d.endTime}]:[])];}events.slice(0,8).forEach((ev,i)=>{const yy=710+i*32;x.fillStyle='#073b4c';x.font='900 14px Arial';x.fillText(timeHM(ev.at),655,yy);x.fillStyle='#e83e68';x.font='900 14px Arial';x.fillText(eventIcon(ev),710,yy);x.fillStyle='#164a58';x.font='800 13px Arial';x.fillText(eventLabel(ev)+(ev.name?' — '+ev.name:''),735,yy);});
     x.fillStyle='#fff';v22RoundRect(x,50,1015,980,270,24);x.fill();x.fillStyle='#073b4c';x.font='900 24px Arial';x.fillText('PIT STOPS',75,1055);const pits=d.pitStops||[];if(!pits.length){x.fillStyle='#60737b';x.font='18px Arial';x.fillText('No pit stops recorded.',75,1095);}else{pits.slice(0,6).forEach((p,i)=>{const yy=1095+i*29;x.fillStyle='#164a58';x.font='800 16px Arial';x.fillText((p.time||'—')+'  •  '+(p.category||p.type||'Pit Stop')+'  •  '+(p.name||'Unnamed spot'),75,yy);});}
