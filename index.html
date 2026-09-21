@@ -949,7 +949,7 @@ function selectRideDay(n){const done=getFinishedDays().some(x=>Number(x.day)===N
 function setActive(btn){document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));if(btn)btn.classList.add("active");}
 function appBackToRides(){backToRides();}
 function navigate(route){alert("Navigation target:\\n"+route+"\\n\\nPrototype action: connect this button to Google Maps / your preferred navigation app.");}
-currentView="home";showHome(document.querySelector(".nav button"));
+currentView="home";
 </script>
 
 <script>
@@ -1025,7 +1025,7 @@ function saveReceiptPreview(input,n){
 })();
 </script>
 
-<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Min's Thailand Road Trip • V26.1</div>
+<div style="text-align:center;padding:8px;font:11px system-ui;color:#6b7280">Min's Thailand Road Trip • V26.1.1</div>
 
 <script>
 (function(){
@@ -1182,8 +1182,6 @@ function saveFinishCard(){const c=makeFinishCanvas();c.toBlob(blob=>{const a=doc
 async function shareFinishCard(){const c=makeFinishCanvas();c.toBlob(async blob=>{try{const file=new File([blob],'Isan-Rider-Finish.png',{type:'image/png'});if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){await navigator.share({title:"Min's Thailand Road Trip",text:"Finished today's ride.",files:[file]});}else{saveFinishCard();alert('Image saved. You can now share it to Facebook or WhatsApp.');}}catch(e){if(e&&e.name==='AbortError')return;saveFinishCard();}},'image/png');}
 
 </script>
-<div style="text-align:center;font-size:10px;color:#94a3b8;padding:8px 0 90px">Min's Thailand Road Trip • V26.1</div>
-
 
 <script>
 function returnToWellDone(){window.__returnToFinish=false;showRides(document.querySelectorAll('.nav button')[1]);setTimeout(()=>{if(window.__finishedRide){openFinishModal(window.__finishedRide.dayLabel,window.__finishedRide);}},30);}
@@ -1265,7 +1263,7 @@ function showHome(btn){
       </div>
     </section>
 
-    <div class="v20-footer-note">Min's Thailand Road Trip • V26.1</div>
+    <div class="v20-footer-note">Min's Thailand Road Trip • V26.1.1</div>
   `;
   renderHomeTripDashboard();
   window.scrollTo(0,0);
@@ -1293,6 +1291,9 @@ function renderHomeTripDashboard(){
   const p=Math.min(100,f.length/days.length*100);
   const bar=document.getElementById('homeProgress'); if(bar)bar.style.width=p+'%';
 }
+
+/* V26.1.1: render Home only after the final Home renderer has been defined. */
+showHome(document.querySelector(".nav button"));
 
 /* Premium in-app completion card */
 function openFinishModal(dayLabel,st){
